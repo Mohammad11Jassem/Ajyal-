@@ -15,7 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         EnsureFrontendRequestsAreStateful::class;
         $middleware->alias([
-             'role' => \App\Http\Middleware\CheckUserRole::class,
+            'role' => \App\Http\Middleware\CheckUserRole::class,
+        ]);
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'Auth' => \App\Http\Middleware\Authenticate::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

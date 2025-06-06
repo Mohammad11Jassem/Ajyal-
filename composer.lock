@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "af1ff0bb7bf60ee186f92f01fd1748bb",
+=======
+    "content-hash": "0afc227dafa9926ab5fbd31a87a17d45",
+>>>>>>> 0fe9d8ddbf7a7d14cf075f0eb908f3d9ee6f89f5
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3481,6 +3485,7 @@
             "time": "2025-06-01T06:28:46+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "simplesoftwareio/simple-qrcode",
             "version": "4.2.0",
             "source": {
@@ -3506,10 +3511,38 @@
             "suggest": {
                 "ext-imagick": "Allows the generation of PNG QrCodes.",
                 "illuminate/support": "Allows for use within Laravel."
+=======
+            "name": "spatie/laravel-permission",
+            "version": "6.19.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-permission.git",
+                "reference": "0cd412dcad066d75caf0b977716809be7e7642fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/0cd412dcad066d75caf0b977716809be7e7642fd",
+                "reference": "0cd412dcad066d75caf0b977716809be7e7642fd",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/auth": "^8.12|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/container": "^8.12|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/contracts": "^8.12|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/database": "^8.12|^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "laravel/passport": "^11.0|^12.0",
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^6.23|^7.0|^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^9.4|^10.1|^11.5"
+>>>>>>> 0fe9d8ddbf7a7d14cf075f0eb908f3d9ee6f89f5
             },
             "type": "library",
             "extra": {
                 "laravel": {
+<<<<<<< HEAD
                     "aliases": {
                         "QrCode": "SimpleSoftwareIO\\QrCode\\Facades\\QrCode"
                     },
@@ -3521,6 +3554,23 @@
             "autoload": {
                 "psr-4": {
                     "SimpleSoftwareIO\\QrCode\\": "src"
+=======
+                    "providers": [
+                        "Spatie\\Permission\\PermissionServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "6.x-dev",
+                    "dev-master": "6.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Spatie\\Permission\\": "src"
+>>>>>>> 0fe9d8ddbf7a7d14cf075f0eb908f3d9ee6f89f5
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3529,6 +3579,7 @@
             ],
             "authors": [
                 {
+<<<<<<< HEAD
                     "name": "Simple Software LLC",
                     "email": "support@simplesoftware.io"
                 }
@@ -3547,6 +3598,37 @@
                 "source": "https://github.com/SimpleSoftwareIO/simple-qrcode/tree/4.2.0"
             },
             "time": "2021-02-08T20:43:55+00:00"
+=======
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Permission handling for Laravel 8.0 and up",
+            "homepage": "https://github.com/spatie/laravel-permission",
+            "keywords": [
+                "acl",
+                "laravel",
+                "permission",
+                "permissions",
+                "rbac",
+                "roles",
+                "security",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-permission/issues",
+                "source": "https://github.com/spatie/laravel-permission/tree/6.19.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-05-31T00:50:27+00:00"
+>>>>>>> 0fe9d8ddbf7a7d14cf075f0eb908f3d9ee6f89f5
         },
         {
             "name": "symfony/clock",
@@ -8586,5 +8668,5 @@
         "php": "^8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
