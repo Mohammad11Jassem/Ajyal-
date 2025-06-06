@@ -18,6 +18,6 @@ class ParentModel extends Model
 
     public function students()
     {
-         return $this->belongsToMany(Student::class, 'parent_student', 'parent_id', 'student_id');
+         return $this->belongsToMany(Student::class, 'parent_student', 'parent_model_id', 'student_id');
     }
 }
