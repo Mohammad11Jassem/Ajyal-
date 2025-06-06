@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('father_name')->nullable();
             $table->string('QR')->nullable();
             $table->string('location')->nullable();
+
+            $table->string('access_code')->unique();
             $table->timestamps();
         });
     }

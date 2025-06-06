@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ParentStudent extends Model
 {
-    protected $fillable=[
-        'parent_id','student_id'
+    protected $table='parent_model_students';
+     protected $fillable =[
+        'student_id','parent_model_id'
     ];
 
     public function parent()

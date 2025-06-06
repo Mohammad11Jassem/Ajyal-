@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parent_students', function (Blueprint $table) {
+        Schema::create('parent_model_students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('parent_id')->constrained()->onDelete('cascade');
+            $table->foreignId('parent_model_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

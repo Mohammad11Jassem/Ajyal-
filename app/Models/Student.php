@@ -20,6 +20,7 @@ class Student extends Model
         'father_name',
         'QR',
         'location',
+        'access_code'
     ];
     public function user()
     {
@@ -30,8 +31,8 @@ class Student extends Model
      protected static function booted()
     {
         static::creating(function ($student) {
-            $max = DB::table('students')->lockForUpdate()->max('student_number') ?? 999;
-            $student->student_number = $max + 1;
+            $max = DB::table('students')->lockForUpdate()->max('student_Id_number') ?? 999;
+            $student->student_Id_number = $max + 1;
         });
     }
 
