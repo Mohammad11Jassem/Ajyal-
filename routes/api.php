@@ -1,11 +1,11 @@
 <?php
 
-<<<<<<< HEAD
+
 use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
-=======
+
 use App\Http\Controllers\ManagerController;
->>>>>>> 0fe9d8ddbf7a7d14cf075f0eb908f3d9ee6f89f5
+
 use App\Http\Controllers\TeacherController;
 use App\Models\Teacher;
 use App\Models\User;
@@ -24,7 +24,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 Route::post('/login', [TeacherController::class, 'login']);
-<<<<<<< HEAD
+
 Route::post('/link-student2', [StudentController::class, 'linkStudent2']);
 Route::get('/qr', [StudentController::class, 'getStudentQr']);
 
@@ -36,23 +36,27 @@ Route::get('/profile-student', [StudentController::class, 'profile'])->middlewar
 Route::post('/link-student', [StudentController::class, 'linkStudent'])->middleware('auth:sanctum');
 
 
-// Route::prefix('student')->controller(StudentController::class)->group(function () {
-//     // Public routes
-//     Route::post('/check', 'getStudentByCodeAndName');
-//     Route::post('/register', 'register');
-//     Route::post('/login', 'login');
+Route::prefix('student')->controller(StudentController::class)->group(function () {
+    // Public routes
+    Route::post('/check', 'getStudentByCodeAndName');
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
 
-//     // Authenticated routes
-//     Route::middleware('auth:sanctum')->group(function () {
-//         Route::post('/add', 'store');
-//         Route::get('/profile', 'profile');
-//         Route::post('/link', 'linkStudent');
-//     });
-// });
+    // Authenticated routes
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/add', 'store')->middleware('role:Manager|Secretariat');
+        Route::get('/profile', 'profile')->middleware('role:Student');
+        Route::post('/link', 'linkStudent')->middleware('role:Parent');
+    });
+});
 
-Route::post('/register-parent', [ParentModelController::class, 'registerParent']);
-Route::post('/login-parent', [ParentModelController::class, 'loginParent']);
-=======
+
+Route::prefix('parent')->controller(ParentModelController::class)->group(function () {
+    Route::post('/register', 'registerParent');
+    Route::post('/login', 'loginParent');
+});
+
+
 
 
 // Admin/Manager Routes
@@ -98,7 +102,7 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('profile', 'profile');
-            
+
                 });
 });
->>>>>>> 0fe9d8ddbf7a7d14cf075f0eb908f3d9ee6f89f5
+

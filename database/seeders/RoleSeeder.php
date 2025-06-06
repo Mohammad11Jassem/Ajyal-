@@ -20,6 +20,7 @@ class RoleSeeder extends Seeder
 
         // Create Secretariat Role
         $managerRole = Role::create(['name' => 'Secretariat', 'guard_name' => 'api']);
+
         $managerRole->givePermissionTo(permissions: [
             'view users', 'create users', 'edit users',
             // 'view teachers', 'create teachers', 'edit teachers',

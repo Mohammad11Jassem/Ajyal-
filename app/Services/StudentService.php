@@ -7,7 +7,6 @@ use App\Models\ParentModel;
 use App\Models\ParentStudent;
 use App\Models\Student;
 use App\Models\User;
-use Carbon\Exceptions\Exception as ExceptionsException;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
