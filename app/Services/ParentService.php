@@ -7,6 +7,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class ParentService
 {
@@ -24,26 +25,30 @@ class ParentService
                  $user = User::create([
                      'password' => bcrypt($data['password']),
                  ]);
-
+                 $user->assignRole(Role::findByName('Parent', 'api'));
                  $parent = ParentModel::create([
                      'user_id' => $user->id,
                      'name' => $data['name'],
                      'phone_number' => $data['phone_number'],
                  ]);
-
                  // link the parent with student
-                 $this->studentService->linkStudent([
+                 $linkData= $this->studentService->linkStudent([
                      'student_id'=>$data['student_id_qr'],
                      'parent_id'=>$parent->id,
-                 ]);
+                    ]);
+                    // dd($linkData);
 
+                if(!$linkData['success']){
+                 return $linkData['success'];
+                }
 
                  // Optional: create token
                  $token = $user->createToken('token')->plainTextToken;
 
                 return [
                     'parent'=>$parent,
-                    'token'=>$token
+                    'token'=>$token,
+                    // 'linkData'=>$linkData
                 ];
              });
 

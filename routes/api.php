@@ -54,6 +54,7 @@ Route::prefix('student')->controller(StudentController::class)->group(function (
 Route::prefix('parent')->controller(ParentModelController::class)->group(function () {
     Route::post('/register', 'registerParent');
     Route::post('/login', 'loginParent');
+    Route::get('/profile', 'profile')->middleware('auth:sanctum');
 });
 
 

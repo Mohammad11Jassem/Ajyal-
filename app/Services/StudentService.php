@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Spatie\Permission\Models\Role;
 
 class StudentService
 {
@@ -32,6 +33,7 @@ class StudentService
             $user = User::create([
             'password' => null,
              ]);
+            $user->assignRole(Role::findByName('Student', 'api'));
             $data['access_code']=$this->generateUniqueVerifyCode();
             $data['user_id'] = $user->id;
             //  return $data;
@@ -146,8 +148,18 @@ class StudentService
                 $studentId = decrypt($data['student_id']);
                 $student = Student::findOrFail($studentId);
 
+                $parentStudent=ParentStudent::where('student_id',$student['id'])
+                                             ->where('parent_model_id',$data['parent_id'])->first();
+                // dd($parentStudent);
+                if($parentStudent){
+                    // return $parentStudent;
+                    return[
+                        'success' => false,
+                    ];
+                }
+                
                 // get the auth parent
-                $p=ParentModel::where('user_id',$data['parent_id'])->first();
+                $p=ParentModel::where('id',$data['parent_id'])->first();
 
                 // $parent = auth()->user()->parentModel;
                 $parent = $p->user;
@@ -158,14 +170,17 @@ class StudentService
 
                 // Avoid duplicate entries
                 // $parent->students()->syncWithoutDetaching([$student->id]);
-                $parentStudent= ParentStudent::create([
+                $parentStudent2= ParentStudent::create([
                     'student_id'=>$studentId,
                     'parent_model_id'=>$data['parent_id']
                 ]);
                 // dd($data['parent_id']);
 
 
-                return $student;
+                return [
+                    'success'=>true,
+                    'student'=>$student
+                ];
 
             });
         } catch (\Exception $e) {

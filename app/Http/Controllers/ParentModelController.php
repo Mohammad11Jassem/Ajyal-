@@ -24,6 +24,9 @@ class ParentModelController extends Controller
         try{
         $data = $request->validated();
         $parentData=$this->parentService->registerParent($data);
+        if(!$parentData['success']){
+            return $this->badRequest('تم ربط الطالب سابقاً');
+        }
         return $this->success('Parent registered and linked to student',$parentData);
         }catch(Exception $e){
             $this->error('Registration failed',$e->getMessage());
@@ -39,5 +42,9 @@ class ParentModelController extends Controller
             return $this->badRequest('Invalid phone number or password');
         }
         return $this->success('Login successfully',$parent); // edit the response
+      }
+
+      public function profile(){
+        return auth()->user()->user_data;
       }
 }
