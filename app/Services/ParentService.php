@@ -36,16 +36,17 @@ class ParentService
                      'student_id'=>$data['student_id_qr'],
                      'parent_id'=>$parent->id,
                     ]);
+
+                    if(!$linkData['success']){
+                        return $linkData['success'];
+                    }
+
+                    // Optional: create token
+                    $token = $user->createToken('token')->plainTextToken;
                     // dd($linkData);
 
-                if(!$linkData['success']){
-                 return $linkData['success'];
-                }
-
-                 // Optional: create token
-                 $token = $user->createToken('token')->plainTextToken;
-
                 return [
+                    'success'=>true,
                     'parent'=>$parent,
                     'token'=>$token,
                     // 'linkData'=>$linkData

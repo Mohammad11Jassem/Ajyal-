@@ -28,12 +28,12 @@ Route::post('/login', [TeacherController::class, 'login']);
 Route::post('/link-student2', [StudentController::class, 'linkStudent2']);
 Route::get('/qr', [StudentController::class, 'getStudentQr']);
 
-Route::post('/check-student', [StudentController::class, 'getStudentByCodeAndName']);
-Route::post('/register-student', [StudentController::class, 'register']);
-Route::post('/login-student', [StudentController::class, 'login']);
-Route::post('/add-student', [StudentController::class, 'store'])->middleware('auth:sanctum');
-Route::get('/profile-student', [StudentController::class, 'profile'])->middleware('auth:sanctum');
-Route::post('/link-student', [StudentController::class, 'linkStudent'])->middleware('auth:sanctum');
+// Route::post('/check-student', [StudentController::class, 'getStudentByCodeAndName']);
+// Route::post('/register-student', [StudentController::class, 'register']);
+// Route::post('/login-student', [StudentController::class, 'login']);
+// Route::post('/add-student', [StudentController::class, 'store'])->middleware('auth:sanctum');
+// Route::get('/profile-student', [StudentController::class, 'profile'])->middleware('auth:sanctum');
+// Route::post('/link-student', [StudentController::class, 'linkStudent'])->middleware('auth:sanctum');
 
 
 Route::prefix('student')->controller(StudentController::class)->group(function () {
@@ -54,7 +54,10 @@ Route::prefix('student')->controller(StudentController::class)->group(function (
 Route::prefix('parent')->controller(ParentModelController::class)->group(function () {
     Route::post('/register', 'registerParent');
     Route::post('/login', 'loginParent');
-    Route::get('/profile', 'profile')->middleware('auth:sanctum');
+    Route::middleware(['auth:sanctum','role:Parent'])->group(function(){
+
+        Route::get('/profile', 'profile');
+    });
 });
 
 
@@ -65,12 +68,12 @@ Route::prefix('admin')->controller(ManagerController::class)->group(function () 
 
         Route::post('login','login');
 
-        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function () {
             Route::post('logout','logout');
             Route::get('profile','profile');
             // Route::get('dashboard', [ManagerController::class, 'dashboard']);
                //Add teachers
-            Route::post('teachers',[TeacherController::class, 'store'])->middleware('role:Manager|Secretariat');
+            Route::post('teachers',[TeacherController::class, 'store']);
 
 
             // Route::post('role', function () {
@@ -101,7 +104,7 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
         Route::post('teacherRegister', 'register');
         Route::post('teacherLogin','login');
 
-        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware(['auth:sanctum','role:Teacher'])->group(function () {
             Route::get('profile', 'profile');
 
                 });

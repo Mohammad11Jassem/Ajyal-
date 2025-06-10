@@ -65,20 +65,25 @@ class ManagerAuthService
      */
     public function getProfile(): array
     {
-        $user = Auth::user();
-        $manager = Manager::where('user_id', $user->id)->first();
+        // $user = Auth::user();
+        // $manager = Manager::where('user_id', $user->id)->first();
 
-        // Get roles and permissions directly from the manager model
-        return [
+        // // Get roles and permissions directly from the manager model
+        // return [
+        //     'success' => true,
+        //     'data' => [
+        //         'manager' => [
+        //             'id' => $manager->id,
+        //             'email' => $manager->email,
+        //             'roles' => $user->getRoleNames(),
+        //             // 'permissions' => $user->getAllPermissions()->pluck('name'),
+        //         ]
+        //     ]
+        // ];
+         $user = Auth::user()->user_data;
+         return [
             'success' => true,
-            'data' => [
-                'manager' => [
-                    'id' => $manager->id,
-                    'email' => $manager->email,
-                    'roles' => $user->getRoleNames(),
-                    // 'permissions' => $user->getAllPermissions()->pluck('name'),
-                ]
-            ]
+            'data' => $user
         ];
     }
 }

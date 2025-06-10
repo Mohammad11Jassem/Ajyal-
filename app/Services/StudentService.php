@@ -133,7 +133,7 @@ class StudentService
     {
         $qr=$this->getStudentQr();
         $data=[
-            ...auth()->user()->user_data['role_data'],
+            ...auth()->user()->user_data,
             // 'student_id'=>$qr['token'],
             ...$qr,
         ];
@@ -157,7 +157,7 @@ class StudentService
                         'success' => false,
                     ];
                 }
-                
+
                 // get the auth parent
                 $p=ParentModel::where('id',$data['parent_id'])->first();
 

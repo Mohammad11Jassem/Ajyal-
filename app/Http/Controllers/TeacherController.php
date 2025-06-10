@@ -112,6 +112,6 @@ class TeacherController extends Controller
     {
         $result = $this->teacherService->getProfile();
 
-        return response()->json($result);
+        return response()->json($result['data']);
     }
 }

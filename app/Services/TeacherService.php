@@ -52,6 +52,7 @@ class TeacherService
                 'user_id' => $user->id,
                 'name' => $data['name'],
                 'email' => $data['email'],
+
             ]);
 
             VerifyCode::create([
@@ -127,7 +128,7 @@ class TeacherService
             'message'=>'welcome to our community',
             'data' => [
                 'token' => $token,
-                'manager' => $teacher,
+                'teacher' => Teacher::where('id',$teacher->id)->first(),
                 'password'=>$data['password']
                 ]
         ];
@@ -176,7 +177,7 @@ class TeacherService
             'message'=>'welcome',
             'data' => [
                 'token' => $token,
-                'manager' => $teacher,
+                'teacher' => Teacher::where('id',$teacher->id)->first(),
                 ]
         ];
     }
@@ -192,20 +193,25 @@ class TeacherService
 
     public function getProfile(): array
     {
-        $user = Auth::user();
-        $manager = Teacher::where('user_id', $user->id)->first();
+        // $user = Auth::user();
+        // $manager = Teacher::where('user_id', $user->id)->first();
 
-        // Get roles and permissions directly from the manager model
-        return [
+        // // Get roles and permissions directly from the manager model
+        // return [
+        //     'success' => true,
+        //     'data' => [
+        //         'teacher' => [
+        //             'id' => $manager->id,
+        //             'email' => $manager->email,
+        //             'roles' => $user->getRoleNames(),
+        //             // 'permissions' => $user->getAllPermissions()->pluck('name'),
+        //         ]
+        //     ]
+        // ];
+        $user = Auth::user()->user_data;
+         return [
             'success' => true,
-            'data' => [
-                'teacher' => [
-                    'id' => $manager->id,
-                    'email' => $manager->email,
-                    'roles' => $user->getRoleNames(),
-                    // 'permissions' => $user->getAllPermissions()->pluck('name'),
-                ]
-            ]
+            'data' => $user
         ];
     }
 

@@ -61,7 +61,7 @@ class ManagerController extends Controller
     {
         $result = $this->authService->getProfile();
 
-        return response()->json($result);
+        return response()->json($result['data']);
     }
 
     /**
@@ -80,6 +80,6 @@ class ManagerController extends Controller
     }
 
     public function addTeacher(){
-        
+
     }
 }

@@ -8,6 +8,7 @@ use App\Services\ParentService;
 use App\Traits\HttpResponse;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class ParentModelController extends Controller
 {
@@ -27,7 +28,8 @@ class ParentModelController extends Controller
         if(!$parentData['success']){
             return $this->badRequest('تم ربط الطالب سابقاً');
         }
-        return $this->success('Parent registered and linked to student',$parentData);
+        // return $parentData;
+        return $this->success('Parent registered and linked to student',Arr::except($parentData,['success']));
         }catch(Exception $e){
             $this->error('Registration failed',$e->getMessage());
         }
