@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->date('date_of_contract')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('avatar')->nullable();
             $table->text('bio')->nullable();
             $table->timestamps();

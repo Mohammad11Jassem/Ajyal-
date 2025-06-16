@@ -8,6 +8,7 @@ use App\Models\Teacher;
 use App\Models\User;
 use App\Models\VerifyCode;
 use Exception;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -27,23 +28,20 @@ class TeacherService
     public function createTeacher(array $data): array
     {
         try {
-            // Generate a random password
-            $password = Str::random(8);
+            // Generate a random verifyCode
+            $verifyCode = Str::random(8);      //or // $verifyCode=mt_rand(100000,999999);
 
-            // $password=mt_rand(100000,999999);
-
-        while(VerifyCode::firstWhere('code', $password)){
-            // $password=mt_rand(100000,999999);
-            $password=Str::random(8);
-        }
+            while(VerifyCode::firstWhere('code', $verifyCode)){
+                // $verifyCode=mt_rand(100000,999999);
+                $verifyCode=Str::random(8);
+            }
 
             DB::beginTransaction();
 
             // Create user account
             $user = User::create([
-                'password' =>" "
+                'password'=>null
             ]);
-
 
             $user->assignRole(Role::findByName('Teacher', 'api'));
 
@@ -52,14 +50,25 @@ class TeacherService
                 'user_id' => $user->id,
                 'name' => $data['name'],
                 'email' => $data['email'],
+                'date_of_contract' => $data['dateOfContract'],
+                'phone_number' => $data['phone_number'],
+                'bio' => $data['bio'],
 
             ]);
+            // Save image if exists
+            if (isset($data['avatar']) && $data['avatar']->isValid()) {
+                $imageFile = $data['avatar'];
+                $imagePath = $imageFile->store('teachers', 'public'); // e.g. storage/app/public/teachers
+
+                $teacher->image()->create([
+                    'path' => $imagePath
+                ]);
+            }
 
             VerifyCode::create([
             'user_id'=>$user->id,
-            'code'=>$password
+            'code'=>$verifyCode
             ]);
-
             DB::commit();
 
              // Try to send welcome email with credentials
@@ -81,8 +90,8 @@ class TeacherService
                 'success' => true,
                 'message' => 'Teacher created successfully. ' . $emailStatus,
                 'data' => [
-                    'teacher' => $teacher,
-                    'temporary_password' => $password // This should be sent via email in production
+                    'teacher' =>$teacher->load('image'),
+                    // 'temporary_password' => $verifyCode // This should be sent via email in production
                 ]
             ];
         } catch (\Exception $e) {
@@ -97,44 +106,48 @@ class TeacherService
     }
 
     public function RegisterTeacher(array $data){
-        try{
-      $teacher=Teacher::where('email',$data['email'])->first();
-      if($teacher && !$teacher->user ){
+    try{
+        $teacher=Teacher::where('email',$data['email'])->first();
+        if($teacher && $teacher->user->password ){
         return [
                 'success' => false,
-                'message' => 'THE ACCOUNT IS USED FROM OTHER ONE'
+                'message' => 'the account is used from other one'
             ];
             }
-            // return[
-            //      'success' => false,
-            //     'message'=>$teacher->user->verfiyCode
-            // ];
-            if($teacher->user->verfiyCode['code'] !=$data['verifyCode']){
-              return [
-                'success' => false,
-                'message' => 'the verify Code Not correct'
-            ];
+
+            $verifyCode =VerifyCode::where('user_id',$teacher->user_id)->firstOrFail();
+             // Try to send welcome email with credentials
+            try {
+                // Mail::to($data['email'])->send(new TeacherCredentialsMail(
+                //     teacherName: $teacher['name'],
+                //     email: $data['email'],
+                //     password: $verifyCode['code']
+                // ));
+                $emailStatus = 'Email sent successfully';
+            } catch (\Exception $e) {
+                // Log the email error but don't fail the teacher creation
+                Log::warning('Failed to send teacher credentials email: ' . $e->getMessage());
+                $emailStatus = 'Teacher created but email could not be sent';
             }
 
             $user=User::find($teacher->user_id);
             $user['password']=Hash::make($data['password']);
-            $token = $teacher->user->createToken('manager-token')->plainTextToken;
+            // $token = $teacher->user->createToken('manager-token')->plainTextToken;
             $teacher->save();
             $user->save();
 
 
             return [
             'success' => true,
-            'message'=>'welcome to our community',
+            'message'=>'Teacher Register successfully. ' . $emailStatus,
             'data' => [
-                'token' => $token,
-                'teacher' => Teacher::where('id',$teacher->id)->first(),
+                'verifyCode' => $verifyCode,
+                'teacher' => $teacher->load('image'),
                 'password'=>$data['password']
                 ]
         ];
 
-        }
-        catch(Exception $e){
+        }catch(Exception $e){
             // return $e->getMessage();
             return [
                 'success' => false,
@@ -145,6 +158,41 @@ class TeacherService
         }
     }
 
+    public function VerifyCode(array $data){
+        try{
+            $teacher=Teacher::findOrFail($data['teacher_id']);
+            //check if exists
+        if($teacher->exists()){
+            // $verifyCode=VerifyCode::where('user_id',$teacher->user_id)->first();
+            //check if correct code
+            if($teacher->user->verfiyCode['code'] !=$data['verifyCode']){
+                return [
+                'success' => false,
+                'message' => 'the verifyCode is not correct ',
+            ];
+            }
+
+        $token = $teacher->user->createToken('manager-token')->plainTextToken;
+            return [
+            'success' => true,
+            'message'=>'welcome to our community',
+            'data' => [
+                'token' => $token,
+                'teacher' => Teacher::where('id',$teacher->id)->first(),
+                ]
+            ];
+
+        }
+    }
+    catch(Exception $e){
+        return [
+                'success' => false,
+                'message' => 'your account has not been added at System ',
+                'error' => $e->getMessage()
+            ];
+        }
+
+    }
     public function loginTeacher(array $data)
     {
         $teacher=Teacher::where('email',$data['email'])->first();
@@ -191,27 +239,19 @@ class TeacherService
     }
 
 
-    public function getProfile(): array
+    public function getProfile($id): array
     {
-        // $user = Auth::user();
-        // $manager = Teacher::where('user_id', $user->id)->first();
-
-        // // Get roles and permissions directly from the manager model
-        // return [
-        //     'success' => true,
-        //     'data' => [
-        //         'teacher' => [
-        //             'id' => $manager->id,
-        //             'email' => $manager->email,
-        //             'roles' => $user->getRoleNames(),
-        //             // 'permissions' => $user->getAllPermissions()->pluck('name'),
-        //         ]
-        //     ]
-        // ];
-        $user = Auth::user()->user_data;
-         return [
+        return [
             'success' => true,
-            'data' => $user
+            'data' => Teacher::where('id',$id)->first()
+        ];
+    }
+    public function getMyProfile(){
+        $user=Auth::user();
+        $teacher=Teacher::where('user_id',$user->id)->first();
+        return [
+            'success'=>true,
+            'data'=>$teacher->load('image'),
         ];
     }
 

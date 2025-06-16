@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Teacher\CreateTeacherRequest;
 use App\Http\Requests\Teacher\TeacherLoginRequest;
 use App\Http\Requests\Teacher\TeacherRegisterRequest;
+use App\Http\Requests\Teacher\VerifyTeacherRequest;
 use App\Services\TeacherService;
 use Illuminate\Http\JsonResponse;
 use Psy\CodeCleaner\FunctionReturnInWriteContextPass;
@@ -84,6 +85,21 @@ class TeacherController extends Controller
         ], 201);
 
     }
+    public function VerifyCode(VerifyTeacherRequest $verifyTeacherRequest):JsonResponse{
+                $result=$this->teacherService->VerifyCode($verifyTeacherRequest->validated());
+            if (!$result['success']) {
+            return response()->json([
+                'message' => $result['message'],
+                // 'error' => $result['error']
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => $result['message'],
+            'data' => $result['data']
+        ], 201);
+
+    }
     public function login(TeacherLoginRequest $teacherLoginRequest):JsonResponse{
 
         $result=$this->teacherService->loginTeacher($teacherLoginRequest->validated());
@@ -108,10 +124,16 @@ class TeacherController extends Controller
         ]);
     }
 
-    public function profile(): JsonResponse
+    public function profile($id): JsonResponse
     {
-        $result = $this->teacherService->getProfile();
+        $result = $this->teacherService->getProfile($id);
 
         return response()->json($result['data']);
     }
+    public function myProfile(): JsonResponse{
+
+        $result =$this->teacherService->getMyProfile();
+        return response()->json($result['data']);
+    }
+
 }

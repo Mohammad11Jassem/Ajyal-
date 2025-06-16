@@ -24,7 +24,7 @@ class TeacherRegisterRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email', 'max:255','exists:teachers,email'],
             'password' => ['required', 'string', 'min:6','confirmed'],
-            'verifyCode' => ['required', 'string', 'min:8'],
+            // 'verifyCode' => ['required', 'string', 'min:8'],
         ];
     }
 
@@ -36,7 +36,6 @@ class TeacherRegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.unique' => 'This email is already registered as a teacher.',
             'email.exists' => 'No teacher account found with this email.',
             'password.confirmed' => 'The password does not match with confirm.',
         ];

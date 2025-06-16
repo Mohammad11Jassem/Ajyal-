@@ -24,10 +24,10 @@ class CreateTeacherRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:teachers,email'],
-            // 'phone' => ['required', 'string', 'unique:teachers,phone'],
-            // 'subject' => ['required', 'string'],
-            // 'qualification' => ['required', 'string'],
-            // 'address' => ['required', 'string'],
+            'dateOfContract' => ['required','date'],
+            'phone_number' => ['required','regex:/^[0-9]{10}$/','unique:teachers'],
+            'avatar' => [ 'image', 'mimes:jpg,png,jpeg,gif,svg', 'max:2048'],
+            'bio' => ['string'],
         ];
     }
 
