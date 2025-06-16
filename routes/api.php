@@ -50,6 +50,7 @@ Route::prefix('student')->controller(StudentController::class)->group(function (
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/add', 'store')->middleware('role:Manager|Secretariat');
         Route::get('/profile', 'profile')->middleware('role:Student');
+        Route::post('/logout', 'logout')->middleware('role:Student');
         Route::post('/link', 'linkStudent')->middleware('role:Parent');
     });
 });

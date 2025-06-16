@@ -96,7 +96,7 @@ public function getUserDataAttribute()
             'name',
             'email',
             'date_of_contract',
-            'avatar',
+            // 'avatar',
             'bio',
             // 'created_at',
             // 'updated_at',

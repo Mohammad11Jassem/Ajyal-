@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\StudentService;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -39,10 +40,10 @@ class StudentController extends Controller
         $base64 = base64_encode($qrCode);
 
         return view('welcome',compact('base64'));
-        return response()->json([
-            'qr_code_base64' => $qrCode,
-            'token' => $token // (optional, for testing)
-        ]);
+        // return response()->json([
+        //     'qr_code_base64' => $qrCode,
+        //     'token' => $token // (optional, for testing)
+        // ]);
     }
 
     public function linkStudent2(Request $request)
@@ -128,6 +129,15 @@ class StudentController extends Controller
         }
         return $this->success('Login Successfully',$student);
     }
+
+    public function logout()
+    {
+         Auth::user()->tokens()->delete();
+
+        return $this->success('Logged out successfully');
+
+    }
+
 
 
     public function profile()

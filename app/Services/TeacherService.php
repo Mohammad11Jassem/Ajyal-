@@ -180,7 +180,7 @@ class TeacherService
             'message'=>'welcome to our community',
             'data' => [
                 'token' => $token,
-                'teacher' => Teacher::where('id',$teacher->id)->first(),
+                'teacher' => Teacher::with('image')->where('id',$teacher->id)->first(),
                 ]
             ];
 
@@ -233,19 +233,19 @@ class TeacherService
     }
 
         public function logout(): void
-    {
-        if ($user = Auth::user()) {
-            // Revoke all tokens for this user
-            $user->tokens()->delete();
+        {
+            if ($user = Auth::user()) {
+                // Revoke all tokens for this user
+                $user->tokens()->delete();
+            }
         }
-    }
 
 
     public function getProfile($id): array
     {
         return [
             'success' => true,
-            'data' => Teacher::with('image')->where('id',$id)->first()
+            'data' => Teacher::with('image')->where('id',$id)->firstOrFail()
         ];
     }
     public function getMyProfile(){

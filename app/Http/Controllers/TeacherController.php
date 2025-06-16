@@ -4,17 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Teacher;
 use App\Models\User;
+use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\Teacher\CreateTeacherRequest;
 use App\Http\Requests\Teacher\TeacherLoginRequest;
 use App\Http\Requests\Teacher\TeacherRegisterRequest;
 use App\Http\Requests\Teacher\VerifyTeacherRequest;
 use App\Services\TeacherService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Psy\CodeCleaner\FunctionReturnInWriteContextPass;
 
 class TeacherController extends Controller
 {
+    use HttpResponse;
     protected TeacherService $teacherService;
 
     public function __construct(TeacherService $teacherService)
@@ -126,9 +129,16 @@ class TeacherController extends Controller
 
     public function profile($id): JsonResponse
     {
-        $result = $this->teacherService->getProfile($id);
 
-        return response()->json($result['data']);
+
+        try {
+             $result = $this->teacherService->getProfile($id);
+            return $this->success('Teacher data',$result['data']);
+        } catch (ModelNotFoundException $e) {
+            return $this->notFound();
+        } catch (\Exception $e) {
+            return $this->error('Something went wrong', 500, $e->getMessage());
+        }
     }
     public function myProfile(): JsonResponse{
 
