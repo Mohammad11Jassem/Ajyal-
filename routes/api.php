@@ -5,16 +5,17 @@ use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
 use App\Http\Controllers\ManagerController;
-
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use App\Mail\TeacherCredentialsMail;
+use App\Http\Controllers\TopicController;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/teacher', function () {
@@ -71,11 +72,28 @@ Route::prefix('admin')->controller(ManagerController::class)->group(function () 
         Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function () {
             Route::post('logout','logout');
             Route::get('profile','profile');
+            // Route::get('dashboard', [ManagerController::class, 'dashboard']);
                //Add teachers
             Route::post('teachers',[TeacherController::class, 'store']);
-            //get Teacher profile
-            Route::get('profile/{id}',[TeacherController::class, 'profile']);
 
+
+            // Route::post('role', function () {
+            //     $user = FacadesAuth::user();
+            //     if (!$user) {
+            //         return response()->json(['message' => 'Not authenticated'], 401);
+            //     }
+            //     // Get the associated User model through the manager relationship
+            //     $actualUser = User::find($user->id);
+            //     if (!$actualUser) {
+            //         return response()->json(['message' => 'User not found'], 404);
+            //     }
+
+            //     return response()->json([
+            //         'roles' => $actualUser->getRoleNames()
+            //     ]);
+
+            //     // return $user->getRoleNames();
+            // });
 
         });
 });
@@ -94,3 +112,22 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
                 });
 });
 
+// middleware('auth:api')->
+Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->prefix('subjects')->controller(SubjectController::class)->group(function () {
+    Route::post('/', 'all');
+    Route::post('/with-topics', 'allWithTopics');
+
+    Route::get('/classes-type', 'getClasses'); // get subject Type
+
+    Route::get('/{id}', 'find'); // get subject by id
+    Route::get('/{id}/with-topics', 'findWithTopics'); // get subject with topics
+    Route::post('/create', 'create');
+    Route::post('/delete/{id}', 'deleteSubject');
+    Route::post('/archive/{id}', 'toggleArchive');
+
+});
+Route::prefix('subject/topic')->controller(TopicController::class)->group(function () {
+    Route::post('/create', 'create');
+    Route::post('/delete/{id}', 'delete');
+    Route::post('/update/{id}', 'update');
+});

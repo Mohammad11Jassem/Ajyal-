@@ -81,7 +81,9 @@ public function getUserDataAttribute()
         return [
             'id' => $this->id,
             'role_data' => $this->student->only([
-                'id', 'user_id','student_Id_number','first_name','last_name','number_civial','address','mother_name','father_name','QR','location','access_code',//'created_at','updated_at',
+                'id', 'user_id','student_Id_number','first_name','last_name','number_civial','address','mother_name','father_name',
+                // 'QR','location',
+                'access_code','created_at','updated_at',
             ]),
             'role' => 'student',
         ];

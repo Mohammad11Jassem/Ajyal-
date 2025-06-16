@@ -26,7 +26,7 @@ class StoreStudentRequest extends FormRequest
             'last_name'         => 'required|string',
             'number_civial'     => 'required|string',
             'address'           => 'required|string',
-            'location'          => 'required|string',
+            // 'location'          => 'required|string',
             'father_name'       => 'required|string',
             'mother_name'       => 'required|string',
         ];

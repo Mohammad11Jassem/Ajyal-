@@ -117,12 +117,12 @@ class StudentService
             $token = encrypt($student->id); // secure token
             $data = ['token' => $token];
             // Generate base64 PNG
-            $qrCode = QrCode::format('svg')->size(300)->generate(json_encode($data));
-            $base64 = base64_encode($qrCode);
+            // $qrCode = QrCode::format('svg')->size(300)->generate(json_encode($data));
+            // $base64 = base64_encode($qrCode);
 
             return[
                 'student_id'=>$token,
-                'svgImage'=>$base64
+                // 'svgImage'=>$base64
             ];
         }catch(Exception $e){
             return null;
@@ -146,6 +146,7 @@ class StudentService
         try {
             return DB::transaction(function () use ($data) {
                 $studentId = decrypt($data['student_id']);
+                // $studentId = $data['student_id'];
                 $student = Student::findOrFail($studentId);
 
                 $parentStudent=ParentStudent::where('student_id',$student['id'])
