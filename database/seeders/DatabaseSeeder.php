@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Subject;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,6 +22,10 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             ManagerSeeder::class,
             StudentSeeder::class,
+            ParentModelSeeder::class,
+            ClassroomSeeder::class,
+            SubjectSeeder::class,
+
         ]);
 
         // User::factory()->create([

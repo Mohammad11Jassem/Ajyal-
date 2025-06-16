@@ -18,8 +18,8 @@ class Student extends Model
         'address',
         'mother_name',
         'father_name',
-        'QR',
-        'location',
+        // 'QR',
+        // 'location',
         'access_code'
     ];
     public function user()

@@ -5,8 +5,9 @@ use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
 use App\Http\Controllers\ManagerController;
-
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TopicController;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
@@ -22,6 +23,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
             // 'data'=>auth()->user()->user_data
         ]);
     });
+});
+Route::get('/test', function () {
+        return response()->json([
+            'data'=>"data"
+        ]);
 });
 Route::post('/login', [TeacherController::class, 'login']);
 
@@ -110,3 +116,22 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
                 });
 });
 
+// middleware('auth:api')->
+Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->prefix('subjects')->controller(SubjectController::class)->group(function () {
+    Route::post('/', 'all');
+    Route::post('/with-topics', 'allWithTopics');
+
+    Route::get('/classes-type', 'getClasses'); // get subject Type
+
+    Route::get('/{id}', 'find'); // get subject by id
+    Route::get('/{id}/with-topics', 'findWithTopics'); // get subject with topics
+    Route::post('/create', 'create');
+    Route::post('/delete/{id}', 'deleteSubject');
+    Route::post('/archive/{id}', 'toggleArchive');
+
+});
+Route::prefix('subject/topic')->controller(TopicController::class)->group(function () {
+    Route::post('/create', 'create');
+    Route::post('/delete/{id}', 'delete');
+    Route::post('/update/{id}', 'update');
+});

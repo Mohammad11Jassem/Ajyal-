@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Student;
+namespace App\Http\Requests\Topic;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LinkStudentRequest extends FormRequest
+class CreateTopicRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class LinkStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id'=>'required|string'
-            // 'student_id'=>'required|exists:students,id|integer'
+            'topic_name'=>'required|string',
+            'subject_id'=>'required|exists:subjects,id|integer'
         ];
     }
 }

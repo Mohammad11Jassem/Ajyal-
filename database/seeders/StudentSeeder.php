@@ -30,8 +30,8 @@ class StudentSeeder extends Seeder
             'address' => fake()->optional()->address(),
             'mother_name' => fake()->optional()->firstName('female'),
             'father_name' => fake()->optional()->firstName('male'),
-            'QR' => fake()->optional()->uuid(),
-            'location' => "LocaT1",
+            // 'QR' => fake()->optional()->uuid(),
+            // 'location' => "LocaT1",
             'access_code' => 'ABCD1234',
         ]);
 

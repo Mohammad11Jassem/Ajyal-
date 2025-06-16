@@ -35,19 +35,19 @@ class StudentController extends Controller
         $token = encrypt($student->id); // secure token
         $data = ['token' => $token];
         // Generate base64 PNG
-        $qrCode = QrCode::format('svg')->size(300)->generate(json_encode($data));
+        $qrCode = QrCode::format('svg')->size(300)->generate(json_encode($token));
         $base64 = base64_encode($qrCode);
 
         return view('welcome',compact('base64'));
         return response()->json([
-            'qr_code_base64' => $base64,
+            'qr_code_base64' => $qrCode,
             'token' => $token // (optional, for testing)
         ]);
     }
 
     public function linkStudent2(Request $request)
     {
-        $request->validate([
+        $request->validate([ // student_id
             'token' => 'required|string',
         ]);
 
@@ -144,8 +144,8 @@ class StudentController extends Controller
 
         try {
             $data=$linkStudentRequest->validated();
-            $data['parent_id']=auth()->user()->user_data['role_data']['id'];
-            // return $data['parent_id'];
+            // $data['parent_id']=auth()->user()->user_data['role_data']['id'];
+            $data['parent_id']=1;
             $linkData=$this->studentService->linkStudent($data);
             if(!$linkData['success']){
                 return $this->badRequest('تم ربط الطالب سابقاً');
