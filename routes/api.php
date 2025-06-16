@@ -29,6 +29,9 @@ Route::post('/login', [TeacherController::class, 'login']);
 Route::post('/link-student2', [StudentController::class, 'linkStudent2']);
 Route::get('/qr', [StudentController::class, 'getStudentQr']);
 
+// Get teacher profile
+Route::get('teacher/profile/{id}',[TeacherController::class, 'profile']);
+
 // Route::post('/check-student', [StudentController::class, 'getStudentByCodeAndName']);
 // Route::post('/register-student', [StudentController::class, 'register']);
 // Route::post('/login-student', [StudentController::class, 'login']);
@@ -74,8 +77,7 @@ Route::prefix('admin')->controller(ManagerController::class)->group(function () 
             Route::get('profile','profile');
             // Add teachers
             Route::post('teachers',[TeacherController::class, 'store']);
-            // Get teacher profile
-            Route::get('profile/{id}',[TeacherController::class, 'profile']);
+
 
 
         });
