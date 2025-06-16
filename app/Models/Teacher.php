@@ -8,7 +8,7 @@ class Teacher extends Model
 {
     //
      protected $fillable=[
-        'user_id','bio','avatar','date_of_contract','email','name',
+        'user_id','bio','avatar','date_of_contract','email','name','phone_number'
     ];
     // protected $with=['image'];
     public function user()
@@ -18,6 +18,10 @@ class Teacher extends Model
     public function image()
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class,'teacher_subjects');
     }
 
 }

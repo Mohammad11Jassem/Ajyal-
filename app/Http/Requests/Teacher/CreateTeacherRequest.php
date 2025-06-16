@@ -24,10 +24,12 @@ class CreateTeacherRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:teachers,email'],
-            'dateOfContract' => ['required','date'],
+            'date_of_contract' => ['required','date'],
             'phone_number' => ['required','regex:/^[0-9]{10}$/','unique:teachers'],
             'avatar' => [ 'image', 'mimes:jpg,png,jpeg,gif,svg', 'max:2048'],
             'bio' => ['string'],
+            'subjects'=>'required|array',
+            'subjects.*' => 'required|integer|distinct|exists:subjects,id',
         ];
     }
 
@@ -40,7 +42,9 @@ class CreateTeacherRequest extends FormRequest
     {
         return [
             'email.unique' => 'This email is already registered for another teacher.',
-            // 'phone.unique' => 'This phone number is already registered for another teacher.',
+            'subjects.*.exists' =>'One or more selected subjects are invalid.',
+            'subject_ids.*.distinct' => 'Duplicate subject IDs are not allowed.',
+            'phone_number.unique' => 'This phone number is already registered for another teacher.',
         ];
     }
 }

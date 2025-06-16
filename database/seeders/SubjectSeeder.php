@@ -42,5 +42,18 @@ class SubjectSeeder extends Seeder
                 'topic_name'=>"Topic $i For subject $subject2->id"
             ]);
         }
+        $subject3=Subject::create([
+            'name'=>'S3',
+            'subject_code'=>'SSS-777',
+            'type'=>SubjectType::ScientificBaccalaureate,
+            'description'=>'Subject 3'
+        ]);
+
+        for($i=1;$i<=5;$i++){
+            Topic::create([
+                'subject_id'=>$subject3->id,
+                'topic_name'=>"Topic $i For subject $subject3->id"
+            ]);
+        }
     }
 }

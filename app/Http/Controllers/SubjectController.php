@@ -102,4 +102,11 @@ class SubjectController extends Controller
     public function getClasses(){
         return $this->success('Classes Type',SubjectType::cases());
     }
+
+    public function allSubjects(){
+        $data['LiteraryBaccalaureate']=$this->subjectService->all('البكالوريا الأدبية');
+        $data['ScientificBaccalaureate']=$this->subjectService->all('البكالوريا العلمية');
+        $data['NinthGrade']=$this->subjectService->all('الصف التاسع');
+        return $data;
+    }
 }

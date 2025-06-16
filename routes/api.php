@@ -72,28 +72,11 @@ Route::prefix('admin')->controller(ManagerController::class)->group(function () 
         Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function () {
             Route::post('logout','logout');
             Route::get('profile','profile');
-            // Route::get('dashboard', [ManagerController::class, 'dashboard']);
-               //Add teachers
+            // Add teachers
             Route::post('teachers',[TeacherController::class, 'store']);
+            // Get teacher profile
+            Route::get('profile/{id}',[TeacherController::class, 'profile']);
 
-
-            // Route::post('role', function () {
-            //     $user = FacadesAuth::user();
-            //     if (!$user) {
-            //         return response()->json(['message' => 'Not authenticated'], 401);
-            //     }
-            //     // Get the associated User model through the manager relationship
-            //     $actualUser = User::find($user->id);
-            //     if (!$actualUser) {
-            //         return response()->json(['message' => 'User not found'], 404);
-            //     }
-
-            //     return response()->json([
-            //         'roles' => $actualUser->getRoleNames()
-            //     ]);
-
-            //     // return $user->getRoleNames();
-            // });
 
         });
 });
@@ -106,8 +89,10 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
         Route::post('teacherLogin','login');
         Route::post('teacherverifycode','VerifyCode');
 
+
         Route::middleware(['auth:sanctum','role:Teacher'])->group(function () {
             Route::get('myProfile', 'myProfile');
+            Route::post('logout','logout');
 
                 });
 });
@@ -118,6 +103,7 @@ Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->prefix('subjects
     Route::post('/with-topics', 'allWithTopics');
 
     Route::get('/classes-type', 'getClasses'); // get subject Type
+    Route::get('/all-subjects', 'allSubjects'); // get subject Type
 
     Route::get('/{id}', 'find'); // get subject by id
     Route::get('/{id}/with-topics', 'findWithTopics'); // get subject with topics

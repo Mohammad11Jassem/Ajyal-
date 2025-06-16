@@ -50,11 +50,13 @@ class TeacherService
                 'user_id' => $user->id,
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'date_of_contract' => $data['dateOfContract'],
+                'date_of_contract' => $data['date_of_contract'],
                 'phone_number' => $data['phone_number'],
                 'bio' => $data['bio'],
 
             ]);
+            $teacher->subjects()->attach($data['subjects']);
+
             // Save image if exists
             if (isset($data['avatar']) && $data['avatar']->isValid()) {
                 $imageFile = $data['avatar'];
@@ -243,7 +245,7 @@ class TeacherService
     {
         return [
             'success' => true,
-            'data' => Teacher::where('id',$id)->first()
+            'data' => Teacher::with('image')->where('id',$id)->first()
         ];
     }
     public function getMyProfile(){
