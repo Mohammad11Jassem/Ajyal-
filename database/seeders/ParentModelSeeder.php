@@ -24,7 +24,7 @@ class ParentModelSeeder extends Seeder
         $parentModel=ParentModel::create([
                 'user_id' => $user->id,
                 'name' => fake()->name(),
-                'phone_number' => fake()->phoneNumber(),
+                'phone_number' => "094949494",
             ]);
 
         ParentStudent::create([
