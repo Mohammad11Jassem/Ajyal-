@@ -10,5 +10,9 @@ class Classroom extends Model
         'class_number',
         'capacity',
     ];
-    
+
+    public function classRooms()
+    {
+        return $this->belongsToMany(Course::class, 'classroom_courses');
+    }
 }

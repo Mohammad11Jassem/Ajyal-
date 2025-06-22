@@ -36,7 +36,6 @@ class ParentService
                      'student_id'=>$data['student_id_qr'],
                      'parent_id'=>$parent->id,
                     ]);
-
                     if(!$linkData['success']){
                         return $linkData['success'];
                     }

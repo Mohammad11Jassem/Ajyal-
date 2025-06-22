@@ -132,13 +132,19 @@ class StudentService
     public function profile()
     {
         $qr=$this->getStudentQr();
-        $data=[
-            ...auth()->user()->user_data,
-            // 'student_id'=>$qr['token'],
-            ...$qr,
+        // dd($qr);
+        // $data=[
+        //     ...auth()->user()->user_data,
+        //     // 'student_id'=>$qr['token'],
+        //     ...$qr,
+        // ];
+        $userData=auth()->user()->user_data;
+        return [
+            'id'=>$userData['id'],
+            'role_data'=>$userData['role_data'],
+            'student_id'=>$qr['student_id'],
         ];
-
-        return $data;
+        // return $data;
     }
 
     public function linkStudent(array $data)
@@ -160,14 +166,14 @@ class StudentService
                 }
 
                 // get the auth parent
-                $p=ParentModel::where('id',$data['parent_id'])->first();
+                // $p=ParentModel::where('id',$data['parent_id'])->first();
 
                 // $parent = auth()->user()->parentModel;
-                $parent = $p->user;
+                // $parent = $p->user;
 
-                if (!$parent) {
-                    return response()->json(['message' => 'Only parents can link to students.'], 403);
-                }
+                // if (!$parent) {
+                //     return response()->json(['message' => 'Only parents can link to students.'], 403);
+                // }
 
                 // Avoid duplicate entries
                 // $parent->students()->syncWithoutDetaching([$student->id]);
@@ -185,7 +191,8 @@ class StudentService
 
             });
         } catch (\Exception $e) {
-            return new Exception($e->getMessage());
+            // dd($e->getMessage());
+            throw new Exception($e->getMessage());
         }
     }
 

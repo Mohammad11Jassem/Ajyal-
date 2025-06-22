@@ -25,6 +25,8 @@ class ParentModelController extends Controller
         try{
         $data = $request->validated();
         $parentData=$this->parentService->registerParent($data);
+        // dd($parentData);
+        // return $parentData;
         if(!$parentData['success']){
             return $this->badRequest('تم ربط الطالب سابقاً');
         }
