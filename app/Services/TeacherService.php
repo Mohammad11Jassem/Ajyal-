@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Requests\Teacher\TeacherLoginRequest;
 use App\Mail\TeacherCredentialsMail;
 use App\Models\Teacher;
+use App\Models\Subject;
 use App\Models\User;
 use App\Models\VerifyCode;
 use Exception;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class TeacherService
 {
@@ -52,19 +54,38 @@ class TeacherService
                 'email' => $data['email'],
                 'date_of_contract' => $data['date_of_contract'],
                 'phone_number' => $data['phone_number'],
-                'bio' => $data['bio'],
+                'bio' => $data['bio']??null,
 
             ]);
             $teacher->subjects()->attach($data['subjects']);
 
             // Save image if exists
+            // if (isset($data['avatar']) && $data['avatar']->isValid()) {
+            //     $imageFile = $data['avatar'];
+            //     $imagePath = $imageFile->store('teachers', 'public'); // e.g. storage/app/public/teachers
+
+            //     $teacher->image()->create([
+            //         'path' => $imagePath
+            //     ]);
+            // }
+
+            // Save image if exists
             if (isset($data['avatar']) && $data['avatar']->isValid()) {
                 $imageFile = $data['avatar'];
-                $imagePath = $imageFile->store('teachers', 'public'); // e.g. storage/app/public/teachers
 
-                $teacher->image()->create([
-                    'path' => $imagePath
+                $image = $teacher->image()->create([
+                    'path' => '' // Temporary, will be updated after saving the file
                 ]);
+
+                $imageName = time().$image->id. '.' . $imageFile->getClientOriginalExtension();
+                $imageFile->move(public_path('teachers'), $imageName);
+                $imagePath = 'teachers/' . $imageName;
+
+                // $image->update(['path' => $imagePath]);        // or
+
+                $image->path=$imagePath;
+                $image->save();
+
             }
 
             VerifyCode::create([
@@ -227,7 +248,7 @@ class TeacherService
             'message'=>'welcome',
             'data' => [
                 'token' => $token,
-                'teacher' => Teacher::where('id',$teacher->id)->first(),
+                'teacher' => Teacher::with('image')->where('id',$teacher->id)->first(),
                 ]
         ];
     }
@@ -257,6 +278,26 @@ class TeacherService
         ];
     }
 
+    public function getAllTeachers(){
+        $teachers=Teacher::with('image','subjects')->get()->all();
+        return [
+            'success'=>true,
+            'data'=>$teachers
+        ];
+    }
+
+    public function getSpecificTeachers($subject_id){
+        // $teachers=Teacher::with(['subjects'=>function(Builder $query) use($subject_id){
+
+        //     $query->where('id',$subject_id);
+        // }])->get();
+
+        $subject=Subject::where('id',$subject_id)->first();
+        return [
+            'success'=>true,
+            'data'=>$subject->teachers
+        ];
+    }
 
 
 

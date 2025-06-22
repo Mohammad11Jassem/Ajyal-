@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('advertisements', function (Blueprint $table) {
             $table->id();
-            $table->string('path')->nullable(); // Store the image path or filename
-            $table->nullableMorphs('imageable'); // Adds imageable_id and imageable_type
+            $table->string('title');
+            $table->text('body');
+            $table->nullableMorphs('advertisable');
             $table->timestamps();
         });
     }
@@ -24,7 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('advertisements');
     }
 };
-

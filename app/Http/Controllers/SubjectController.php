@@ -24,7 +24,7 @@ class SubjectController extends Controller
     {
         $typeValue = $subjectFilterRequest->validated('subjects_type');
         $subjects = $this->subjectService->all($typeValue);
-        return $this->success('Subjects retrieved successfully.', $subjects);
+        return $this->success('Subjects retrieved successfully.', ["data"=>[$subjects]]);
     }
 
     public function allWithTopics(SubjectFilterRequest $subjectFilterRequest)
@@ -107,6 +107,6 @@ class SubjectController extends Controller
         $data['LiteraryBaccalaureate']=$this->subjectService->all('البكالوريا الأدبية');
         $data['ScientificBaccalaureate']=$this->subjectService->all('البكالوريا العلمية');
         $data['NinthGrade']=$this->subjectService->all('الصف التاسع');
-        return $data;
+        return $this->success("allSubjects",$data);
     }
 }

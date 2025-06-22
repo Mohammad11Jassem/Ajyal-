@@ -27,9 +27,9 @@ class CreateTeacherRequest extends FormRequest
             'date_of_contract' => ['required','date'],
             'phone_number' => ['required','regex:/^[0-9]{10}$/','unique:teachers'],
             'avatar' => [ 'image', 'mimes:jpg,png,jpeg,gif,svg', 'max:2048'],
-            'bio' => ['string'],
-            'subjects'=>'required|array',
-            'subjects.*' => 'required|integer|distinct|exists:subjects,id',
+            'bio' => ['string','nullable'],
+            'subjects'=>['required','array'],
+            'subjects.*' => ['required','integer','distinct','exists:subjects,id'],
         ];
     }
 

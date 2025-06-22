@@ -26,4 +26,9 @@ class Teacher extends Model
         return $this->belongsToMany(Subject::class,'teacher_subjects');
     }
 
+    public function advertisements()
+    {
+        return $this->morphMany(Advertisement::class, 'advertisable');
+    }
+
 }

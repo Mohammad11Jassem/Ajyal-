@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
@@ -30,7 +30,7 @@ Route::post('/link-student2', [StudentController::class, 'linkStudent2']);
 Route::get('/qr', [StudentController::class, 'getStudentQr']);
 
 // Get teacher profile
-Route::get('teacher/profile/{id}',[TeacherController::class, 'profile']);
+Route::get('profile/{id}',[TeacherController::class, 'profile']);
 
 // Route::post('/check-student', [StudentController::class, 'getStudentByCodeAndName']);
 // Route::post('/register-student', [StudentController::class, 'register']);
@@ -40,21 +40,28 @@ Route::get('teacher/profile/{id}',[TeacherController::class, 'profile']);
 // Route::post('/link-student', [StudentController::class, 'linkStudent'])->middleware('auth:sanctum');
 
 
-Route::prefix('student')->controller(StudentController::class)->group(function () {
-    // Public routes
-    Route::post('/check', 'getStudentByCodeAndName');
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
+Route::prefix('student')->group(function () {
 
-    // Authenticated routes
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/add', 'store')->middleware('role:Manager|Secretariat');
-        Route::get('/profile', 'profile')->middleware('role:Student');
-        Route::post('/logout', 'logout')->middleware('role:Student');
-        Route::post('/link', 'linkStudent')->middleware('role:Parent');
+    Route::controller(StudentController::class)->group(function () {
+        // Public routes
+        Route::post('/check', 'getStudentByCodeAndName');
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+
+        // Authenticated routes
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/add', 'store')->middleware('role:Manager|Secretariat');
+            Route::get('/profile', 'profile')->middleware('role:Student');
+            Route::post('/logout', 'logout')->middleware('role:Student');
+            Route::post('/link', 'linkStudent')->middleware('role:Parent');
+        });
     });
-});
+        Route::middleware('auth:sanctum')->controller(TeacherController::class)->group(function () {
+            Route::get('profile/{id}', 'profile');
 
+        });
+
+});
 
 Route::prefix('parent')->controller(ParentModelController::class)->group(function () {
     Route::post('/register', 'registerParent');
@@ -69,20 +76,73 @@ Route::prefix('parent')->controller(ParentModelController::class)->group(functio
 
 
 // Admin/Manager Routes
-Route::prefix('admin')->controller(ManagerController::class)->group(function () {
+Route::prefix('admin')->group(function () {
+
+Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function () {
+
+    Route::controller(ManagerController::class)->group(function () {
+
+        Route::post('logout','logout');
+
+    });
+
+    Route::controller(TeacherController::class)->group(function () {
+
+        // Add teachers
+        Route::post('teachers', 'store');
+        // All teachers
+        Route::get('allTeachers','allTeachers');
+        //teacher profile
+        Route::get('profile/{id}','profile');
+        //Specific teachers
+        Route::get('specificTeachers/{subject_id}','specificTeachers');
+
+
+
+    });
+
+    Route::controller(AdvertisementController::class)->group(function () {
+
+        Route::post('addAdvertisement','store');
+        Route::get('showAdvertisement/{id}','show');
+        Route::post('updateAdvertisement/{id}','update');
+        Route::delete('deleteAdvertisement/{id}','delete');
+
+
+    });
+
+
+});
+
+    Route::controller(ManagerController::class)->group(function () {
 
         Route::post('login','login');
 
-        Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function () {
-            Route::post('logout','logout');
-            Route::get('profile','profile');
-            // Add teachers
-            Route::post('teachers',[TeacherController::class, 'store']);
-
-
-
-        });
+    });
 });
+// Route::prefix('admin')->controller(ManagerController::class)->group(function () {
+
+//         Route::post('login','login');
+
+//         Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function () {
+//             Route::post('logout','logout');
+//             Route::get('profile','profile');
+//             // Add teachers
+//             Route::post('teachers',[TeacherController::class, 'store']);
+//             // All teachers
+//             Route::get('allTeachers',[TeacherController::class,'allTeachers']);
+
+//             //Add advertisement
+//             Route::post('addAdvertisement',[AdvertisementController::class,'store']);
+//             Route::get('showAdvertisement/{id}',[AdvertisementController::class,'show']);
+//             Route::post('updateAdvertisement/{id}',[AdvertisementController::class,'update']);
+//             Route::delete('deleteAdvertisement/{id}',[AdvertisementController::class,'delete']);
+
+
+
+
+//         });
+// });
 
 //Teacher Routes
 
@@ -91,11 +151,13 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
         Route::post('teacherRegister', 'register');
         Route::post('teacherLogin','login');
         Route::post('teacherverifycode','VerifyCode');
+        // Route::get('allTeachers','allTeachers');
 
 
         Route::middleware(['auth:sanctum','role:Teacher'])->group(function () {
             Route::get('myProfile', 'myProfile');
             Route::post('logout','logout');
+
 
                 });
 });

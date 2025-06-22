@@ -146,4 +146,18 @@ class TeacherController extends Controller
         return response()->json($result['data']);
     }
 
+    public function allTeachers(){
+
+        $result =$this->teacherService->getAllTeachers();
+        return response()->json($result['data']);
+
+    }
+
+    public function specificTeachers($subject_id){
+
+        $result =$this->teacherService->getSpecificTeachers($subject_id);
+        return response()->json($result['data']);
+
+    }
+
 }
