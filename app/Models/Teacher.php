@@ -26,4 +26,8 @@ class Teacher extends Model
         return $this->belongsToMany(Subject::class,'teacher_subjects');
     }
 
+    public function curriculums()
+    {
+        return $this->belongsToMany(Curriculum::class, 'curriculum_teachers');
+    }
 }

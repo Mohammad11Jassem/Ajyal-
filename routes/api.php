@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
@@ -117,6 +117,11 @@ Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->prefix('subjects
 });
 Route::prefix('subject/topic')->controller(TopicController::class)->group(function () {
     Route::post('/create', 'create');
+    Route::post('/delete/{id}', 'delete');
+    Route::post('/update/{id}', 'update');
+});
+Route::prefix('course')->controller(CourseController::class)->group(function () {
+    Route::post('/create', 'store');
     Route::post('/delete/{id}', 'delete');
     Route::post('/update/{id}', 'update');
 });
