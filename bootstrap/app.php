@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\Handler;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'Auth' => \App\Http\Middleware\Authenticate::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions)  {
 
         $exceptions->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
             return response()->json([
@@ -32,4 +34,5 @@ return Application::configure(basePath: dirname(__DIR__))
                //'responseStatus'  => 403,
             ],403);
         });
+        // $app->singleton(ExceptionHandler::class, Handler::class);
     })->create();

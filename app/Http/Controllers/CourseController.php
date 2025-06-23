@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Course\StoreCourseRequest;
+use App\Http\Requests\File\AddFileRequest;
 use App\Models\Course;
 use App\Models\Curriculum;
+use App\Services\CourseService;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,13 @@ class CourseController extends Controller
 {
     use HttpResponse;
 
-    public function store(StoreCourseRequest $storeCourseRequest){
+    protected $courseService;
+
+    public function __construct(CourseService $courseService)
+    {
+        $this->courseService = $courseService;
+    }
+    public function store2(StoreCourseRequest $storeCourseRequest){
         $validated=$storeCourseRequest->validated();
         return DB::transaction(function() use($validated){
              $course = Course::create([
@@ -40,5 +48,52 @@ class CourseController extends Controller
                 'course' => $course,
             ], 201);
         });
+    }
+
+    public function store(StoreCourseRequest $request)
+    {
+        $course = $this->courseService->store($request->validated());
+        $courseDetails=$this->courseService->show($course['data']['id']);
+        if($courseDetails['succuss']){
+            return $this->success('تم إضافة الكورس بنجاح',$courseDetails['data']);
+        }
+        return $this->badRequest($courseDetails['message']);
+    }
+
+    public function show($id)
+    {
+
+        $courseDetails=$this->courseService->show($id);
+        if($courseDetails['succuss']){
+            return $this->success('تفاصيل الكورس',$courseDetails['data']);
+        }
+        return $this->badRequest($courseDetails['message']);
+
+    }
+
+    public function destroy($id)
+    {
+        $deleted = $this->courseService->destroy($id);
+
+        if($deleted){
+            return $this->success('تم حذف الكورس بنجاح');
+        }
+        return $this->badRequest('فشل حذف الكورس');
+    }
+
+    public function storeFile(AddFileRequest $request)
+    {
+        $data=$request->validated();
+        $file = $this->courseService->storeFile($data['curriculum_id'], $data);
+
+        return response()->json(['message' => 'File uploaded successfully', 'file' => $file]);
+    }
+
+    public function AllCourses(){
+        $courses=$this->courseService->AllCourses();
+        return $this->success('الكورسات',$courses);
+    }
+    public function Allfile($courseId){
+
     }
 }

@@ -12,6 +12,8 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
+use App\Models\Curriculum;
+use App\Models\CurriculumFile;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
@@ -189,5 +191,21 @@ Route::prefix('subject/topic')->controller(TopicController::class)->group(functi
 Route::prefix('course')->controller(CourseController::class)->group(function () {
     Route::post('/create', 'store');
     Route::post('/delete/{id}', 'delete');
-    Route::post('/update/{id}', 'update');
+    // Route::post('/update/{id}', 'update');
+    Route::get('/show/{id}', 'show');
+    Route::get('/all-courses', 'AllCourses');
+    Route::post('/delete/{id}', 'destroy');
+    Route::post('/store-file', 'storeFile');
+});
+
+Route::get('fff',function(){
+    //  $fullPath = "Curriculumfiles/1750680979.pdf";
+    //  return response()->file($fullPath, [
+    //      'Content-Type' => 'application/pdf',
+    //      'Content-Disposition' => 'inline; filename="' . "1750680979" . '"',
+    //     ]);
+        $cur=CurriculumFile::findOrFail(7);
+        return response()->json([
+            'data'=>asset($cur['file_path'])
+        ]);
 });
