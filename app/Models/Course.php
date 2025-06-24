@@ -15,11 +15,11 @@ class Course extends Model
         'code',
         'capacity',
     ];
-    protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'cost' => 'decimal:2',
-    ];
+    // protected $casts = [
+    //     'start_date' => 'date',
+    //     'end_date' => 'date',
+    //     'cost' => 'decimal:2',
+    // ];
 
     public function subjects()
     {
@@ -29,4 +29,20 @@ class Course extends Model
     {
         return $this->belongsToMany(Classroom::class, 'classroom_courses');
     }
+
+    public function curriculums(){
+        return $this->hasMany(Curriculum::class,'course_id');
+    }
+
+    public function files()
+{
+    return $this->hasManyThrough(
+        CurriculumFile::class,
+        Curriculum::class,
+        'course_id',       // Foreign key on the Curriculum table
+        'curriculum_id',   // Foreign key on the CurriculumFile table
+        'id',              // Local key on the Course table
+        'id'          // Local key on the Curriculum table
+    );
+}
 }
