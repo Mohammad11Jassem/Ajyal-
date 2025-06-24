@@ -25,4 +25,7 @@ class ClassroomCourse extends Model
         return $this->hasMany(SortStudent::class,'classroom_course_id');
     }
 
+    public function sortStudents(){
+        return $this->hasMany(SortStudent::class,'classroom_course_id');
+    }
 }
