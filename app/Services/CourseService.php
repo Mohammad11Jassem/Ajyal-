@@ -8,6 +8,8 @@ use App\Models\ClassroomCourse;
 use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumFile;
+use App\Models\Payment;
+use App\Models\Registration;
 use App\Repositories\CourseRepository;
 use Carbon\Carbon;
 use Exception;
@@ -154,4 +156,50 @@ class CourseService
                             });
 
     }
+
+
+    public function registerStudent(array $data){
+        try{
+            DB::beginTransaction();
+
+                $registration = Registration::create([
+                    'course_id' => $data['course_id'],
+                    'student_id' => $data['student_id']
+                ]);
+
+                $payment = Payment::create([
+                    'registration_id' => $registration->id,
+                    'price' => $data['payment']
+                ]);
+
+                DB::commit();
+
+                return [
+                    'success'=>true,
+                    'message' => 'تم التسجيل والدفع بنجاح.',
+                ];
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                return [
+                    'success'=>false,
+                    'error' => 'فشل التسجيل والدفع',
+                    'message' => $e->getMessage()
+                ];
+            }
+
+    }
+
+    public function AllStudentAtCourse($course_id){
+        return [
+            'success'=>true,
+            'data'=>Course::find($course_id)->students()->get(),
+            'message'=>'كل طلاب الكورس'
+        ];
+
+    }
+
+
+
+
 }

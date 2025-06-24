@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Course extends Model
 {
@@ -35,14 +36,18 @@ class Course extends Model
     }
 
     public function files()
-{
-    return $this->hasManyThrough(
-        CurriculumFile::class,
-        Curriculum::class,
-        'course_id',       // Foreign key on the Curriculum table
-        'curriculum_id',   // Foreign key on the CurriculumFile table
-        'id',              // Local key on the Course table
-        'id'          // Local key on the Curriculum table
-    );
-}
+    {
+        return $this->hasManyThrough(
+            CurriculumFile::class,
+            Curriculum::class,
+            'course_id',       // Foreign key on the Curriculum table
+            'curriculum_id',   // Foreign key on the CurriculumFile table
+            'id',              // Local key on the Course table
+            'id'          // Local key on the Curriculum table
+        );
+    }
+    public function students():BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'registrations', 'course_id', 'student_id');
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Course;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterStudentRequest extends FormRequest
 {
@@ -23,7 +24,21 @@ class RegisterStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'course_id'=>['required','exists:Courses,id'],
+
+            'student_id'=>['required','exists:students,id'],
+            'course_id'=>['required','exists:courses,id',
+                Rule::unique('registrations')->where(function ($query) {
+                return $query->where('student_id', $this->student_id);
+            }),],
+            'payment'=>['required','integer']
         ];
     }
+    public function messages()
+{
+    return [
+        // 'course_id.unique' => 'This student is already registered in this course.',
+        'course_id.unique' => 'هذا الطالب مسجل بالفعل في هذه الدورة.',
+    ];
+}
+
 }

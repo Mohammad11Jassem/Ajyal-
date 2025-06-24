@@ -243,8 +243,9 @@ Route::prefix('advertisement')->group(function () {
 
 //course
 Route::prefix('course')->controller(CourseController::class)->group(function () {
-    Route::middleware(['auth:sanctum','role:Student'])->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('registerAtCourse','registerAtCourse');
+        Route::get('AllStudent/{course_id}','AllStudent');
 
 
     });

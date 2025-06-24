@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ClassroomCourse extends Model
 {
@@ -16,4 +17,9 @@ class ClassroomCourse extends Model
     {
         return $this->belongsTo(Classroom::class,'classroom_id');
     }
+    public function registrations():BelongsToMany
+    {
+        return $this->belongsToMany(Registration::class, 'sort_students', 'classroom_course_id', 'registration_id');
+    }
+
 }
