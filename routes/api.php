@@ -214,7 +214,7 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
     Route::post('/store-file', 'storeFile');
 });
 
-Route::get('fff',function(){
+Route::get('file',function(){
     //  $fullPath = "Curriculumfiles/1750680979.pdf";
     //  return response()->file($fullPath, [
     //      'Content-Type' => 'application/pdf',
@@ -222,7 +222,12 @@ Route::get('fff',function(){
     //     ]);
         $cur=CurriculumFile::findOrFail(7);
         return response()->json([
-            'data'=>asset($cur['file_path'])
+            // 'data'=>asset($cur['file_path'])
+            'data'=>[
+                'id'=>$cur['id'],
+                'title'=>$cur['title'],
+                'file_path'=>asset($cur['file_path']),
+            ]
         ]);
 });
 
