@@ -5,6 +5,7 @@ use App\Http\Controllers\AdvertisementController;
 
 use App\Http\Controllers\CourseController;
 
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
@@ -14,6 +15,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
 use App\Models\Curriculum;
 use App\Models\CurriculumFile;
+use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
@@ -214,16 +216,23 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
     Route::post('/store-file', 'storeFile');
 });
 
-Route::get('fff',function(){
+Route::get('file',function(){
     //  $fullPath = "Curriculumfiles/1750680979.pdf";
     //  return response()->file($fullPath, [
     //      'Content-Type' => 'application/pdf',
     //      'Content-Disposition' => 'inline; filename="' . "1750680979" . '"',
     //     ]);
-        $cur=CurriculumFile::findOrFail(7);
+        $cur=CurriculumFile::findOrFail(13);
         return response()->json([
-            'data'=>asset($cur['file_path'])
+            // 'data'=>asset($cur['file_path'])
+            'data'=>[
+                'id'=>$cur['id'],
+                'title'=>$cur['title'],
+                'file_path'=>asset($cur['file_path']),
+            ]
         ]);
+
+
 });
 
 
@@ -251,7 +260,6 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
 
 
     });
-
-
-
 });
+
+Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);

@@ -51,4 +51,18 @@ class Student extends Model
     {
         return $this->hasMany(Registration::class );
     }
+
+
+    // public function files()
+    // {
+    //     return $this->hasManyThrough(
+    //         ClassroomCourse::class,
+    //         Course::class,
+    //         'course_id',       // Foreign key on the Curriculum table
+    //         'curriculum_id',   // Foreign key on the CurriculumFile table
+    //         'id',              // Local key on the Course table
+    //         'id'          // Local key on the Curriculum table
+    //     );
+    // }
+    
 }
