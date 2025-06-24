@@ -21,12 +21,22 @@ class StudentsExport implements FromCollection , WithHeadings
     */
     public function collection()
     {
-        return Student::where('classroom_id', $this->classroomCourseId)
-            ->whereHas('classroom.courses', function ($query) {
-                $query->where('courses.id', $this->courseId);
-            })
-            ->select('id', 'name', 'email', 'created_at') // adjust fields as needed
-            ->get();
+        $courseId=$this->courseId;
+        $classroomCourseId=$this->classroomCourseId;
+        // return Student::whereHas('courses', function($query) use($courseId){
+        //             $query->where('id',$courseId);
+        //     })
+        //     ->whereHas('courses.classroomCourse', function ($query) use($classroomCourseId) {
+        //         $query->where('course_id', $classroomCourseId);
+        //     })
+        //     ->get();
+          return Student::whereHas('courses', function($query) use($courseId){
+                    $query->where('courses.id',$courseId);
+            })->whereHas('courses.classroomCourse.sortStudents', function ($query) use ($classroomCourseId) {
+                        $query->where('sort_students.classroom_course_id', $classroomCourseId);
+                    })
+
+                    ->get();
     }
 
     public function headings(): array
