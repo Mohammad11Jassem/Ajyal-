@@ -21,5 +21,8 @@ class ClassroomCourse extends Model
     {
         return $this->belongsToMany(Registration::class, 'sort_students', 'classroom_course_id', 'registration_id');
     }
+    public function sortStudents(){
+        return $this->hasMany(SortStudent::class,'classroom_course_id');
+    }
 
 }

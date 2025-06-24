@@ -19,4 +19,8 @@ class Registration extends Model
         return $this->belongsToMany(Classroom::class, 'sort_students', 'registration_id', 'classroom_course_id');
     }
 
+    public function Student(){
+        return $this->belongsTo(Student::class);
+    }
+
 }

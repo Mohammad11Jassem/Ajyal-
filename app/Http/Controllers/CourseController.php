@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\GetAllStudentWithClassRequest;
 use App\Http\Requests\Course\RegisterStudentRequest;
+use App\Http\Requests\Course\SortStudentRequest;
 use App\Http\Requests\Course\StoreCourseRequest;
 use App\Http\Requests\File\AddFileRequest;
 use App\Models\Course;
@@ -131,6 +133,25 @@ class CourseController extends Controller
     public function AllStudent($course_id)
     {
         $result = $this->courseService->AllStudentAtCourse($course_id);
+
+        if(!$result['success'])
+        return $this->error($result['error'], 500);
+
+        return $this->success($result['message'],$result['data']);
+
+    }
+    public function sortStudent(SortStudentRequest $sortStudentRequest){
+        $result=$this->courseService->sortStudentAtClassRoom($sortStudentRequest->validated());
+        // if(!$result['success'])
+        // return $this->error($result['error'], 500);
+
+        return $this->success($result['message']);
+
+    }
+
+    public function AllStudentAtClass(GetAllStudentWithClassRequest $getAllStudentWithClassRequest)
+    {
+        $result = $this->courseService->AllStudentAtCourseAtClass($getAllStudentWithClassRequest->validated());
 
         if(!$result['success'])
         return $this->error($result['error'], 500);
