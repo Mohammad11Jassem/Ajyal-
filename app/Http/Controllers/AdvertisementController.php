@@ -54,7 +54,7 @@ class AdvertisementController extends Controller
         }
         return response()->json([
             'data' => $result['data']
-        ], 201);
+        ], 200);
 
     }
 
@@ -101,6 +101,45 @@ class AdvertisementController extends Controller
             'message' => $result['message']
         ], 201);
 
+
+    }
+    public function allTeacherAdvertisements(){
+
+        $result=$this->advertisementService->getAllTeacherAdvertisement();
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['error']
+            ], 422);
+        }
+        return response()->json([
+            'data' => $result['data']
+        ], 200);
+
+    }
+        public function allCourseAdvertisements(){
+
+        $result=$this->advertisementService->getAllCourseAdvertisement();
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['error']
+            ], 422);
+        }
+        return response()->json([
+            'data' => $result['data']
+        ], 200);
+
+    }
+        public function allGeneralAdvertisements(){
+
+        $result=$this->advertisementService->getAllGeneralAdvertisement();
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['error']
+            ], 422);
+        }
+        return response()->json([
+            'data' => $result['data']
+        ], 200);
 
     }
 }

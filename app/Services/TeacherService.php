@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enum\SubjectType;
 use App\Http\Requests\Teacher\TeacherLoginRequest;
 use App\Mail\TeacherCredentialsMail;
 use App\Models\Teacher;
@@ -296,6 +297,26 @@ class TeacherService
         return [
             'success'=>true,
             'data'=>$subject->teachers
+        ];
+    }
+    public function getLevelTeachers($level_id){
+        $SubjectType=SubjectType::getTypeId($level_id);
+
+        // $subject=Subject::where('type',$SubjectType)->first();
+        // $teachers=Teacher::with(['subjects'=>function(Builder $query) use($SubjectType){
+
+        //     $query->where('type',$SubjectType);
+        // }])->get();
+        $teachers = Teacher::whereHas('subjects', function (Builder $query) use ($SubjectType) {
+        $query->where('type', $SubjectType);
+        })
+        // ->with(['subjects' => function (Builder $query) use ($SubjectType) {
+        //     $query->where('type', $SubjectType);
+        // }])
+        ->get();
+        return [
+            'success'=>true,
+            'data'=>$teachers
         ];
     }
 

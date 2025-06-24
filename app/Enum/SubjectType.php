@@ -13,4 +13,14 @@ enum SubjectType :string
             self::LiteraryBaccalaureate,self::ScientificBaccalaureate,self::NinthGrade
         ];
     }
+    public static function getTypeId($id){
+        if($id==1)
+            return self::NinthGrade;
+        elseif($id==2)
+            return self::ScientificBaccalaureate;
+        elseif($id==3)
+            return self::LiteraryBaccalaureate;
+    }
+
+
 }

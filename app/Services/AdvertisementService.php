@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Advertisement;
+use App\Models\Course;
 use App\Models\Image;
+use App\Models\Teacher;
 use Exception;
 use Illuminate\Support\Facades\File;
 
@@ -86,6 +88,7 @@ class AdvertisementService
 
         // Update images (optional: delete old and upload new)
         if (isset($data['images'])) {
+            $advertisement->images()->delete();
             foreach ($data['images'] as $newImage) {
                 if ($newImage->isValid()) {
                     $image=$advertisement->images()->create(['path' => '']);
@@ -147,6 +150,53 @@ class AdvertisementService
                 'error' =>$e->getMessage()
             ];
     }
+    }
+
+    public function getAllTeacherAdvertisement(){
+        try{
+            $advertisement=Advertisement::where('advertisable_type',Teacher::class)->get();
+            return [
+                'success' => true,
+                'message' => 'all Teacher Advertisement',
+                'data' => $advertisement->fresh('images')
+                ];
+        }catch(Exception $e){
+        return [
+                'success' => false,
+                'error' =>$e->getMessage()
+            ];
+        }
+    }
+
+        public function getAllCourseAdvertisement(){
+        try{
+            $advertisement=Advertisement::where('advertisable_type',Course::class)->get();
+            return [
+                'success' => true,
+                'message' => 'all Course Advertisement',
+                'data' => $advertisement->fresh('images')
+                ];
+        }catch(Exception $e){
+        return [
+                'success' => false,
+                'error' =>$e->getMessage()
+            ];
+        }
+    }
+        public function getAllGeneralAdvertisement(){
+        try{
+            $advertisement=Advertisement::where('advertisable_type',null)->get();
+            return [
+                'success' => true,
+                'message' => 'all general Advertisement',
+                'data' => $advertisement->fresh('images')
+                ];
+        }catch(Exception $e){
+        return [
+                'success' => false,
+                'error' =>$e->getMessage()
+            ];
+        }
     }
 
 

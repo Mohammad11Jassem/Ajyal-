@@ -60,10 +60,18 @@ Route::prefix('student')->group(function () {
             Route::post('/link', 'linkStudent')->middleware('role:Parent');
         });
     });
-        Route::middleware('auth:sanctum')->controller(TeacherController::class)->group(function () {
+        Route::middleware(['auth:sanctum','role:Student'])->controller(TeacherController::class)->group(function () {
             Route::get('profile/{id}', 'profile');
+            // All teachers
+            Route::get('allTeachers','allTeachers');
+            //Specific teachers
+            Route::get('specificTeachers/{subject_id}','specificTeachers');
+            //level teachers
+            Route::get('levelTeachers/{level_id}','levelTeachers');
+
 
         });
+
 
 });
 
@@ -73,6 +81,7 @@ Route::prefix('parent')->controller(ParentModelController::class)->group(functio
     Route::middleware(['auth:sanctum','role:Parent'])->group(function(){
 
         Route::get('/profile', 'profile');
+
     });
 });
 
@@ -100,6 +109,8 @@ Route::middleware(['auth:sanctum','role:Manager|Secretariat'])->group(function (
         Route::get('profile/{id}','profile');
         //Specific teachers
         Route::get('specificTeachers/{subject_id}','specificTeachers');
+        //level teachers
+        Route::get('levelTeachers/{level_id}','levelTeachers');
 
 
 
@@ -190,4 +201,31 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
     Route::post('/create', 'store');
     Route::post('/delete/{id}', 'delete');
     Route::post('/update/{id}', 'update');
+});
+
+
+
+//general api ==========> for everyone
+Route::prefix('advertisement')->group(function () {
+
+        Route::controller(AdvertisementController::class)->group(function () {
+            Route::get('teacherAdvertisements','allTeacherAdvertisements');
+            Route::get('courseAdvertisements','allCourseAdvertisements');
+            Route::get('generalAdvertisements','allGeneralAdvertisements');
+
+        });
+
+
+});
+
+//course
+Route::prefix('course')->controller(CourseController::class)->group(function () {
+    Route::middleware(['auth:sanctum','role:Student'])->group(function(){
+        Route::post('registerAtCourse','registerAtCourse');
+
+
+    });
+
+
+
 });

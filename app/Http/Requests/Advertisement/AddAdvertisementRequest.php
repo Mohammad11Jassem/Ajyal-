@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Advertisement;
 
+use App\Models\Course;
 use App\Models\Teacher;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -26,8 +27,8 @@ class AddAdvertisementRequest extends FormRequest
         return [
             'title' => ['required'],
             'body' => ['required', 'string'],
-            'advertisable_id' => ['required', 'integer'],
-            'advertisable_type' => ['required', 'string',  Rule::in([Teacher::class,])],//Course::class
+            'advertisable_id' => [ 'nullable','integer'],
+            'advertisable_type' => [ 'nullable','string',  Rule::in([Teacher::class,Course::class])],
             'images'=>['required','array'],
             'images.*' =>['required','mimes:jpg,png,jpeg,gif,svg|max:2048','distinct'],
         ];
@@ -39,7 +40,7 @@ class AddAdvertisementRequest extends FormRequest
 
             $map = [
                 'teacher' => \App\Models\Teacher::class,
-                // 'course' => \App\Models\Course::class,
+                'course' => \App\Models\Course::class,
             ];
 
             if (isset($map[$type])) {

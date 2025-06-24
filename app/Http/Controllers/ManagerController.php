@@ -34,7 +34,7 @@ class ManagerController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'token' => $result['token'],
-            // 'manager' => $result['manager']
+            'role' => $result['role']
         ]);
     }
 

@@ -41,4 +41,8 @@ class CourseController extends Controller
             ], 201);
         });
     }
+
+    public function register(){
+      
+    }
 }
