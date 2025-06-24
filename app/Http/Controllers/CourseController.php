@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Curriculum;
 use App\Services\CourseService;
 use App\Traits\HttpResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -93,7 +94,26 @@ class CourseController extends Controller
         $courses=$this->courseService->AllCourses();
         return $this->success('الكورسات',$courses);
     }
-    public function Allfile($courseId){
 
+    public function getCurrentAndIncomingCourses()
+    {
+        $courses = $this->courseService->getCurrentAndIncomingCourses();
+        return $this->success('الكورسات الحالية والمستقبلية',$courses);
+    }
+    public function AllfileForCourse($courseId){
+        try {
+            $files = $this->courseService->AllfileForCourse($courseId);
+            return $this->success('الملفات', $files);
+
+        } catch (ModelNotFoundException $e) {
+            return $this->notFound('الكورس غير موجود');
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
+    }
+
+    public function classRoomsCourse($courseId){
+        $data= $this->courseService->classRoomsCourse($courseId);
+        return $this->success('قاعات الكورس',$data);
     }
 }

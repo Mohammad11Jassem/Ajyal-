@@ -16,9 +16,9 @@ trait HttpResponse
         return response()->json(["message" => $message, "data" => $data, "code" => 400], 400);
     }
 
-    public function notFound(): JsonResponse
+    public function notFound($message="Data Not Found"): JsonResponse
     {
-        return response()->json(["message" => "Data Not Found", "code" => 404], 404);
+        return response()->json(["message" => $message, "code" => 404], 404);
     }
     public function unauthorized(): JsonResponse
     {

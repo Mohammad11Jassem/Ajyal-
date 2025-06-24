@@ -193,8 +193,13 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
     Route::post('/delete/{id}', 'delete');
     // Route::post('/update/{id}', 'update');
     Route::get('/show/{id}', 'show');
-    Route::get('/all-courses', 'AllCourses');
     Route::post('/delete/{id}', 'destroy');
+    Route::get('/all-courses', 'AllCourses');
+    Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
+    Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
+
+
+    Route::get('/all-file-for-course/{courseId}', 'AllfileForCourse');
     Route::post('/store-file', 'storeFile');
 });
 
