@@ -22,6 +22,9 @@ class Student extends Model
         // 'location',
         'access_code'
     ];
+    protected $hidden=[
+        'pivot'
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -38,6 +41,10 @@ class Student extends Model
 
     public function parents():BelongsToMany
     {
-    return $this->belongsToMany(ParentModel::class, 'parent_student', 'student_id', 'parent_model_id');
+        return $this->belongsToMany(ParentModel::class, 'parent_student', 'student_id', 'parent_model_id');
+    }
+    public function courses():BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'registrations', 'student_id', 'course_id');
     }
 }

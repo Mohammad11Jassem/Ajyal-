@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\RegisterStudentRequest;
 use App\Http\Requests\Course\StoreCourseRequest;
 use App\Http\Requests\File\AddFileRequest;
 use App\Models\Course;
@@ -116,5 +117,25 @@ class CourseController extends Controller
     public function classRoomsCourse($courseId){
         $data= $this->courseService->classRoomsCourse($courseId);
         return $this->success('قاعات الكورس',$data);
+    }
+
+    public function registerAtCourse(RegisterStudentRequest $registerStudentRequest){
+
+        $result = $this->courseService->registerStudent($registerStudentRequest->validated());
+
+        if(!$result['success'])
+        return $this->error($result['error'], 500);
+
+        return $this->success($result['message']);
+    }
+    public function AllStudent($course_id)
+    {
+        $result = $this->courseService->AllStudentAtCourse($course_id);
+
+        if(!$result['success'])
+        return $this->error($result['error'], 500);
+
+        return $this->success($result['message'],$result['data']);
+
     }
 }
