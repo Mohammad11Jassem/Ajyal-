@@ -92,24 +92,24 @@ class CourseService
 
             if (isset($data['file']) && $data['file']->isValid()) {
                     $file=$data['file'];
-                    // $fileName = time().'.' . $file->getClientOriginalExtension();
-                    // $file->move(public_path('Curriculumfiles'), $fileName);
-                    // $filePath = 'Curriculumfiles/' . $fileName;
+                    $fileName = time().'.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('Curriculumfiles'), $fileName);
+                    $filePath = 'Curriculumfiles/' . $fileName;
 
-                    // return CurriculumFile::create([
-                    //     'curriculum_id' => $curriculumId,
-                    //     'title' => $data['title'],
-                    //     'file_path' =>$filePath,
-                    // ]);
-                $fileName = time().'.' . $file->getClientOriginalExtension();
-                $file->move(public_path('Curriculumfiles'), $fileName);
-                $filePath = 'Curriculumfiles/' . $fileName;
-                // $data['fileName']=$fileName;
-                $jobData['title']=$data['title'];
-                $jobData['filePath']=$filePath;
-                StoreCurriculumFileJob::dispatch($jobData,$curriculumId);
-                $file=CurriculumFile::latest()->first();
-                return $file;
+                    return CurriculumFile::create([
+                        'curriculum_id' => $curriculumId,
+                        'title' => $data['title'],
+                        'file_path' =>$filePath,
+                    ]);
+                // $fileName = time().'.' . $file->getClientOriginalExtension();
+                // $file->move(public_path('Curriculumfiles'), $fileName);
+                // $filePath = 'Curriculumfiles/' . $fileName;
+                // // $data['fileName']=$fileName;
+                // $jobData['title']=$data['title'];
+                // $jobData['filePath']=$filePath;
+                // StoreCurriculumFileJob::dispatch($jobData,$curriculumId);
+                // $file=CurriculumFile::latest()->first();
+                // return $file;
             }
         });
     }
