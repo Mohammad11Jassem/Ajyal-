@@ -2,12 +2,18 @@
 
 namespace App\Imports;
 
+use App\Models\PaperExamStudent;
 use App\Models\Student;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
 class StudentMarksImport implements ToCollection
 {
+    protected $paperExamId;
+
+    public function __construct($paperExamId){
+        $this->paperExamId=$paperExamId;
+    }
     /**
     * @param Collection $collection
     */
@@ -32,6 +38,13 @@ class StudentMarksImport implements ToCollection
                 //         'mark' => $markValue,
                 //     ]
                 // );
+
+                PaperExamStudent::create([
+                    'student_id'=>$student->id,
+                    'paper_exam_id'=>$this->paperExamId,
+                    'mark'=>$markValue,
+                ]);
+
             }
         });
     }

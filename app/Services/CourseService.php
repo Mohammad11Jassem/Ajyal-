@@ -202,6 +202,9 @@ class CourseService
 
     }
 
+    public function curriculumsCourse($courseId){
+        return Course::with('subjects')->findOrFail($courseId);
+    }
 
 
 

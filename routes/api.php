@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Exports\StudentsExport;
 use App\Http\Controllers\AdvertisementController;
 
 use App\Http\Controllers\CourseController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\PaperExamController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
@@ -22,8 +24,7 @@ use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Route;
-
-
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/teacher', function () {
@@ -210,6 +211,7 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
     Route::get('/all-courses', 'AllCourses');
     Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
     Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
+    Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
 
 
     Route::get('/all-file-for-course/{courseId}', 'AllfileForCourse');
@@ -231,6 +233,11 @@ Route::get('file',function(){
                 'file_path'=>asset($cur['file_path']),
             ]
         ]);
+
+        // $data['classroom_course_id']=1;
+        // $data['course_id']=2;
+        // $filename = "طلاب الشعبة (رقم {$data['classroom_course_id']}).xlsx";
+        // return Excel::download(new StudentsExport($data['course_id'],$data['classroom_course_id']), $filename);
 
 
 });
@@ -261,3 +268,6 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
 });
 
 Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);
+Route::post('import-excel',[ExcelController::class,'importExcel']);
+
+Route::post('store-paperExam',[PaperExamController::class,'store']);

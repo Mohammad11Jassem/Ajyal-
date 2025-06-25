@@ -59,4 +59,12 @@ class Student extends Model
     //         'id'          // Local key on the Curriculum table
     //     );
     // }
+
+    public function paperExams()
+    {
+        return $this->belongsToMany(PaperExam::class,'paper_exam_students')
+                    // ->using(PaperExamStudent::class)
+                    ->withPivot('mark');
+                    // ->withTimestamps();
+    }
 }

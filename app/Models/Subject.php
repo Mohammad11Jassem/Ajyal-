@@ -18,6 +18,10 @@ class Subject extends Model
         'type' => SubjectType::class,
     ];
 
+    protected $hidden=[
+        'pivot',
+    ];
+
     public function scopeNonArchived($query)
     {
         return $query->where('archived', false);

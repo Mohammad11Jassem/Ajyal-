@@ -138,4 +138,9 @@ class CourseController extends Controller
         return $this->success($result['message'],$result['data']);
 
     }
+
+    public function curriculumsCourse($courseId){
+        $curricula=$this->courseService->curriculumsCourse($courseId);
+        return $this->success('مواد الكورس',$curricula);
+    }
 }
