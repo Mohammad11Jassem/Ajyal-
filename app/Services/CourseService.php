@@ -251,7 +251,17 @@ class CourseService
 
     }
 
+    public function getFiles($curriculumId)
+    {
+        $curriculum = Curriculum::with('files')->findOrFail($curriculumId);
+        return $curriculum;
+    }
 
+    public function showFile($fileId)
+    {
+         $file = CurriculumFile::findOrFail($fileId);
+         return $file;
+    }
 
 
 }
