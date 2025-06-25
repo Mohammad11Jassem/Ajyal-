@@ -19,6 +19,7 @@ class CourseSeeder extends Seeder
             'name' => 'Advanced Math Course',
             'cost' => 199.99,
             'type' => 'البكالوريا العلمية',
+            'code'=>'COU-123',
             'start_date' => now()->addDays(3)->toDateString(),    // e.g. 2025-06-26
             'end_date' => now()->addMonths(3)->toDateString(),   // e.g. 2025-09-26
             'capacity' => 40,
@@ -52,6 +53,7 @@ class CourseSeeder extends Seeder
         $course = Course::create([
             'name' => 'Advanced Math Course',
             'cost' => 199.99,
+            'code'=>'COU-567',
             'type' => 'البكالوريا الأدبية',
             'start_date' => now()->addDays(10)->toDateString(),    // e.g. 2025-06-26
             'end_date' => now()->addMonths(5)->toDateString(),   // e.g. 2025-09-26
