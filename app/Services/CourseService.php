@@ -228,7 +228,7 @@ class CourseService
     }
 
     public function AllStudentAtCourseAtClass(array $data){
-        
+
         $courseId=$data['courseId'];
         $classroomCourseId=$data['classroomCourseId'];
 

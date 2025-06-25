@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ParentModelSeeder::class,
             ClassroomSeeder::class,
             SubjectSeeder::class,
+            TeacherSeeder::class,
 
         ]);
 

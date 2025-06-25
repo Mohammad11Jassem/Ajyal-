@@ -187,14 +187,16 @@ class TeacherService
             $teacher=Teacher::findOrFail($data['teacher_id']);
             //check if exists
         if($teacher->exists()){
-            // $verifyCode=VerifyCode::where('user_id',$teacher->user_id)->first();
+                $verifyCode=VerifyCode::where('user_id',$teacher->user_id)->first();
             //check if correct code
-            if($teacher->user->verfiyCode['code'] !=$data['verifyCode']){
+            if($verifyCode['code'] !=$data['verifyCode']){
                 return [
                 'success' => false,
                 'message' => 'the verifyCode is not correct ',
             ];
             }
+                $verifyCode['confirmed']=true;
+                $verifyCode->save();
 
         $token = $teacher->user->createToken('manager-token')->plainTextToken;
             return [
@@ -224,14 +226,20 @@ class TeacherService
         // !Hash::check($data['password'], $teacher->user->password);
 
         $user=User::find($teacher->user_id);
-        if (!$user) {
+        if (!$user['password']) {
             return [
                 'success'=>false,
-                'message' => 'please register first'
+                'message' => 'الرجاء تسجيل الدخول أولاً'
+            ];
+        }
+        if(!$user->verifyCode['confirmed']){
+            return [
+                'success'=>false,
+                'message' => 'الرجاء تأكيد الحساب أولاً'
             ];
         }
         if($user->id != $teacher->user_id || !Hash::check($data['password'], $user->password)){
-             return[
+            return[
                 'success'=>false,
                 'message' =>'this information not matching together',
             ];

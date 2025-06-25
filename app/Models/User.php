@@ -64,7 +64,7 @@ public function manager()
 {
     return $this->hasOne(Manager::class);
 }
-public function verfiyCode()
+public function verifyCode()
 {
     return $this->hasOne(VerifyCode::class);
 }
