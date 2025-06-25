@@ -10,6 +10,8 @@ use App\Models\Curriculum;
 use App\Models\CurriculumFile;
 use App\Models\Payment;
 use App\Models\Registration;
+use App\Models\SortStudent;
+use App\Models\Student;
 use App\Repositories\CourseRepository;
 use Carbon\Carbon;
 use Exception;
@@ -196,7 +198,7 @@ class CourseService
     public function AllStudentAtCourse($course_id){
         return [
             'success'=>true,
-            'data'=>Course::find($course_id)->students()->get(),
+            'data'=>Registration::where('course_id',$course_id)->with('student')->get(),
             'message'=>'كل طلاب الكورس'
         ];
 
@@ -205,6 +207,50 @@ class CourseService
     public function curriculumsCourse($courseId){
         return Course::with('subjects')->findOrFail($courseId);
     }
+
+    public function sortStudentAtClassRoom(array $data){
+
+        try{
+            $classRoom=ClassroomCourse::where('id',$data['class_course_id'])->first();
+            $classRoom->registrations()->attach($data['registration_id']);
+
+                return [
+                    'success'=>true,
+                    'message' => 'تم فرز الطلاب على الشعب بنجاح',
+                ];
+
+
+        }catch(Exception $e){
+            return [
+                    'success'=>false,
+                    'error' => 'فشل فرز الطلاب ',
+                    'message' => $e->getMessage()
+                ];
+        }
+
+    }
+
+    public function AllStudentAtCourseAtClass(array $data){
+
+        $courseId=$data['courseId'];
+        $classroomCourseId=$data['classroomCourseId'];
+
+        $students=Student::whereHas('courses', function($query) use($courseId){
+                    $query->where('courses.id',$courseId,);
+            })->whereHas('courses.classroomCourse.sortStudents', function ($query) use ($classroomCourseId) {
+                        $query->where('sort_students.classroom_course_id', $classroomCourseId);
+                    })
+
+                    ->get();
+
+        return [
+            'success'=>true,
+            'data'=>$students,
+            'message'=>'كل طلاب الكورس في صف محدد'
+        ];
+
+    }
+
 
 
 

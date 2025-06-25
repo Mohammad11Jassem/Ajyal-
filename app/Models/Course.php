@@ -31,11 +31,11 @@ class Course extends Model
         return $this->belongsToMany(Classroom::class, 'classroom_courses');
     }
 
-    public function curriculums(){
-        return $this->hasMany(Curriculum::class,'course_id');
-    }
     public function classroomCourse(){
         return $this->hasMany(ClassroomCourse::class,'course_id');
+    }
+    public function curriculums(){
+        return $this->hasMany(Curriculum::class,'course_id');
     }
 
     public function files()
@@ -52,5 +52,10 @@ class Course extends Model
     public function students():BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'registrations', 'course_id', 'student_id');
+    }
+
+    public function registration()
+    {
+        return $this->hasMany(Registration::class );
     }
 }

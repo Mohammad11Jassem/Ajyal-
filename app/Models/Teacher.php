@@ -7,11 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Teacher extends Model
 {
     //
-     protected $fillable=[
-        'user_id','bio','avatar','date_of_contract','email','name','phone_number'
+    protected $fillable=[
+        'user_id','bio','date_of_contract','email','name','phone_number'
     ];
-
-    protected $hidden=['avatar'];
     // protected $with=['image'];
     public function user()
     {

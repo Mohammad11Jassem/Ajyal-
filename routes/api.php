@@ -261,7 +261,9 @@ Route::prefix('advertisement')->group(function () {
 Route::prefix('course')->controller(CourseController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('registerAtCourse','registerAtCourse');
+        Route::post('sortStudent','sortStudent');
         Route::get('AllStudent/{course_id}','AllStudent');
+        Route::post('AllStudentAtClass','AllStudentAtClass');
 
 
     });

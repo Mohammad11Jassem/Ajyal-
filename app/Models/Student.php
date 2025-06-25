@@ -22,9 +22,9 @@ class Student extends Model
         // 'location',
         'access_code'
     ];
-    protected $hidden=[
-        'pivot'
-    ];
+    // protected $hidden=[
+    //     'pivot'
+    // ];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -47,6 +47,11 @@ class Student extends Model
     {
         return $this->belongsToMany(Course::class, 'registrations', 'student_id', 'course_id');
     }
+        public function registration()
+    {
+        return $this->hasMany(Registration::class );
+    }
+
 
     // public function files()
     // {
@@ -60,6 +65,7 @@ class Student extends Model
     //     );
     // }
 
+
     public function paperExams()
     {
         return $this->belongsToMany(PaperExam::class,'paper_exam_students')
@@ -67,4 +73,5 @@ class Student extends Model
                     ->withPivot('mark');
                     // ->withTimestamps();
     }
+
 }
