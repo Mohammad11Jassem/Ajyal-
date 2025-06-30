@@ -163,7 +163,31 @@ class CourseController extends Controller
         return $this->error($result['error'], 500);
 
         return $this->success($result['message'],$result['data']);
+    }
 
+    public function getFiles($curriculumId)
+    {
+        try {
+            $curriculum=$this->courseService->getFiles($curriculumId);
+            return $this->success('ملفات المادة', $curriculum);
 
+        } catch (ModelNotFoundException $e) {
+            return $this->notFound(' المادة غير موجودة');
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
+    }
+
+    public function showFile($fileId)
+    {
+        try {
+            $file=$this->courseService->showFile($fileId);
+            return $this->success('الملف', $file);
+
+        } catch (ModelNotFoundException $e) {
+            return $this->notFound(' الملف غير موجود');
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
     }
 }

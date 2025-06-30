@@ -36,5 +36,27 @@ class StudentSeeder extends Seeder
         ]);
 
         $user->assignRole(Role::findByName('Student', 'api'));
+        
+         // Create a user first (assuming user_id is required)
+        $user = User::create([
+            'password'=>123456789
+        ]);
+
+        // Create a student
+       $student=Student::create([
+            'user_id' => $user->id,
+            'student_Id_number' => 1001,
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'number_civial' => fake()->optional()->numerify('##########'),
+            'address' => fake()->optional()->address(),
+            'mother_name' => fake()->optional()->firstName('female'),
+            'father_name' => fake()->optional()->firstName('male'),
+            // 'QR' => fake()->optional()->uuid(),
+            // 'location' => "LocaT1",
+            'access_code' => 'EFGH1234',
+        ]);
+
+        $user->assignRole(Role::findByName('Student', 'api'));
     }
 }
