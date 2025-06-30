@@ -15,7 +15,7 @@ class Curriculum extends Model
     protected $hidden=[
         'updated_at',
         'created_at',
-    ];
+        ];
     public function teachers()
     {
         return $this->belongsToMany(Teacher::class, 'curriculum_teachers');

@@ -10,6 +10,9 @@ class Teacher extends Model
     protected $fillable=[
         'user_id','bio','date_of_contract','email','name','phone_number'
     ];
+    protected $hidden=[
+        'pivot'
+    ];
     // protected $with=['image'];
     public function user()
     {

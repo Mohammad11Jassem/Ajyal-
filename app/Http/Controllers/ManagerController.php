@@ -33,8 +33,7 @@ class ManagerController extends Controller
 
         return response()->json([
             'message' => 'Login successful',
-            'token' => $result['token'],
-            'role' => $result['role']
+            'data'=>$result['data']
         ]);
     }
 

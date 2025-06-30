@@ -33,8 +33,11 @@ class ManagerAuthService
 
         return [
             'success' => true,
-            'token' => $token,
-            'role' =>$manager->user->getRoleNames(),
+            'data'=>[
+                'token' => $token,
+                'role' =>$manager->user->getRoleNames(),
+            ]
+
         ];
     }
 
