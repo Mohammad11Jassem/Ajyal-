@@ -202,21 +202,30 @@ Route::prefix('subject/topic')->controller(TopicController::class)->group(functi
     Route::post('/delete/{id}', 'delete');
     Route::post('/update/{id}', 'update');
 });
-Route::prefix('course')->controller(CourseController::class)->group(function () {
-    Route::post('/create', 'store');
-    Route::post('/delete/{id}', 'delete');
-    // Route::post('/update/{id}', 'update');
-    Route::get('/show/{id}', 'show');
-    Route::post('/delete/{id}', 'destroy');
-    Route::get('/all-courses', 'AllCourses');
-    Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
-    Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
-    Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
+// Route::prefix('course')->controller(CourseController::class)->group(function () {
+//     Route::post('/create', 'store');
+//     Route::post('/delete/{id}', 'delete');
+//     // Route::post('/update/{id}', 'update');
+//     Route::get('/show/{id}', 'show');
+//     Route::post('/delete/{id}', 'destroy');
+//     Route::get('/all-courses', 'AllCourses');
+//     Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
+//     Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
+//     Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
 
 
-    Route::get('/all-file-for-course/{courseId}', 'AllfileForCourse');
-    Route::post('/store-file', 'storeFile');
-});
+//     Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
+//     Route::get('/get-files/{curriculumId}', 'getFiles');
+//     Route::get('/show-file/{fileId}', 'showFile');
+//     Route::post('/store-file', 'storeFile');
+
+
+//      Route::prefix('excel')->controller(ExcelController::class)->group(function () {
+//              Route::post('download-excel','downloadStudentsExcel');
+//         });
+
+//     Route::post('store-paperExam',[PaperExamController::class,'store']);
+// });
 
 Route::get('file',function(){
     //  $fullPath = "Curriculumfiles/1750680979.pdf";
@@ -265,11 +274,24 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
         Route::get('AllStudent/{course_id}','AllStudent');
         Route::post('AllStudentAtClass','AllStudentAtClass');
 
+        Route::post('/create', 'store')->middleware('role:Secretariat|Manager');
+        Route::post('/delete/{id}', 'delete')->middleware('role:Secretariat|Manager');
+        // Route::post('/update/{id}', 'update');
+        Route::get('/show/{id}', 'show');
+        // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
+        Route::get('/all-courses', 'AllCourses');
+        Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
+        Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
+        Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
 
+        Route::prefix('excel')->controller(ExcelController::class)->group(function () {
+             Route::post('download-excel','downloadStudentsExcel')->middleware('role:Secretariat|Manager');
+        });
+        Route::post('store-paperExam',[PaperExamController::class,'store'])->middleware('role:Secretariat|Manager');
     });
 });
 
-Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);
-Route::post('import-excel',[ExcelController::class,'importExcel']);
+// Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);
+// Route::post('import-excel',[ExcelController::class,'importExcel']);
 
-Route::post('store-paperExam',[PaperExamController::class,'store']);
+// Route::post('store-paperExam',[PaperExamController::class,'store']);
