@@ -284,6 +284,10 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
         Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
         Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
 
+        Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
+        Route::get('/get-files/{curriculumId}', 'getFiles');
+        Route::get('/show-file/{fileId}', 'showFile');
+        Route::post('/store-file', 'storeFile');
         Route::prefix('excel')->controller(ExcelController::class)->group(function () {
              Route::post('download-excel','downloadStudentsExcel')->middleware('role:Secretariat|Manager');
         });
