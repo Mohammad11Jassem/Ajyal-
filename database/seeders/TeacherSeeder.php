@@ -22,7 +22,39 @@ class TeacherSeeder extends Seeder
     public function run(): void
     {
 
-        $teacherService = new TeacherService();
+    //     $teacherService = new TeacherService();
+
+    //     Storage::fake('public'); // use fake disk for test images
+
+    //     for ($i = 0; $i < 5; $i++) {
+    //         $data = [
+    //             'name' => fake()->name,
+    //             'email' => fake()->unique()->safeEmail,
+    //             'date_of_contract' => now()->subDays(rand(1, 365))->format('Y-m-d'),
+    //             'phone_number' => fake()->phoneNumber,
+    //             'bio' => fake()->paragraph,
+    //             'subjects' => [1, 2], // assuming subject IDs exist in DB
+    //             'avatar' => UploadedFile::fake()->image('avatar.jpg', 300, 300),
+
+    //             'password'=>'123456',
+    //         ];
+
+    //         $result = $teacherService->createTeacher($data);
+
+    //         $registerTeacher=$teacherService->RegisterTeacher($data);
+    //         $verifyCode=VerifyCode::where('user_id',$registerTeacher['data']['teacher']->user_id)->first();
+    //         $verifyCode['confirmed']=true;
+    //         $verifyCode->save();
+
+    //         if (!$result['success'] || !$registerTeacher['success']) {
+    //             echo "Failed: " . $result['error'] . PHP_EOL;
+    //         }
+
+
+    //         }
+    // }
+
+    $teacherService = new TeacherService();
 
         Storage::fake('public'); // use fake disk for test images
 
