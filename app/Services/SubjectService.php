@@ -38,12 +38,15 @@ class SubjectService
 
     public function create(array $data)
     {
-        do {
-            $code = strtoupper(substr($data['name'], 0, 3)) . '-' . rand(100, 999);
-        } while (Subject::where('subject_code', $code)->exists());
 
-        $data['subject_code'] = $code;
+        do {
+            $code =rand(100, 999);
+        } while (Subject::where('subject_code', $code)->exists());
+        // return $data['name'];
         $data['type'] = $data['subjects_type'];
+        $data['subject_code'] = $code;
+        // return $data;
+
         return $this->subjectRepo->create($data);
     }
 

@@ -21,5 +21,5 @@ class StudentRepository implements StudentInterface
                         ->first();
     }
 
-    
+
 }

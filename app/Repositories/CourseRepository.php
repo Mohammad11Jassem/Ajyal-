@@ -12,14 +12,14 @@ class CourseRepository implements CourseInterface
     }
 
     public function show($id){
-     return Course::with(['classrooms','curriculums.subject', 'curriculums.teachers.image'])->findOrFail($id);;
+     return Course::with(['curriculums.subject', 'curriculums.teachers'])->findOrFail($id);;
     }
 
     public function destroy($id)
     {
         $course = Course::findOrFail($id);
 
-        return $course->delete(); 
+        return $course->delete();
     }
 
 }

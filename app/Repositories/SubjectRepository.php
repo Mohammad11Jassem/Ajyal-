@@ -42,6 +42,7 @@ class SubjectRepository implements SubjectRepositoryInterface
 
     public function create(array $data)
     {
+        // return $data['name'];
         // create subject
         return DB::transaction(function () use ($data) {
 

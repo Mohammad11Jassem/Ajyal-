@@ -230,18 +230,25 @@ class CourseService
 
     }
 
-    public function AllStudentAtCourseAtClass(array $data){
+    public function AllStudentAtCourseAtClass(array $data)
+    {
 
         $courseId=$data['courseId'];
         $classroomCourseId=$data['classroomCourseId'];
 
-        $students=Student::whereHas('courses', function($query) use($courseId){
-                    $query->where('courses.id',$courseId,);
-            })->whereHas('courses.classroomCourse.sortStudents', function ($query) use ($classroomCourseId) {
-                        $query->where('sort_students.classroom_course_id', $classroomCourseId);
-                    })
+        //Registration::where('course_id',$course_id)->with('student')->get(),
+        // $students=Student::whereHas('courses', function($query) use($courseId){
+        //             $query->where('courses.id',$courseId,);
+        //     })->whereHas('courses.classroomCourse.sortStudents', function ($query) use ($classroomCourseId) {
+        //                 $query->where('sort_students.classroom_course_id', $classroomCourseId);
+        //             })
 
-                    ->get();
+        //             ->get();
+
+        $students=Registration::where('course_id',$courseId)
+                                ->whereHas('classroom_courses', function($query) use($classroomCourseId){
+                            $query->where('classroom_course_id',$classroomCourseId,);
+                        })->with('student')->get();
 
         return [
             'success'=>true,
