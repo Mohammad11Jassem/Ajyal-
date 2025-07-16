@@ -154,7 +154,7 @@ class AdvertisementService
 
     public function getAllTeacherAdvertisement(){
         try{
-            $advertisement=Advertisement::where('advertisable_type',Teacher::class)->get();
+            $advertisement=Advertisement::where('advertisable_type',Teacher::class)->orderByDesc('created_at')->with('images')->paginate(3);
             return [
                 'success' => true,
                 'message' => 'all Teacher Advertisement',
@@ -170,11 +170,11 @@ class AdvertisementService
 
         public function getAllCourseAdvertisement(){
         try{
-            $advertisement=Advertisement::where('advertisable_type',Course::class)->get();
+            $advertisement=Advertisement::where('advertisable_type',Course::class)->orderByDesc('created_at')->with('images')->paginate(10);
             return [
                 'success' => true,
                 'message' => 'all Course Advertisement',
-                'data' => $advertisement->fresh('images')
+                'data' => $advertisement
                 ];
         }catch(Exception $e){
         return [
@@ -185,11 +185,11 @@ class AdvertisementService
     }
         public function getAllGeneralAdvertisement(){
         try{
-            $advertisement=Advertisement::where('advertisable_type',null)->get();
+            $advertisement=Advertisement::where('advertisable_type',null)->orderByDesc('created_at')->with('images')->paginate(10);
             return [
                 'success' => true,
                 'message' => 'all general Advertisement',
-                'data' => $advertisement->fresh('images')
+                'data' => $advertisement
                 ];
         }catch(Exception $e){
         return [

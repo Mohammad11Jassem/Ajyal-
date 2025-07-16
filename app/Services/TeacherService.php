@@ -166,8 +166,9 @@ class TeacherService
             'message'=>'Teacher Register successfully. ' . $emailStatus,
             'data' => [
                 'verifyCode' => $verifyCode,
-                'teacher' => $teacher->load('image'),
-                'password'=>$data['password']
+                'teacher' =>[
+                    'id'=>$teacher->id
+                ],
                 ]
         ];
 

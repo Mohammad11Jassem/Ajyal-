@@ -255,7 +255,7 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
         // Route::post('/update/{id}', 'update');
         Route::get('/show/{id}', 'show');
         // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
-        Route::get('/all-courses', 'AllCourses');   
+        Route::get('/all-courses', 'AllCourses');
         Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
         Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
         Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
