@@ -271,4 +271,11 @@ class CourseService
     }
 
 
+    public function studentCourses(){
+        $courses=Course::whereHas('registration',function($query){
+            $query->where('student_id',auth()->user()->user_data['role_data']['id']);
+        })->get();
+        return $courses;
+    }
+
 }

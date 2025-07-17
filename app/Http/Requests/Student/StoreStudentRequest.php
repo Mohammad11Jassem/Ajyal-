@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Student;
 
+use App\Enum\SubjectType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreStudentRequest extends FormRequest
 {
@@ -26,6 +28,8 @@ class StoreStudentRequest extends FormRequest
             'last_name'         => 'required|string',
             'number_civial'     => 'required|string',
             'address'           => 'required|string',
+            'birthdate'         =>'date',
+            'class_level'       =>Rule::enum(SubjectType::class),
             // 'location'          => 'required|string',
             'father_name'       => 'required|string',
             'mother_name'       => 'required|string',

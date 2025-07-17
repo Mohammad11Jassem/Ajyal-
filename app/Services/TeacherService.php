@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enum\SubjectType;
 use App\Http\Requests\Teacher\TeacherLoginRequest;
 use App\Mail\TeacherCredentialsMail;
+use App\Models\Curriculum;
 use App\Models\Teacher;
 use App\Models\Subject;
 use App\Models\User;
@@ -329,6 +330,16 @@ class TeacherService
         ];
     }
 
+    public function getAllMySubjectWithCourse(){
+        $subjects = Curriculum::whereHas('teachers', function ($query) {
+            $query->where('teacher_id', auth()->user()->user_data['role_data']['id']);
+        })->with('subject', 'course')->get();
+        return $subjects;
+    }
 
-
+    public function getAllSubjectForTeacher($id)
+    {
+        $subjects=Teacher::with('subjects','image:id,imageable_id,path')->where('id',$id)->first();
+        return $subjects;
+    }
 }

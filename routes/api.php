@@ -3,7 +3,7 @@
 
 use App\Exports\StudentsExport;
 use App\Http\Controllers\AdvertisementController;
-
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CourseController;
 
 use App\Http\Controllers\ExcelController;
@@ -75,6 +75,9 @@ Route::prefix('student')->group(function () {
             Route::get('levelTeachers/{level_id}','levelTeachers');
 
 
+        });
+        Route::middleware(['auth:sanctum','role:Student'])->controller(CourseController::class)->group(function () {
+            Route::get('my-courses','studentCourses');
         });
 
 
@@ -178,8 +181,11 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
             Route::get('myProfile', 'myProfile');
             Route::post('logout','logout');
 
+            Route::get('get-all-my-subjects-with-course','getAllMySubjectWithCourse');
+            Route::get('get-all-subjects-for-teacher/{id}','getAllSubjectForTeacher');
 
-                });
+
+        });
 });
 
 // middleware('auth:api')->
@@ -269,6 +275,13 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
              Route::post('download-excel','downloadStudentsExcel')->middleware('role:Secretariat|Manager');
         });
         Route::post('store-paperExam',[PaperExamController::class,'store'])->middleware('role:Secretariat|Manager');
+    });
+
+});
+
+Route::prefix('classroom')->controller(ClassroomController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('all-classrooms','getClasses');
     });
 
 });
