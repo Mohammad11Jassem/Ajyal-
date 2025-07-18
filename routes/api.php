@@ -288,18 +288,19 @@ Route::prefix('classroom')->controller(ClassroomController::class)->group(functi
 });
 Route::prefix('quiz')->controller(QuizController::class)->group(function () {
 
-    Route::middleware(['auth:sanctum','role:Teacher'])->group(function(){
-        Route::post('/create',  'store');
-
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::post('/create',  'store')->middleware('role:Teacher');
+        Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
     });
     Route::get('/all_questions/{quizID}',  'getAllQuestions');
+    // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
 });
 
 Route::prefix('question')->controller(QuestionController::class)->group(function () {
 
     Route::middleware(['auth:sanctum','role:Teacher'])->group(function(){
         Route::post('/create',  'store');
-
+        Route::post('/update',  'update');
     });
     Route::get('/show/{questionID}',  'show');
 });

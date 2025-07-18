@@ -26,10 +26,32 @@ class QuizService
         }
     }
     public function allQuestions($quizID){
+
+        if(auth()->user()->hasRole('Teacher')){
+            return [
+                'success' => true,
+                'message' => 'All Question at Quiz',
+                'data' =>Quiz::with(['questions.parent.image','questions.choices',
+
+                            'questions.image',
+                            ])->findOrFail($quizID)
+            ];
+        }
         return [
                 'success' => true,
                 'message' => 'All Question at Quiz',
-                'data' =>Quiz::with(['questions.choices','questions.children.choices','questions.image','questions.children.image'])->findOrFail($quizID)
+                'data' =>Quiz::available()->with(['questions.parent.image','questions.choices',
+
+                            'questions.image',
+                            ])->findOrFail($quizID)
         ];
+    }
+
+    public function getAllQuizzesForSubject($id){
+
+        if(auth()->user()->hasRole('Teacher')){
+            return Quiz::where('curriculum_id',$id)->get();
+        }
+        return Quiz::available()->where('curriculum_id',$id)->get();
     }
 }

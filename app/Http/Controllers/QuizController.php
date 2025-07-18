@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Quiz\StoreQuizRequest as QuizStoreQuizRequest;
 use App\Services\QuizService;
+use App\Traits\HttpResponse;
 
 class QuizController extends Controller
 {
+    use HttpResponse;
     protected QuizService $quizService;
 
     public function __construct(QuizService $quizService)
@@ -48,5 +50,10 @@ class QuizController extends Controller
             'message' => $result['message'],
             'data' => $result['data']
         ], 201);
+    }
+
+    public function getAllQuizzesForSubject($id){
+        $quzzies=$this->quizService->getAllQuizzesForSubject($id);
+        return $this->success('امتحانات هذه المادة',$quzzies);
     }
 }

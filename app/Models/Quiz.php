@@ -16,6 +16,12 @@ class Quiz extends Model
     'end_time',
     'duration',
     ];
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('available', 1);
+    }
+
     public function curriculum()
     {
         return $this->belongsTo(Curriculum::class);
@@ -30,6 +36,6 @@ class Quiz extends Model
     }
     public function questions()
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Question::class)->whereHas('choices');
     }
 }

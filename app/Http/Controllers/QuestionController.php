@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Question\StoreQuestionRequest as QuestionStoreQuestionRequest;
+use App\Http\Requests\Question\UpdateQuestionRequest;
 use App\Models\Question;
+use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Services\QuestionService;
 class QuestionController extends Controller
 {
+    use HttpResponse;
     /**
      * Display a listing of the resource.
      */
@@ -84,9 +87,11 @@ class QuestionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Question $question)
+    public function update(UpdateQuestionRequest $updateQuestionRequest)
     {
-        //
+        $data=$updateQuestionRequest->validated();
+        $result=$this->questionService->update($data);
+        return $this->success('تم تعديل السؤال بنجاح',$result);
     }
 
     /**

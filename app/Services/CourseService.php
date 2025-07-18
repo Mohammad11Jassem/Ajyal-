@@ -205,7 +205,8 @@ class CourseService
     }
 
     public function curriculumsCourse($courseId){
-        return Course::with('subjects')->findOrFail($courseId);
+        // return Course::with('subjects')->findOrFail($courseId);
+        return Course::with('curriculums.subject')->findOrFail($courseId);
     }
 
     public function sortStudentAtClassRoom(array $data){
