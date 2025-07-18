@@ -153,6 +153,7 @@ class AdvertisementService
     }
     }
 
+
     public function getAllTeacherAdvertisement(){
         try{
             $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
@@ -179,7 +180,7 @@ class AdvertisementService
         }
     }
 
-        public function getAllCourseAdvertisement(){
+    public function getAllCourseAdvertisement(){
         try{
             $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
             $perPage = 10;
@@ -202,7 +203,7 @@ class AdvertisementService
             ];
         }
     }
-        public function getAllGeneralAdvertisement(){
+    public function getAllGeneralAdvertisement(){
         try{
             $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
             $perPage = 10;
@@ -210,9 +211,11 @@ class AdvertisementService
                 $perPage = 3;
             }
             $advertisement=Advertisement::where('advertisable_type',null)
+
             ->orderByDesc('created_at')
             ->with('images')
             ->paginate($perPage);
+
             return [
                 'success' => true,
                 'message' => 'all general Advertisement',
@@ -225,7 +228,6 @@ class AdvertisementService
             ];
         }
     }
-
 
 
 }

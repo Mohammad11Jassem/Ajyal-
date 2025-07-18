@@ -171,4 +171,14 @@ class TeacherController extends Controller
 
     }
 
+    public function getAllMySubjectWithCourse(){
+
+        $subjects=$this->teacherService->getAllMySubjectWithCourse();
+        return $this->success('مواد الاستاذ',$subjects);
+    }
+    public function getAllSubjectForTeacher($id){
+
+        $subjects=$this->teacherService->getAllSubjectForTeacher($id);
+        return $this->success('مواد الاستاذ',$subjects);
+    }
 }

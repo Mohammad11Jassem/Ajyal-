@@ -86,6 +86,7 @@ class StudentController extends Controller
     {
         $data = $request->validated();
 
+        // return $data;
 
         $student = $this->studentService->createStudent($data);
 

@@ -20,7 +20,9 @@ class Student extends Model
         'father_name',
         // 'QR',
         // 'location',
-        'access_code'
+        'access_code',
+        'class_level',
+        'birthdate',
     ];
     // protected $hidden=[
     //     'pivot'

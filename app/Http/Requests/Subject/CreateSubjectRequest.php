@@ -24,7 +24,7 @@ class CreateSubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => 'required|string',
             // 'subject_code' => ['required', 'string', 'max:100'],
             'subjects_type' => ['required', 'string', Rule::enum(SubjectType::class)],
             'description' => ['nullable', 'string'],

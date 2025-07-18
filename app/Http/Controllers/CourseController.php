@@ -190,4 +190,11 @@ class CourseController extends Controller
             return $this->error($e->getMessage(), 500);
         }
     }
+
+    public function studentCourses(){
+        $courses=$this->courseService->studentCourses();
+        return $this->success('كورسات هذا الطالب',$courses);
+    }
+
+    
 }

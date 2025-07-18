@@ -28,15 +28,15 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions)  {
 
-        $exceptions->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
-            return response()->json([
-                    'message' => 'You are not authorized to access this resource.',
-               //'responseStatus'  => 403,
-            ],403);
-        });
-        // $app->singleton(ExceptionHandler::class, Handler::class);
-        // $exceptions->renderable(function (Throwable $e, $request) {
-        //     $handler = app(Handler::class);
-        //     return $handler->render($request, $e);
+        // $exceptions->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+        //     return response()->json([
+        //             'message' => 'You are not authorized to access this resource.',
+        //        //'responseStatus'  => 403,
+        //     ],403);
         // });
+        // $app->singleton(ExceptionHandler::class, Handler::class);
+        $exceptions->renderable(function (Throwable $e, $request) {
+            $handler = app(Handler::class);
+            return $handler->render($request, $e);
+        });
     })->create();

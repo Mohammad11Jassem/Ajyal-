@@ -3,7 +3,7 @@
 
 use App\Exports\StudentsExport;
 use App\Http\Controllers\AdvertisementController;
-
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CourseController;
 
 use App\Http\Controllers\ExcelController;
@@ -77,6 +77,9 @@ Route::prefix('student')->group(function () {
             Route::get('levelTeachers/{level_id}','levelTeachers');
 
 
+        });
+        Route::middleware(['auth:sanctum','role:Student'])->controller(CourseController::class)->group(function () {
+            Route::get('my-courses','studentCourses');
         });
 
 
@@ -180,8 +183,11 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
             Route::get('myProfile', 'myProfile');
             Route::post('logout','logout');
 
+            Route::get('get-all-my-subjects-with-course','getAllMySubjectWithCourse');
+            Route::get('get-all-subjects-for-teacher/{id}','getAllSubjectForTeacher');
 
-                });
+
+        });
 });
 
 // middleware('auth:api')->
@@ -204,30 +210,6 @@ Route::prefix('subject/topic')->controller(TopicController::class)->group(functi
     Route::post('/delete/{id}', 'delete');
     Route::post('/update/{id}', 'update');
 });
-// Route::prefix('course')->controller(CourseController::class)->group(function () {
-//     Route::post('/create', 'store');
-//     Route::post('/delete/{id}', 'delete');
-//     // Route::post('/update/{id}', 'update');
-//     Route::get('/show/{id}', 'show');
-//     Route::post('/delete/{id}', 'destroy');
-//     Route::get('/all-courses', 'AllCourses');
-//     Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
-//     Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
-//     Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
-
-
-//     Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
-//     Route::get('/get-files/{curriculumId}', 'getFiles');
-//     Route::get('/show-file/{fileId}', 'showFile');
-//     Route::post('/store-file', 'storeFile');
-
-
-//      Route::prefix('excel')->controller(ExcelController::class)->group(function () {
-//              Route::post('download-excel','downloadStudentsExcel');
-//         });
-
-//     Route::post('store-paperExam',[PaperExamController::class,'store']);
-// });
 
 Route::get('file',function(){
     //  $fullPath = "Curriculumfiles/1750680979.pdf";
@@ -285,15 +267,24 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
         Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
         Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
 
-        Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
-        Route::get('/get-files/{curriculumId}', 'getFiles');
-        Route::get('/show-file/{fileId}', 'showFile');
-        Route::post('/store-file', 'storeFile');
+            Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
+            Route::get('/get-files/{curriculumId}', 'getFiles');
+            Route::get('/show-file/{fileId}', 'showFile');
+            Route::post('/store-file', 'storeFile');
+
         Route::prefix('excel')->controller(ExcelController::class)->group(function () {
              Route::post('download-excel','downloadStudentsExcel')->middleware('role:Secretariat|Manager');
         });
         Route::post('store-paperExam',[PaperExamController::class,'store'])->middleware('role:Secretariat|Manager');
     });
+
+});
+
+Route::prefix('classroom')->controller(ClassroomController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('all-classrooms','getClasses');
+    });
+
 });
 Route::prefix('quiz')->controller(QuizController::class)->group(function () {
 
@@ -317,3 +308,10 @@ Route::prefix('question')->controller(QuestionController::class)->group(function
 // Route::post('import-excel',[ExcelController::class,'importExcel']);
 
 // Route::post('store-paperExam',[PaperExamController::class,'store']);
+
+Route::get('testapi',function(){
+    $data=User::paginate(3);
+    return response()->json([
+        'data'=>$data
+    ]);
+});

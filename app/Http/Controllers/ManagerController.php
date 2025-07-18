@@ -31,7 +31,7 @@ class ManagerController extends Controller
             ], 401);
         }
 
-        return response()->json([
+         return response()->json([
             'message' => 'Login successful',
             'data'=>$result['data']
         ]);

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -11,18 +12,29 @@ use Throwable;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException as ExceptionRouteNotFoundException;
 
 class Handler extends ExceptionHandler
 {
     public function render($request, Throwable $e): JsonResponse
     {
-        if ($request->is('api/*')) {
+        // if ($request->is('api/*')) {
             return match (true) {
                 $e instanceof AuthenticationException => response()->json([
                     'success' => false,
                     'message' => 'Unauthorized Request.',
                 ], Response::HTTP_UNAUTHORIZED),
+
+                $e instanceof UnauthorizedException => response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to access this resource.',
+                ], Response::HTTP_UNAUTHORIZED),
+
+                $e instanceof ModelNotFoundException => response()->json([
+                    'success' => false,
+                    'message' => 'not found.',
+                ], Response::HTTP_NOT_FOUND),
 
                 $e instanceof ValidationException => response()->json([
                     'success' => false,
@@ -45,13 +57,15 @@ class Handler extends ExceptionHandler
                     'message' => 'Route not found.',
                 ], Response::HTTP_NOT_FOUND),
 
+
+
                 default => response()->json([
                     'success' => false,
                     'message' => 'An unexpected error occurred.',
                     'details' => $e->getMessage(),
                 ], Response::HTTP_INTERNAL_SERVER_ERROR),
             };
-        }
+        // }
 
         return parent::render($request, $e);
     }

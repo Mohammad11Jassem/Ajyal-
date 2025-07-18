@@ -26,10 +26,10 @@ class TeacherSeeder extends Seeder
 
         Storage::fake('public'); // use fake disk for test images
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 1; $i <=5; $i++) {
             $data = [
                 'name' => fake()->name,
-                'email' => fake()->unique()->safeEmail,
+                'email' => "teacher$i@ajyal.com",
                 'date_of_contract' => now()->subDays(rand(1, 365))->format('Y-m-d'),
                 'phone_number' => fake()->phoneNumber,
                 'bio' => fake()->paragraph,
@@ -42,7 +42,15 @@ class TeacherSeeder extends Seeder
             $result = $teacherService->createTeacher($data);
 
             $registerTeacher=$teacherService->RegisterTeacher($data);
-            $verifyCode=VerifyCode::where('user_id',$registerTeacher['data']['teacher']->user_id)->first();
+                // Output the result
+            // echo "Register Teacher Result:\n";
+            // print_r($registerTeacher['success']);
+            // echo "\n---------------------------------\n";
+            // $verifyCode=VerifyCode::where('user_id',$registerTeacher['data']['teacher']->user_id)->first();
+
+            $teacherId = $registerTeacher['data']['teacher']['id']; // array access
+            $teacher = Teacher::find($teacherId);
+            $verifyCode = VerifyCode::where('user_id', $teacher->user_id)->first();
             $verifyCode['confirmed']=true;
             $verifyCode->save();
 
@@ -53,4 +61,6 @@ class TeacherSeeder extends Seeder
 
             }
     }
+
+
 }

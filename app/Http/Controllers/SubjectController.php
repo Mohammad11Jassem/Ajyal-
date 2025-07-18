@@ -24,7 +24,7 @@ class SubjectController extends Controller
     {
         $typeValue = $subjectFilterRequest->validated('subjects_type');
         $subjects = $this->subjectService->all($typeValue);
-        return $this->success('Subjects retrieved successfully.', ["data"=>[$subjects]]);
+        return $this->success('Subjects retrieved successfully.', $subjects);
     }
 
     public function allWithTopics(SubjectFilterRequest $subjectFilterRequest)
@@ -66,10 +66,11 @@ class SubjectController extends Controller
     public function create(CreateSubjectRequest $createSubjectRequest)
     {
         $data = $createSubjectRequest->validated();
-
+        
         try {
-            // return $data['subjects_type'];
+            // return $data['name'];
             $subject = $this->subjectService->create($data);
+
             return $this->success("Subject created successfully", $subject);
         } catch (\Exception $e) {
             return $this->error("Failed to create subject", 500, $e->getMessage());
