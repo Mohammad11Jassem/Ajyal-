@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Image;
 use App\Models\Teacher;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
 class AdvertisementService
@@ -154,11 +155,21 @@ class AdvertisementService
 
     public function getAllTeacherAdvertisement(){
         try{
-            $advertisement=Advertisement::where('advertisable_type',Teacher::class)->orderByDesc('created_at')->with('images')->paginate(3);
+            $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
+            $perPage = 10;
+            if ($user && in_array($user->getRoleNames()->first(),[ "Manager","Secretariat"])) {
+                $perPage = 3;
+            }
+
+            $advertisements = Advertisement::where('advertisable_type', Teacher::class)
+            ->orderByDesc('created_at')
+            ->with('images')
+            ->paginate($perPage);
+            //$advertisement=Advertisement::where('advertisable_type',Teacher::class)->orderByDesc('created_at')->with('images')->paginate(10);
             return [
                 'success' => true,
                 'message' => 'all Teacher Advertisement',
-                'data' => $advertisement
+                'data' =>$advertisements,
                 ];
         }catch(Exception $e){
         return [
@@ -170,7 +181,15 @@ class AdvertisementService
 
         public function getAllCourseAdvertisement(){
         try{
-            $advertisement=Advertisement::where('advertisable_type',Course::class)->orderByDesc('created_at')->with('images')->paginate(10);
+            $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
+            $perPage = 10;
+            if ($user && in_array($user->getRoleNames()->first(),[ "Manager","Secretariat"])) {
+                $perPage = 3;
+            }
+            $advertisement=Advertisement::where('advertisable_type',Course::class)
+            ->orderByDesc('created_at')
+            ->with('images')
+            ->paginate($perPage);
             return [
                 'success' => true,
                 'message' => 'all Course Advertisement',
@@ -185,7 +204,15 @@ class AdvertisementService
     }
         public function getAllGeneralAdvertisement(){
         try{
-            $advertisement=Advertisement::where('advertisable_type',null)->orderByDesc('created_at')->with('images')->paginate(10);
+            $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
+            $perPage = 10;
+            if ($user && in_array($user->getRoleNames()->first(),[ "Manager","Secretariat"])) {
+                $perPage = 3;
+            }
+            $advertisement=Advertisement::where('advertisable_type',null)
+            ->orderByDesc('created_at')
+            ->with('images')
+            ->paginate($perPage);
             return [
                 'success' => true,
                 'message' => 'all general Advertisement',

@@ -12,6 +12,8 @@ use App\Http\Controllers\StudentController;
 
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PaperExamController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
@@ -262,9 +264,8 @@ Route::prefix('advertisement')->group(function () {
             Route::get('generalAdvertisements','allGeneralAdvertisements');
 
         });
-
-
 });
+
 
 //course
 Route::prefix('course')->controller(CourseController::class)->group(function () {
@@ -293,6 +294,23 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
         });
         Route::post('store-paperExam',[PaperExamController::class,'store'])->middleware('role:Secretariat|Manager');
     });
+});
+Route::prefix('quiz')->controller(QuizController::class)->group(function () {
+
+    Route::middleware(['auth:sanctum','role:Teacher'])->group(function(){
+        Route::post('/create',  'store');
+
+    });
+    Route::get('/all_questions/{quizID}',  'getAllQuestions');
+});
+
+Route::prefix('question')->controller(QuestionController::class)->group(function () {
+
+    Route::middleware(['auth:sanctum','role:Teacher'])->group(function(){
+        Route::post('/create',  'store');
+
+    });
+    Route::get('/show/{questionID}',  'show');
 });
 
 // Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);

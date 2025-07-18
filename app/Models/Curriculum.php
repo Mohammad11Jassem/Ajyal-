@@ -34,4 +34,8 @@ class Curriculum extends Model
     {
         return $this->hasMany(PaperExam::class);
     }
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }

@@ -27,6 +27,8 @@ class ManagerAuthService
             ];
         }
 
+
+
         // $token = $manager->createToken('manager-token')->plainTextToken;
         $token = $manager->user->createToken('manager-token')->plainTextToken;
 
