@@ -31,19 +31,26 @@ class QuizService
             return [
                 'success' => true,
                 'message' => 'All Question at Quiz',
-                'data' =>Quiz::with(['questions.parent.image','questions.choices',
+                'data' =>Quiz::with(['questions.image','questions.choices','questions.children.image','questions.children.choices',
 
-                            'questions.image',
+
                             ])->findOrFail($quizID)
+                // 'data' =>Quiz::with(['questions.parent.image','questions.choices',
+
+                //             'questions.image',
+                //             ])->findOrFail($quizID)
             ];
         }
         return [
                 'success' => true,
                 'message' => 'All Question at Quiz',
-                'data' =>Quiz::available()->with(['questions.parent.image','questions.choices',
-
-                            'questions.image',
+                'data' =>Quiz::with(['questions.image','questions.choices',
+                                    'questions.children.image','questions.children.choices',
                             ])->findOrFail($quizID)
+                // 'data' =>Quiz::available()->with(['questions.parent.image','questions.choices',
+
+                //             'questions.image',
+                //             ])->findOrFail($quizID)
         ];
     }
 

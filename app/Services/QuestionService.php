@@ -234,15 +234,18 @@ class QuestionService
             ]);
 
             // Update choices
-            foreach ($data['choices'] as $choiceData) {
-                $choice=Choice::where('id',$choiceData['id']??null)->first()??null;
-                Choice::updateOrCreate(
-                    ['id' => $choiceData['id'] ?? null, 'question_id' => $question->id],
-                    [
-                        'choice_text' => $choiceData['choice_text']??$choice['choice_text'],
-                        'is_correct' => $choiceData['is_correct']??$choice['is_correct'],
-                    ]
-                );
+            if(isset($data['choices'])){
+                foreach ($data['choices'] as $choiceData) {
+                    $choice=Choice::where('id',$choiceData['id']??null)->first()??null;
+                    Choice::updateOrCreate(
+                        ['id' => $choiceData['id'] ?? null, 'question_id' => $question->id],
+                        [
+                            'choice_text' => $choiceData['choice_text']??$choice['choice_text'],
+                            'is_correct' => $choiceData['is_correct']??$choice['is_correct'],
+                        ]
+                    );
+                }
+
             }
 
             if (isset($data['image'])) {

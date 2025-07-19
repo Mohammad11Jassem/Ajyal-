@@ -291,8 +291,8 @@ Route::prefix('quiz')->controller(QuizController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('/create',  'store')->middleware('role:Teacher');
         Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
+        Route::get('/all_questions/{quizID}',  'getAllQuestions');
     });
-    Route::get('/all_questions/{quizID}',  'getAllQuestions');
     // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
 });
 

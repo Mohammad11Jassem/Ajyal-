@@ -36,6 +36,6 @@ class Quiz extends Model
     }
     public function questions()
     {
-        return $this->hasMany(Question::class)->whereHas('choices');
+        return $this->hasMany(Question::class)->whereNull('parent_question_id');
     }
 }
