@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
@@ -38,4 +40,13 @@ class Quiz extends Model
     {
         return $this->hasMany(Question::class)->whereNull('parent_question_id');
     }
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class, 'student_quizzes', 'quiz_id', 'student_id');
+    }
+    public function studentQuizzes(): HasMany
+    {
+        return $this->hasMany(StudentQuiz::class);
+    }
+
 }

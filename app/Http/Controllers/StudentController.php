@@ -166,6 +166,19 @@ class StudentController extends Controller
             return $this->badRequest($e->getMessage());
         }
     }
+    public function getAllStudent(){
+        $result=$this->studentService->allStudent();
+        if (!$result['success']) {
+            return response()->json([
+                'message' => $result['message'],
+                // 'error' => $result['error']
+            ], 422);
+        }
+        return response()->json([
+            'message' => $result['message'],
+            'data' => $result['data']
+        ], 201);
+    }
 
 
 

@@ -65,7 +65,9 @@ Route::prefix('student')->group(function () {
             Route::get('/profile', 'profile')->middleware('role:Student');
             Route::post('/logout', 'logout')->middleware('role:Student');
             Route::post('/link', 'linkStudent')->middleware('role:Parent');
+            Route::get('/all', 'getAllStudent')->middleware('role:Manager|Secretariat');
         });
+
     });
         Route::middleware(['auth:sanctum','role:Student'])->controller(TeacherController::class)->group(function () {
             Route::get('profile/{id}', 'profile');
@@ -81,6 +83,7 @@ Route::prefix('student')->group(function () {
         Route::middleware(['auth:sanctum','role:Student'])->controller(CourseController::class)->group(function () {
             Route::get('my-courses','studentCourses');
         });
+
 
 
 });
@@ -292,6 +295,10 @@ Route::prefix('quiz')->controller(QuizController::class)->group(function () {
         Route::post('/create',  'store')->middleware('role:Teacher');
         Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
         Route::get('/all_questions/{quizID}',  'getAllQuestions');
+        Route::post('/enter/{quizID}',  'enterQuiz')->middleware('role:Student');
+        Route::post('/submit',  'submitAnswers')->middleware('role:Student');
+        Route::get('/my_solved_quizzes',  'mySolvedQuizzes')->middleware('role:Student');
+
     });
     // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
 });

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
-            $table->boolean("is_submit");
-            $table->decimal("result");
+            $table->boolean("is_submit")->default(false);
+            $table->decimal("result")->default(0);
             $table->timestamps();
         });
     }

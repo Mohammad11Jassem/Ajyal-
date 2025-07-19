@@ -76,4 +76,14 @@ class Student extends Model
                     // ->withTimestamps();
     }
 
+    public function quizzes(): BelongsToMany
+    {
+        return $this->belongsToMany(Quiz::class, 'student_quizzes', 'student_id', 'quiz_id');
+    }
+
+    public function studentQuizzes()
+    {
+        return $this->hasMany(StudentQuiz::class);
+    }
+
 }

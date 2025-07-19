@@ -196,4 +196,21 @@ class StudentService
         }
     }
 
+    public function allStudent(){
+        try{
+            return[
+                'success'=>true,
+                'message'=>'كل طلاب المعهد',
+                'data'=>Student::get(),
+            ];
+
+        }catch(Exception $e){
+            return[
+                'success'=>false,
+                'message'=>'فشل جلب جميع الطلاب',
+                'error'=>$e->getMessage(),
+            ];
+        }
+    }
+
 }
