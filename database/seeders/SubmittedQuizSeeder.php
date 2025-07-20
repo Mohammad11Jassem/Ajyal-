@@ -68,7 +68,7 @@ class SubmittedQuizSeeder extends Seeder
 
                 // Optionally: calculate fake result (e.g., always 0 because all are wrong)
                 $studentQuiz->update([
-                    'result' => 0,
+                    'result' => 10,
                 ]);
             }
         }

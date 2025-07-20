@@ -32,7 +32,7 @@ class QuestionResource extends JsonResource
 
             // 'selected_choice' => $this->selected_choice, // your accessor
 
-            // // children questions recursively
+            // children questions recursively
             'children' => QuestionResource::collection($this->children),
         ];
     }
