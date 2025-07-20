@@ -19,7 +19,9 @@ class QuizController extends Controller
 
     public function store(QuizStoreQuizRequest $request)
     {
-        $result = $this->quizService->create($request->validated());
+        $data=$request->validated();
+        // $data['teacher_id']=auth()->user()->user_data['role_data']['id'];
+        $result = $this->quizService->create($data);
 
         // return response()->json([
         //     'success' => true,

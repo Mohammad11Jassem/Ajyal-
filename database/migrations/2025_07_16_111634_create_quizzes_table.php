@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
+            $table->foreignId('curriculum_teacher_id')->constrained()->onDelete('cascade');
             $table->foreignId('topic_id')->nullable()->constrained()->onDelete('cascade');
+            // $table->foreignId('topic_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name');
             $table->enum('type', ['Timed', 'worksheet']);
             $table->boolean('available')->default(false);

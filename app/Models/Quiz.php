@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Quiz extends Model
 {
     protected $fillable = [
-    'curriculum_id',
+    // 'curriculum_id',
+    'curriculum_teacher_id',
     'topic_id',
     'name',
     'column_name',
@@ -25,9 +26,14 @@ class Quiz extends Model
         return $query->where('available', 1);
     }
 
-    public function curriculum()
+    // public function curriculum()
+    // {
+    //     return $this->belongsTo(Curriculum::class);
+    // }
+    public function assignment()
     {
-        return $this->belongsTo(Curriculum::class);
+        return $this->belongsTo(CurriculumTeacher::class,'curriculum_teacher_id');
+
     }
     public function topic()
     {

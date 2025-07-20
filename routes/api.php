@@ -182,11 +182,11 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
         // Route::get('allTeachers','allTeachers');
 
 
-        Route::middleware(['auth:sanctum','role:Teacher'])->group(function () {
-            Route::get('myProfile', 'myProfile');
-            Route::post('logout','logout');
+        Route::middleware(['auth:sanctum'])->group(function () {
+            Route::get('myProfile', 'myProfile')->middleware('role:Teacher');
+            Route::post('logout','logout')->middleware('role:Teacher');
 
-            Route::get('get-all-my-subjects-with-course','getAllMySubjectWithCourse');
+            Route::get('get-all-my-subjects-with-course','getAllMySubjectWithCourse')->middleware('role:Teacher');
             Route::get('get-all-subjects-for-teacher/{id}','getAllSubjectForTeacher');
 
 

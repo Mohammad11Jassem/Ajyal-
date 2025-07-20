@@ -65,9 +65,15 @@ class QuizService
     public function getAllQuizzesForSubject($id){
 
         if(auth()->user()->hasRole('Teacher')){
-            return Quiz::where('curriculum_id',$id)->get();
+            // return Quiz::where('curriculum_id',$id)->get();
+            return Quiz::whereHas('assignment',function($query)use($id){
+                $query->where('teacher_id',auth()->user()->user_data['role_data']['id'])
+                      ->where('curriculum_id',$id);
+            })->get();
         }
-        return Quiz::available()->where('curriculum_id',$id)->get();
+        return Quiz::available()->whereHas('assignment',function($query)use($id){
+                $query->where('curriculum_id',$id);
+            })->get();
     }
 
     public function StartQuiz($quizID){

@@ -16,11 +16,13 @@ class QuizSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach ([1, 2] as $curriculumId) {
+        $k=1;
+        foreach ([1, 3] as $curriculumId) {
+
             $quiz = Quiz::create([
-                'curriculum_id' => $curriculumId,
+                'curriculum_teacher_id' => $curriculumId,
                 'topic_id' => null,
-                'name' => 'Quiz for Curriculum ' . $curriculumId,
+                'name' => 'Quiz for Curriculum ' . $k,
                 'type' => 'Timed',
                 'available' => true,
                 'start_time' => Carbon::now(),
@@ -85,6 +87,7 @@ class QuizSeeder extends Seeder
                     ]);
                 }
             }
+            $k++;
         }
     }
 }
