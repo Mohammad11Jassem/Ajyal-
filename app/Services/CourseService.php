@@ -157,6 +157,8 @@ class CourseService
                                 return [
                                     'id' => $classRoomCourse->classRoom->id,
                                     'class_number' => $classRoomCourse->classRoom->class_number,
+                                    'capacity'=>$classRoomCourse->classRoom->capacity,
+                                    'remaining_capacity'=>$classRoomCourse->capacity,
                                 ];
                             });
 
@@ -212,13 +214,32 @@ class CourseService
     public function sortStudentAtClassRoom(array $data){
 
         try{
-            $classRoom=ClassroomCourse::where('id',$data['class_course_id'])->first();
-            $classRoom->registrations()->attach($data['registration_id']);
+           return DB::transaction(function() use($data){
 
+                $classRoom=ClassroomCourse::where('id',$data['class_course_id'])->first();
+
+                // Count how many students you're trying to register
+                $registrationCount = count($data['registration_id']);
+
+                // Subtract the count from capacity
+                $newCapacity = $classRoom->capacity - $registrationCount;
+
+                if ($newCapacity < 0) {
+                    return [
+                        'success'=>false,
+                        'error' => 'فشل فرز الطلاب ',
+                        'message' => 'عدد الطلاب أكبر من المتاح ضمن الصف'
+                    ];
+                }
+
+                $classRoom->registrations()->attach($data['registration_id']);
+                // Update the capacity
+                $classRoom->update(['capacity' => $newCapacity]);
                 return [
                     'success'=>true,
                     'message' => 'تم فرز الطلاب على الشعب بنجاح',
                 ];
+            });
 
 
         }catch(Exception $e){

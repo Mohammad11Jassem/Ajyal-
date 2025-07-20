@@ -100,4 +100,11 @@ class QuizController extends Controller
             'data' => $result['data']
         ], 201);
     }
+
+    public function mySolvedQuizDetails($id)
+    {
+       $result=$this->quizService->mySolvedQuizDetails($id);
+       return $this->success('تفاصيل الاختبار المحلول',$result);
+    }
+
 }

@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Http\Resources\QuestionResource;
+use App\Http\Resources\QuizResource;
 use App\Models\Choice;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\StudentQuiz;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +74,10 @@ class QuizService
         try{
             $user=auth()->user();
             if($user && $user->hasRole('Student')){
-                $user->student->studentQuizzes()->create(['quiz_id'=>$quizID]);
+                $user->student->studentQuizzes()->create(['quiz_id'=>$quizID,
+                'is_submit'=>0,
+                'result'=>0,
+            ]);
                 return [
                     'success'=>true,
                     'message'=>'نتمنى لكم امتحاناً موفقاً',
@@ -137,6 +143,7 @@ class QuizService
                 $studentQuiz->answers()->create([
                     'question_id' => $question->id,
                     'selected_choice_id' => $choice->id,
+                    'answered_at'=>Carbon::now(),
                 ]);
 
                 if ($choice->is_correct) {
@@ -159,10 +166,10 @@ class QuizService
 
     public function allMySolvedQuiz(){
             return DB::transaction(function ()  {
-            $user = auth()->user();
-                        if (!$user || !$user->hasRole('Student')) {
-                throw new \Exception('Unauthorized');
-            }
+                $user = auth()->user();
+                if (!$user || !$user->hasRole('Student')) {
+                    throw new \Exception('Unauthorized');
+                }
 
             $student = $user->student;
 
@@ -177,6 +184,30 @@ class QuizService
             ];
             });
 
+    }
+
+    public function mySolvedQuizDetails($id)
+    {
+        $quiz=Quiz::where('id',$id)->first();
+        // return $quiz;
+        if(!$quiz->student){
+            throw new ModelNotFoundException();
+        }
+       return DB::transaction(function() use($id){
+             $quiz=Quiz::with([
+                'questions.image',
+                'questions.choices',
+                'questions.correctChoice',
+                'questions.studentAnswer.selectedChoice',
+                'questions.children.image',
+                'questions.children.choices',
+                'questions.children.correctChoice',
+                'questions.children.studentAnswer.selectedChoice'
+            ])->findOrFail($id);
+
+            //   return $quiz;
+            return new QuizResource($quiz);
+       });
     }
 
 }

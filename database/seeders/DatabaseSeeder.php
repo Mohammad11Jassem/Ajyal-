@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             CurriculumFileSeeder::class,
             RegistrationSeeder::class,
+            QuizSeeder::class,
+            SubmittedQuizSeeder::class,
         ]);
 
         // User::factory()->create([

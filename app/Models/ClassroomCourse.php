@@ -11,6 +11,7 @@ class ClassroomCourse extends Model
     protected $fillable=[
         'classroom_id',
         'course_id',
+        'capacity'
     ];
 
     public function classRoom(): BelongsTo

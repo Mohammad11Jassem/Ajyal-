@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Quiz extends Model
 {
@@ -43,6 +44,11 @@ class Quiz extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'student_quizzes', 'quiz_id', 'student_id');
+    }
+    public function student()
+    {
+        return $this->hasOne(StudentQuiz::class)
+            ->where('student_id',auth()->user()->user_data['role_data']['id']);
     }
     public function studentQuizzes(): HasMany
     {

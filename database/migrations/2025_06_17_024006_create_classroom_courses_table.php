@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
             $table->foreignId('classroom_id')->constrained()->cascadeOnDelete();
+            $table->integer('capacity')->default(40);
             $table->timestamps();
         });
     }

@@ -150,7 +150,9 @@ class CourseController extends Controller
         $result=$this->courseService->sortStudentAtClassRoom($sortStudentRequest->validated());
         // if(!$result['success'])
         // return $this->error($result['error'], 500);
-
+        if(!$result['success']){
+            return $this->badRequest($result['message']);
+        }
         return $this->success($result['message']);
 
     }
@@ -196,5 +198,5 @@ class CourseController extends Controller
         return $this->success('كورسات هذا الطالب',$courses);
     }
 
-    
+
 }
