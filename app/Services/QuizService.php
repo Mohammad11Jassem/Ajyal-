@@ -245,7 +245,7 @@ class QuizService
 
             $quiz->update([
                 'curriculum_teacher_id'=>$data['curriculum_teacher_id']??$quiz['curriculum_teacher_id'],
-                'topic_id'=>$data['topic_id']??$quiz['topic_id'],
+                'topic_id'=>$data['topic_id']??null,
                 'name'=>$data['name']??$quiz['name'],
                 'type'=>$data['type']??$quiz['type'],
                 'available'=>$data['available']??$quiz['available'],
