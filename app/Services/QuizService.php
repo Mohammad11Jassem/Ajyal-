@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\QuestionResource;
 use App\Http\Resources\QuizResource;
 use App\Models\Choice;
+use App\Models\CurriculumTeacher;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\StudentQuiz;
@@ -17,13 +18,25 @@ class QuizService
     public function create(array $data)
     {
         try{
-            return [
-                'success' => true,
-                'message' => 'Quiz created successfully',
-                'data' =>DB::transaction(function () use ($data) {
-                return Quiz::create($data);
-            })
-        ];
+            return DB::transaction(function () use ($data) {
+                $curriculmTeacher=CurriculumTeacher::where('curriculum_id',$data['curriculum_id'])
+                                                    ->where('teacher_id',auth()->user()->user_data['role_data']['id'])
+                                                    ->first();
+                $data['curriculum_teacher_id']=$curriculmTeacher['id'];
+                $quiz=Quiz::create($data);
+                return [
+                    'success' => true,
+                    'message' => 'Quiz created successfully',
+                    'data' =>$quiz,
+                ];
+            });
+        //     return [
+        //         'success' => true,
+        //         'message' => 'Quiz created successfully',
+        //         'data' =>DB::transaction(function () use ($data) {
+        //         return Quiz::create($data);
+        //     })
+        // ];
 
         }catch(Exception $e){
             return[
@@ -214,6 +227,34 @@ class QuizService
             //   return $quiz;
             return new QuizResource($quiz);
        });
+    }
+
+
+    public function update($data)
+    {
+        return DB::transaction(function () use ($data) {
+
+            $quiz=Quiz::findOrFail($data['quiz_id']);
+            //get the teacher assignment
+            $curriculmTeacher=CurriculumTeacher::where('curriculum_id',$data['curriculum_id'])
+                                                    ->where('teacher_id',auth()->user()->user_data['role_data']['id'])
+                                                    ->first();
+            $data['curriculum_teacher_id']=$curriculmTeacher['id'];
+
+            $quiz->update([
+                'curriculum_teacher_id'=>$data['curriculum_teacher_id']??$quiz['curriculum_teacher_id'],
+                'topic_id'=>$data['topic_id']??$quiz['topic_id'],
+                'name'=>$data['name']??$quiz['name'],
+                'type'=>$data['type']??$quiz['type'],
+                'available'=>$data['available']??$quiz['available'],
+                'start_time'=>$data['start_time']??$quiz['start_time'],
+                'duration'=>$data['duration']??$quiz['duration'],
+            ]);
+
+            return $quiz;
+        });
+
+
     }
 
 }

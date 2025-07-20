@@ -21,11 +21,17 @@ class Quiz extends Model
     'duration',
     ];
 
+    protected $appends=['curriculum_id'];
+
+    protected $hidden=['assignment'];
+    public function getCurriculumIdAttribute()
+    {
+        return $this->assignment->curriculum_id;
+    }
     public function scopeAvailable($query)
     {
         return $query->where('available', 1);
     }
-
     // public function curriculum()
     // {
     //     return $this->belongsTo(Curriculum::class);

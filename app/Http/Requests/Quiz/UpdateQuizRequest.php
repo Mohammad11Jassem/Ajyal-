@@ -4,14 +4,14 @@ namespace App\Http\Requests\Quiz;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreQuizRequest extends FormRequest
+class UpdateQuizRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->hasAnyRole(['Teacher']);
+        return true;
     }
 
     /**
@@ -22,12 +22,13 @@ class StoreQuizRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'curriculum_id' => 'required|exists:curricula,id',
-            'topic_id'      => 'nullable|exists:topics,id',
-            'name'          => 'required|string|max:255',
-            'type'          => 'required|in:Timed,worksheet',
+            'quiz_id'       => 'required|exists:quizzes,id',
+            'curriculum_id' => 'exists:curricula,id',
+            'topic_id'      => 'exists:topics,id',
+            'name'          => 'string|max:255',
+            'type'          => 'in:Timed,worksheet',
             'available'     => 'boolean',
-            'start_time'    => 'required|date|required_if:type,Timed',
+            'start_time'    => 'date|required_if:type,Timed',
             // 'end_time'      => 'required|date|after_or_equal:start_time',
             'duration'      => 'numeric|min:0|required_if:type,Timed',
         ];

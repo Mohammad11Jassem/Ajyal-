@@ -194,7 +194,7 @@ Route::prefix('teacher')->controller(TeacherController::class)->group(function (
 });
 
 // middleware('auth:api')->
-Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->prefix('subjects')->controller(SubjectController::class)->group(function () {
+Route::middleware(['auth:sanctum','role:Secretariat|Manager|Teacher'])->prefix('subjects')->controller(SubjectController::class)->group(function () {
     Route::post('/', 'all');
     Route::post('/with-topics', 'allWithTopics');
 
@@ -293,6 +293,7 @@ Route::prefix('quiz')->controller(QuizController::class)->group(function () {
 
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('/create',  'store')->middleware('role:Teacher');
+        Route::post('/update',  'update')->middleware('role:Teacher');
         Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
         Route::get('/all_questions/{quizID}',  'getAllQuestions');
         Route::post('/enter/{quizID}',  'enterQuiz')->middleware('role:Student');

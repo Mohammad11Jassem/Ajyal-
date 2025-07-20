@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Quiz\StoreQuizRequest as QuizStoreQuizRequest;
 use App\Http\Requests\Quiz\SubmitQuizRequest;
+use App\Http\Requests\Quiz\UpdateQuizRequest;
 use App\Services\QuizService;
 use App\Traits\HttpResponse;
 
@@ -109,4 +110,10 @@ class QuizController extends Controller
        return $this->success('تفاصيل الاختبار المحلول',$result);
     }
 
+    public function update(UpdateQuizRequest $updateQuizRequest)
+    {
+        $data=$updateQuizRequest->validated();
+        $result=$this->quizService->update($data);
+        return $this->success('تم تعديل الاختبار بنجاح',$result);
+    }
 }
