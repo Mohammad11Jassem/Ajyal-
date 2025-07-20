@@ -14,10 +14,11 @@ class Quiz extends Model
     'curriculum_teacher_id',
     'topic_id',
     'name',
+    'type',
     'column_name',
     'available',
     'start_time',
-    'end_time',
+    // 'end_time',
     'duration',
     ];
 

@@ -27,9 +27,9 @@ class StoreQuizRequest extends FormRequest
             'name'          => 'required|string|max:255',
             'type'          => 'required|in:Timed,worksheet',
             'available'     => 'boolean',
-            'start_time'    => 'required|date|required_if:type,Timed',
+            'start_time'    => 'nullable|date|required_if:type,Timed',
             // 'end_time'      => 'required|date|after_or_equal:start_time',
-            'duration'      => 'numeric|min:0|required_if:type,Timed',
+            'duration'      => 'nullable|numeric|min:0|required_if:type,Timed',
         ];
     }
 }

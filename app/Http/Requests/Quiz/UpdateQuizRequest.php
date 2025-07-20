@@ -28,9 +28,9 @@ class UpdateQuizRequest extends FormRequest
             'name'          => 'string|max:255',
             'type'          => 'in:Timed,worksheet',
             'available'     => 'boolean',
-            'start_time'    => 'date|required_if:type,Timed',
+            'start_time'    => 'nullable|date|required_if:type,Timed',
             // 'end_time'      => 'required|date|after_or_equal:start_time',
-            'duration'      => 'numeric|min:0|required_if:type,Timed',
+            'duration'      => 'nullable|numeric|min:0|required_if:type,Timed',
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\QuestionResource;
 use App\Http\Resources\QuizResource;
+use App\Http\Resources\QuizWithoutQustionsResource;
 use App\Models\Choice;
 use App\Models\CurriculumTeacher;
 use App\Models\Question;
@@ -27,7 +28,7 @@ class QuizService
                 return [
                     'success' => true,
                     'message' => 'Quiz created successfully',
-                    'data' =>$quiz,
+                    'data' =>new QuizWithoutQustionsResource($quiz),
                 ];
             });
         //     return [
@@ -232,6 +233,7 @@ class QuizService
 
     public function update($data)
     {
+        // return $data;
         return DB::transaction(function () use ($data) {
 
             $quiz=Quiz::findOrFail($data['quiz_id']);
@@ -247,8 +249,8 @@ class QuizService
                 'name'=>$data['name']??$quiz['name'],
                 'type'=>$data['type']??$quiz['type'],
                 'available'=>$data['available']??$quiz['available'],
-                'start_time'=>$data['start_time']??$quiz['start_time'],
-                'duration'=>$data['duration']??$quiz['duration'],
+                'start_time'=>$data['start_time']??null,
+                'duration'=>$data['duration']??null,
             ]);
 
             return $quiz;

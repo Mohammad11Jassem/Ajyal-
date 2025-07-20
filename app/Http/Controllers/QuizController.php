@@ -38,7 +38,7 @@ class QuizController extends Controller
         }
         return response()->json([
             'message' => $result['message'],
-            'data' => $result['data']
+            'data' => $result['data'],
         ], 201);
     }
     public function getAllQuestions($quizID){
