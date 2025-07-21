@@ -96,7 +96,6 @@ class QuizService
             if($user && $user->hasRole('Student')){
                 $user->student->studentQuizzes()->create(['quiz_id'=>$quizID,
                 'is_submit'=>0,
-                'result'=>0,
             ]);
                 return [
                     'success'=>true,
@@ -147,26 +146,26 @@ class QuizService
 
             foreach ($data['answers'] as $answer) {
                 $question = Question::find($answer['question_id']);
-                $choice = Choice::find($answer['choice_id']);
+                $choice = Choice::find($answer['choice_id'])??null;
 
                 // Throw exception if question or choice not found
-                if (!$question || !$choice) {
-                    throw new ModelNotFoundException('Invalid question or choice');
-                }
+                // if (!$question || !$choice) {
+                //     throw new ModelNotFoundException('Invalid question or choice');
+                // }
 
                 // Check if choice belongs to the question
-                if ($choice->question_id !== $question->id) {
-                    throw new \Exception('Choice does not belong to question');
-                }
+                // if ($choice?->question_id !== $question->id) {
+                //     throw new \Exception('Choice does not belong to question');
+                // }
 
                 // Save answer
                 $studentQuiz->answers()->create([
                     'question_id' => $question->id,
-                    'selected_choice_id' => $choice->id,
+                    'selected_choice_id' => $choice?->id??null,
                     'answered_at'=>Carbon::now(),
                 ]);
 
-                if ($choice->is_correct) {
+                if ($choice?->is_correct) {
                     $totalScore += $question->mark;
                 }
             }

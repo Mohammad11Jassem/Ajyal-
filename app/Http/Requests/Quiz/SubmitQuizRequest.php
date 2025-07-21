@@ -26,7 +26,7 @@ class SubmitQuizRequest extends FormRequest
             'quiz_id' => 'required|exists:quizzes,id',
             'answers' => 'required|array|min:1',
             'answers.*.question_id' => 'required|exists:questions,id',
-            'answers.*.choice_id' => 'required|exists:choices,id',
+            'answers.*.choice_id' => 'nullable|exists:choices,id',
         ];
     }
     public function messages(): array
