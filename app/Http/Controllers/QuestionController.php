@@ -9,6 +9,8 @@ use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Services\QuestionService;
+use Illuminate\Support\Facades\Validator;
+
 class QuestionController extends Controller
 {
     use HttpResponse;
@@ -97,8 +99,12 @@ class QuestionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Question $question)
+    public function delete(Request $request)
     {
-        //
+        Validator::make($request->all(), [
+            'question_id'=>'required|exists:quizzes,id'
+        ]);
+        $result=$this->questionService->delete($request['question_id']);
+        return $this->success('تم حذف السؤال بنجاح');
     }
 }
