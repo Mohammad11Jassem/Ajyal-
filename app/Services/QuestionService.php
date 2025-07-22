@@ -20,7 +20,7 @@ class QuestionService
                 $question = Question::create([
                     'quiz_id' => $data['quiz_id'],
                     'question_text' => $data['question_text'],
-                    'mark' => $data['mark'],
+                    'mark' => $data['mark']??1,
                     'hint' => $data['hint'],
                 ]);
                 // Save image if exists
@@ -42,7 +42,7 @@ class QuestionService
                         $subQuestion =$question->children()->create([
                             'quiz_id' => $data['quiz_id'],
                             'question_text' => $child['question_text'],
-                            'mark' => $child['mark'],
+                            'mark' => $child['mark']??1,
                             'hint' => $child['hint'],
                         ]);
 
@@ -228,25 +228,63 @@ class QuestionService
     public function update(array $data){
         return DB::transaction(function () use ($data) {
             $question = Question::findOrFail($data['question_id']);
+
+            //delete choices
+            $question?->choices()?->delete();
+            //delete child question
+            $question?->children()?->delete();
+
             $question->update([
+                'parent_question_id'=>$data['parent_question_id']??$question['parent_question_id'],
                 'question_text' => $data['question_text']??$question['question_text'],
                 'hint' => $data['hint']??$question['hint'],
             ]);
 
-            // Update choices
-            if(isset($data['choices'])){
-                foreach ($data['choices'] as $choiceData) {
-                    $choice=Choice::where('id',$choiceData['id']??null)->first()??null;
-                    Choice::updateOrCreate(
-                        ['id' => $choiceData['id'] ?? null, 'question_id' => $question->id],
-                        [
-                            'choice_text' => $choiceData['choice_text']??$choice['choice_text'],
-                            'is_correct' => $choiceData['is_correct']??$choice['is_correct'],
-                        ]
-                    );
-                }
+            // // Update choices
+            // if(isset($data['choices'])){
+            //     foreach ($data['choices'] as $choiceData) {
+            //         // $choice=Choice::where('id',$choiceData['id']??null)->first()??null;
+            //         // Choice::updateOrCreate(
+            //         //     ['id' => $choiceData['id'] ?? null, 'question_id' => $question->id],
+            //         //     [
+            //         //         'choice_text' => $choiceData['choice_text']??$choice['choice_text'],
+            //         //         'is_correct' => $choiceData['is_correct']??$choice['is_correct'],
+            //         //     ]
+            //         // );
+            //         Choice::create([
+            //             'choice_text' => $choiceData['choice_text'],
+            //             'is_correct' => $choiceData['is_correct'],
+            //         ]);
+            //     }
 
-            }
+            // }
+            //add child question if there
+           // Add children if any
+                if (isset($data['children'])) {
+                    foreach ($data['children'] as $child) {
+                        $subQuestion =$question->children()->create([
+                            'quiz_id' => $question['quiz_id'],
+                            'question_text' => $child['question_text'],
+                            'mark' => $child['mark']??1,
+                            'hint' => $child['hint']??null,
+                        ]);
+
+                        // Save image if exists
+                        if (isset($child['image'])) {
+                            $this->saveQuestionImage($child['image'],$subQuestion);
+
+                        }
+                        if (isset($child['choices']) && is_array($child['choices'])) {
+                            $subQuestion->choices()->createMany($child['choices']);
+                        }
+                    }
+                }else{
+                        // This question has NO children → can have choices
+                    if (isset($data['choices']) && is_array($data['choices'])) {
+                        $question->choices()->createMany($data['choices']);
+                    }
+
+                }
 
             if (isset($data['image'])) {
                 // Delete old image if exists

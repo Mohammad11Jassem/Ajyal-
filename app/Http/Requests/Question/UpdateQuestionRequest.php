@@ -23,6 +23,7 @@ class UpdateQuestionRequest extends FormRequest
     {
         return [
             'question_id'=>'required|exists:questions,id',
+
             'question_text' => 'nullable|string',
             'hint' => 'nullable|string',
             'choices' => 'nullable|array',
@@ -30,6 +31,15 @@ class UpdateQuestionRequest extends FormRequest
             'choices.*.choice_text' => 'nullable|string',
             'choices.*.is_correct' => 'nullable|boolean',
             'image' => 'nullable|image|max:2048',
+
+            'children' => ['nullable', 'array'],
+            'children.*.question_text' => ['string'],
+            'children.*.mark' => ['nullable', 'numeric'],
+            'children.*.hint' => ['nullable', 'string'],
+            'children.*.image' => ['nullable','image', 'mimes:jpg,png,jpeg,gif,svg', 'max:2048'],
+            'children.*.choices' => 'nullable|array|min:2',
+            'children.*.choices.*.choice_text' => 'nullable|string',
+            'children.*.choices.*.is_correct' => 'nullable|boolean',
         ];
     }
 }
