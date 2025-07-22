@@ -300,6 +300,8 @@ Route::prefix('quiz')->controller(QuizController::class)->group(function () {
         Route::post('/submit',  'submitAnswers')->middleware('role:Student');
         Route::get('/my_solved_quizzes',  'mySolvedQuizzes')->middleware('role:Student');
         Route::get('/my_solved_quiz_details/{id}',  'mySolvedQuizDetails')->middleware('role:Student');
+        Route::post('/delete',  'delete')->middleware('role:Teacher');
+        Route::post('/change_available',  'changeState')->middleware('role:Teacher');
 
     });
     // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
@@ -310,6 +312,7 @@ Route::prefix('question')->controller(QuestionController::class)->group(function
     Route::middleware(['auth:sanctum','role:Teacher'])->group(function(){
         Route::post('/create',  'store');
         Route::post('/update',  'update');
+        Route::post('/delete',  'delete');
     });
     Route::get('/show/{questionID}',  'show');
 });

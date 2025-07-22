@@ -7,6 +7,8 @@ use App\Http\Requests\Quiz\SubmitQuizRequest;
 use App\Http\Requests\Quiz\UpdateQuizRequest;
 use App\Services\QuizService;
 use App\Traits\HttpResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class QuizController extends Controller
 {
@@ -115,5 +117,25 @@ class QuizController extends Controller
         $data=$updateQuizRequest->validated();
         $result=$this->quizService->update($data);
         return $this->success('تم تعديل الاختبار بنجاح',$result);
+    }
+    public function delete(Request $request){
+        Validator::make($request->all(), [
+            'quiz_id'=>'required|exists:quizzes,id'
+        ]);
+        $result=$this->quizService->delete($request->quiz_id);
+        if (!$result['success']) {
+            return $this->badRequest('فشل حذف الاختبار');
+        }
+        return $this->success('تم حذف الاختبار بنجاح');
+    }
+    public function changeState(Request $request){
+        Validator::make($request->all(), [
+            'quiz_id'=>'required|exists:quizzes,id'
+        ]);
+        $result=$this->quizService->changeState($request->quiz_id);
+        if (!$result['success']) {
+            return $this->badRequest('فشل تغيير حالة الاختبار');
+        }
+        return $this->success('تم تغيير حالة الاختبار',$result['data']);
     }
 }

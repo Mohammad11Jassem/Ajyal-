@@ -222,9 +222,7 @@ class QuestionService
 
     }
 
-    public function delete(){
 
-    }
     public function update(array $data){
         return DB::transaction(function () use ($data) {
             $question = Question::findOrFail($data['question_id']);
@@ -301,5 +299,13 @@ class QuestionService
             }
             return $this->showQuestion($data['question_id'])['data'];
         });
+    }
+
+    public function delete($questionId){
+        Question::findOrFail($questionId)->delete();
+        return[
+            'success'=>true,
+            'message'=>'Question has been deleted'
+        ];
     }
 }
