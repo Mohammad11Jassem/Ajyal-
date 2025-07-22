@@ -267,15 +267,25 @@ class CourseService
 
         //             ->get();
 
+        if($classroomCourseId!=-1){
         $students=Registration::where('course_id',$courseId)
                                 ->whereHas('classroom_courses', function($query) use($classroomCourseId){
                             $query->where('classroom_course_id',$classroomCourseId,);
                         })->with('student')->get();
-
-        return [
+            return [
             'success'=>true,
             'data'=>$students,
             'message'=>'كل طلاب الكورس في صف محدد'
+            ];
+
+                    }
+        $students=Registration::where('course_id',$courseId)
+                    ->whereDoesntHave('classroom_courses', function() {
+            })->with('student')->get();
+                    return [
+            'success'=>true,
+            'data'=>$students,
+            'message'=>'كل طلاب الكورس الغير مفروزين على أي صف'
         ];
 
     }
