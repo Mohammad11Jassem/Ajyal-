@@ -20,11 +20,12 @@ class SubmittedQuizSeeder extends Seeder
         $students = [1, 2];
 
         // All quizzes created previously
-        $quizzes = Quiz::with(['questions.choices'])->get();
+        // $quizzes = Quiz::with(['questions.choices'])->get();
+        $quiz = Quiz::with(['questions.choices'])->findOrFail(1);
 
          foreach ($students as $studentId) {
 
-            foreach ($quizzes as $quiz) {
+            // foreach ($quizzes as $quiz) {
 
                 // Create student quiz submission
                 $studentQuiz = StudentQuiz::create([
@@ -70,7 +71,7 @@ class SubmittedQuizSeeder extends Seeder
                 $studentQuiz->update([
                     'result' => 10,
                 ]);
-            }
+            // }
         }
     }
 }

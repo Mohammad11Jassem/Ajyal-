@@ -17,12 +17,12 @@ class QuizSeeder extends Seeder
     public function run(): void
     {
         $k=1;
-        foreach ([1, 3] as $curriculumId) {
+        foreach ([1,2, 3] as $curriculumId) {
 
             $quiz = Quiz::create([
                 'curriculum_teacher_id' => $curriculumId,
                 'topic_id' => null,
-                'name' => 'Quiz for Curriculum ' . $k,
+                'name' => 'Quiz ' . $k,
                 'type' => 'Timed',
                 'available' => true,
                 'start_time' => Carbon::now(),

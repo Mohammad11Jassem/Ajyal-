@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('type', ['Timed', 'worksheet']);
             $table->boolean('available')->default(false);
-            $table->date('start_time')->nullable();
+            $table->dateTime('start_time')->nullable();
             // $table->date('end_time');
             $table->decimal('duration')->nullable();
             $table->timestamps();

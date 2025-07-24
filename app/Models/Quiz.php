@@ -27,7 +27,7 @@ class Quiz extends Model
     protected $hidden=['assignment'];
     public function getCurriculumIdAttribute()
     {
-        return $this->assignment->curriculum_id;
+        return $this->assignment?->curriculum_id;
     }
     public function scopeAvailable($query)
     {
@@ -54,6 +54,10 @@ class Quiz extends Model
     {
         return $this->hasMany(Question::class)->whereNull('parent_question_id');
     }
+    public function markedQuestions()
+    {
+        return $this->hasMany(Question::class)->whereHas('choices');
+    }
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'student_quizzes', 'quiz_id', 'student_id');
@@ -62,10 +66,17 @@ class Quiz extends Model
     {
         return $this->hasOne(StudentQuiz::class)
             ->where('student_id',auth()->user()->user_data['role_data']['id']);
+            // ->where('student_id',1);
     }
     public function studentQuizzes(): HasMany
     {
         return $this->hasMany(StudentQuiz::class);
     }
+
+    public function curriculumTeacher()
+    {
+        return $this->belongsTo(CurriculumTeacher::class,'curriculum_teacher_id');
+    }
+
 
 }

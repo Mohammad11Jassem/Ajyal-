@@ -75,6 +75,12 @@ class Student extends Model
                     ->withPivot('mark');
                     // ->withTimestamps();
     }
+    public function scopePaperExamForSubject($query,$id)
+    {
+        return $query->with('paperExams',function($q) use($id){
+            $q->where('curriculum_id',$id)->orderBy('exam_date', 'asc');
+        });
+    }
 
     public function quizzes(): BelongsToMany
     {
@@ -85,5 +91,19 @@ class Student extends Model
     {
         return $this->hasMany(StudentQuiz::class);
     }
+    public function scopeStudentQuizzesForSubject($query,$id)
+    {
+        return $query->with([
+                'studentQuizzes' => function ($q) use ($id) {
+                    $q->whereHas('quiz.assignment', function ($q2) use ($id) {
+                        $q2->where('curriculum_id', $id);
+                    })->orderBy('created_at','asc');
+                }]);
+        // return $query->with('studentQuizzes.quiz.assignment',function($q) use($id){
+        //     $q->where('curriculum_id',$id);
+        // });
+    }
+
+
 
 }

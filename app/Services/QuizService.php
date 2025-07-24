@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\QuestionResource;
 use App\Http\Resources\QuizResource;
 use App\Http\Resources\QuizWithoutQustionsResource;
+use App\Http\Resources\SolvedQuizResource;
 use App\Models\Choice;
 use App\Models\CurriculumTeacher;
 use App\Models\Question;
@@ -86,7 +87,7 @@ class QuizService
                       ->where('curriculum_id',$id);
             })->get();
         }
-        return Quiz::available()->whereHas('assignment',function($query)use($id){
+        return Quiz::available()->whereDoesntHave('student')->whereHas('assignment',function($query)use($id){
                 $query->where('curriculum_id',$id);
             })->get();
     }
@@ -96,11 +97,12 @@ class QuizService
             $user=auth()->user();
             if($user && $user->hasRole('Student')){
                 $user->student->studentQuizzes()->create(['quiz_id'=>$quizID,
-                'is_submit'=>0,
+                'is_submit'=>1,
             ]);
                 return [
                     'success'=>true,
                     'message'=>'نتمنى لكم امتحاناً موفقاً',
+                    'data'=>$this->allQuestions($quizID),
                 ];
             }
         }
@@ -184,8 +186,8 @@ class QuizService
         });
     }
 
-    public function allMySolvedQuiz(){
-            return DB::transaction(function ()  {
+    public function allMySolvedQuiz($curriculumId){
+            return DB::transaction(function ()use ($curriculumId)  {
                 $user = auth()->user();
                 if (!$user || !$user->hasRole('Student')) {
                     throw new \Exception('Unauthorized');
@@ -197,12 +199,24 @@ class QuizService
                 throw new \Exception('Student record not found');
             }
 
+
+            $quizzes = $student->quizzes()
+                    ->with('assignment')
+                    ->withPivot(['result', 'is_submit'])
+                    ->wherePivot('is_submit', true)
+                    ->get()
+                    ->filter(function ($quiz) use ($curriculumId) {
+                        return $quiz->curriculum_id == $curriculumId;
+                    });
+
             return [
                 'success' => true,
                 'message' => 'اختباراتي السابقة',
-                'data' => $student->quizzes
+                // 'data' => $quizzes
+                'data' => SolvedQuizResource::collection($quizzes),
+                // 'data' => $student->quizzes->student
             ];
-            });
+        });
 
     }
 
@@ -215,6 +229,7 @@ class QuizService
         }
        return DB::transaction(function() use($id){
              $quiz=Quiz::with([
+                'student',
                 'questions.image',
                 'questions.choices',
                 'questions.correctChoice',

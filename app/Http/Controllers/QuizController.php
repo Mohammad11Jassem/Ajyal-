@@ -72,7 +72,7 @@ class QuizController extends Controller
         }
         return response()->json([
             'message' => $result['message'],
-            // 'data' => $result['data']
+            'data' => $result['data']['data']
         ], 201);
 
     }
@@ -91,9 +91,9 @@ class QuizController extends Controller
         ], 201);
 
     }
-    public function mySolvedQuizzes(){
+    public function mySolvedQuizzes($id){
 
-        $result=$this->quizService->allMySolvedQuiz();
+        $result=$this->quizService->allMySolvedQuiz($id);
         if (!$result['success']) {
             return response()->json([
                 'message' => $result['message'],

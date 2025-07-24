@@ -42,4 +42,9 @@ class Curriculum extends Model
     {
         return $this->hasMany(Quiz::class);
     }
+
+    public function currSubject()
+    {
+        return $this->hasMany(CurriculumTeacher::class);
+    }
 }

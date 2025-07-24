@@ -298,7 +298,7 @@ Route::prefix('quiz')->controller(QuizController::class)->group(function () {
         Route::get('/all_questions/{quizID}',  'getAllQuestions');
         Route::post('/enter/{quizID}',  'enterQuiz')->middleware('role:Student');
         Route::post('/submit',  'submitAnswers')->middleware('role:Student');
-        Route::get('/my_solved_quizzes',  'mySolvedQuizzes')->middleware('role:Student');
+        Route::get('/my_solved_quizzes/{id}',  'mySolvedQuizzes')->middleware('role:Student');
         Route::get('/my_solved_quiz_details/{id}',  'mySolvedQuizDetails')->middleware('role:Student');
         Route::post('/delete',  'delete')->middleware('role:Teacher');
         Route::post('/change_available',  'changeState')->middleware('role:Teacher');

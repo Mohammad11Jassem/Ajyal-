@@ -22,7 +22,7 @@ class StudentQuiz extends Model
 
     public function quiz(): BelongsTo
     {
-        return $this->belongsTo(Quiz::class);
+        return $this->belongsTo(Quiz::class)->where('available',1);
     }
 
     public function answers(): HasMany
