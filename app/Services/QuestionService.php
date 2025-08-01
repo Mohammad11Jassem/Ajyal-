@@ -108,7 +108,6 @@ class QuestionService
     public function storeQuestions(array $questions, $parentId = null)
     {
         try{
-            $created = [];
 
             return DB::transaction(function () use ($questions,$parentId) {
 
@@ -121,11 +120,9 @@ class QuestionService
                 //         'parent_question_id' => $parentId,
                 //     ]);
 
-                //     // ✅ If the current question has children, call recursively
                 //     if (isset($questionData['children']) && is_array($questionData['children'])) {
                 //         $this->storeQuestions($questionData['children'], $question->id);
                 //     } else {
-                //         // ✅ Only add choices if this question has no children
                 //         if (isset($questionData['choices']) && is_array($questionData['choices'])) {
                 //             foreach ($questionData['choices'] as $choiceData) {
                 //                 $question->choices()->create([
@@ -175,7 +172,7 @@ class QuestionService
                             if (isset($subQ['image']) && $subQ['image']->isValid()) {
                                 $imageFile = $subQ['image'];
                                 $image = $subQuestion->image()->create([
-                                    'path' => '' // Temporary, will be updated after saving the file
+                                    'path' => ''
                                 ]);
                                 $imageName = time().$image->id. '.' . $imageFile->getClientOriginalExtension();
                                 $imageFile->move(public_path('questions'), $imageName);
@@ -256,7 +253,7 @@ class QuestionService
             //     }
 
             // }
-            //add child question if there
+
            // Add children if any
                 if (isset($data['children'])) {
                     foreach ($data['children'] as $child) {

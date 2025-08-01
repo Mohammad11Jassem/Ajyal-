@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StripeController;
 use App\Http\Resources\PrevQuizeResource;
 use App\Mail\TestMail;
 use App\Models\Curriculum;
@@ -13,12 +14,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Row;
 
-Route::get('test',function(){
-    $quizId = 1; // the quiz you want
-    $studentId = 1; // the student you're checking
 
-    $paperExam=Student::PaperExamForSubject(1)->find(1);
-    return $paperExam;
-});
 
-Route::get('ser/{id}',[StudentPerformanceAnalysisService::class,'quizzes']);
+Route::get('ser/{id}',[StudentPerformanceAnalysisService::class,'calculateTotalMean']);
+
+Route::get('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');
+Route::get('/stripe/success', [StripeController::class, 'success'])->name('stripe.success');
+Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');

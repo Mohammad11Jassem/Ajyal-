@@ -40,7 +40,7 @@ class ParentService
                         return $linkData['success'];
                     }
 
-                    // Optional: create token
+                    
                     $token = $user->createToken('token')->plainTextToken;
                     // dd($linkData);
 

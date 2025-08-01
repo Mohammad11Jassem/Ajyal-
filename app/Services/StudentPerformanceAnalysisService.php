@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumTeacher;
 use App\Models\Quiz;
@@ -18,7 +19,7 @@ class StudentPerformanceAnalysisService
         $quizzes = $student->studentQuizzes;
 
         $totalScore = 0;
-        // $totalQuizzes = 0;
+        // $totalQuizzes2 = 0;
         $totalQuizzes = Quiz::whereHas('curriculumTeacher',function($query) use($curriculumId){
                 $query->where('curriculum_id',$curriculumId);
         })->get()->count();;
@@ -28,7 +29,7 @@ class StudentPerformanceAnalysisService
                 // $score = $studentQuiz->result;
                 $score = $this->getTheMarkByPercentage($studentQuiz->quiz->markedQuestions->count(),$studentQuiz->result);
                 $totalScore += $score;
-                // $totalQuizzes++;
+                // $totalQuizzes2++;
             }
         }
         $average = $totalQuizzes > 0 ? $totalScore / $totalQuizzes : 0;
@@ -49,13 +50,15 @@ class StudentPerformanceAnalysisService
         return [
                 // 'subject'=>Curriculum::where('id',$curriculumId)->with('subject')->first(),
                 'average_score' => round($average, 2),
+                'total_quizzes'=>$totalQuizzes,
+                // 'totalQuizzes2'=>$totalQuizzes2,
                 'exams' => $quizData,
         ];
     }
-    public function getTheMarkByPercentage($questionNumber,$studentMark)
+    public function getTheMarkByPercentage($maxMark,$studentMark)
     {
         // if($questionNumber==0)$questionNumber=1;
-        return 100*($studentMark/$questionNumber);
+        return 100*($studentMark/$maxMark);
     }
 
     public function calculateStandardDeviationForQuiz($curriculumId)
@@ -142,7 +145,8 @@ class StudentPerformanceAnalysisService
         $quizStats = $this->claculateMeanForQuiz($curriculumId);
         $paperStats = $this->claculateMeanForPaperExam($curriculumId);
 
-        $quizCount = count($quizStats['exams']);
+        // $quizCount = count($quizStats['exams']);
+        $quizCount = $quizStats['total_quizzes'];
         $paperCount = count($paperStats['exams']);
 
         if ($quizCount + $paperCount === 0) {
@@ -158,6 +162,10 @@ class StudentPerformanceAnalysisService
         ) / ($quizCount + $paperCount);
 
         return round($combinedMean, 2);
+        // return [
+        //     'meanQuiz'=>$meanQuiz,
+        //     'meanPaper'=>$meanPaper
+        // ];
     }
 
     public function calculateCombinedStandardDeviation($curriculumId)
@@ -195,15 +203,29 @@ class StudentPerformanceAnalysisService
     {
         $studentID=1;
         $studentPaper = Student::paperExamForSubject($curriculumId)->find($studentID);
+        $studentExams=$studentPaper->paperExams->map(function ($studentExam) {
+                return [
+                    'id' => $studentExam->id,
+                    'curriculum_id'=>$studentExam->curriculum_id,
+                    'quiz_name' => $studentExam->title,
+                    'exam_date'=>$studentExam->exam_date,
+                    'result' => $studentExam->pivot->mark,
+                ];
+            });
 
         $studentQuiz = Student::studentQuizzesForSubject($curriculumId)->find($studentID);
         $quizzes = $studentQuiz->studentQuizzes->map(function ($studentQuiz) {
                 return [
                     'id' => $studentQuiz->quiz->id,
+                    'curriculum_id' => $studentQuiz->quiz->curriculum_id,
                     'quiz_name' => $studentQuiz->quiz->name,
+                    'exam_date' => $studentQuiz->quiz->start_time,
                     'result' => $studentQuiz->result,
                 ];
             });
+
+        $mergedResults = collect($studentExams)->merge($quizzes)->sortBy('exam_date')->values();
+
         // return $quizzes;
         // $totalQuizzes = CurriculumTeacher::where('curriculum_id',$curriculumId)
         //                     ->withCount('availableQuizzes')->get();
@@ -212,10 +234,29 @@ class StudentPerformanceAnalysisService
         //         $query->where('curriculum_id',$curriculumId);
         // })->get();
         return [
-            'paper_exams'=>$studentPaper->paperExams,
+            'paper_exams'=>$studentExams,
             'quiz'=>$quizzes,
+            'both'=>$mergedResults,
         ];
 
+    }
+
+    public function calculateTotalMean($courseId)
+    {
+        $means=[];
+        $subjects=Course::findOrFail($courseId)->curriculums;
+        // return $subjects;
+        foreach($subjects as $subject){
+            $means[]=$this->calculateCombinedMean($subject->id);
+        }
+
+        $meanSum=0;
+        $subjectCount=0;
+        foreach($means as $mean){
+            $meanSum+=$mean;
+            $subjectCount++;
+        }
+        return round($this->getTheMarkByPercentage(100,$meanSum/$subjectCount),2);
     }
 
 

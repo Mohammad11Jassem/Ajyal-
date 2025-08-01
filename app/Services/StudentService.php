@@ -31,8 +31,8 @@ class StudentService
 
         return DB::transaction(function () use ($data) {
             $user = User::create([
-            'password' => null,
-             ]);
+                'password' => null,
+            ]);
             $user->assignRole(Role::findByName('Student', 'api'));
             $data['access_code']=$this->generateUniqueVerifyCode();
             $data['user_id'] = $user->id;
@@ -94,7 +94,6 @@ class StudentService
                 return null;
             }
 
-             // Optional: revoke old tokens
             // $user->tokens()->delete();
             $token = $user->createToken('token')->plainTextToken;
 
@@ -114,9 +113,9 @@ class StudentService
             $student = Student::where('user_id',auth()->id())->first();
 
             // return $student;
-            $token = encrypt($student->id); // secure token
-            $data = ['token' => $token];
-            // Generate base64 PNG
+            $token = encrypt($student->id);
+            // $data = ['token' => $token];
+
             // $qrCode = QrCode::format('svg')->size(300)->generate(json_encode($data));
             // $base64 = base64_encode($qrCode);
 

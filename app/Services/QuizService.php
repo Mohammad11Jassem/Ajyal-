@@ -278,29 +278,29 @@ class QuizService
         $userID=auth()->user()->user_data['role_data']['id'];
         $OwnerID=CurriculumTeacher::findOrFail($quiz['curriculum_teacher_id'])->teacher_id;
         if($userID===$OwnerID ){
-        $quiz->delete();
-        return[
-            'success'=>true,
-            'message'=>'Quiz has been deleted'
+            $quiz->delete();
+            return[
+                'success'=>true,
+                'message'=>'Quiz has been deleted'
+            ];
+        }
+        return [
+            'success'=>false,
+            'message'=>'َQuiz deletion failed'
         ];
-    }
-    return [
-        'success'=>false,
-        'message'=>'َQuiz deletion failed'
-    ];
     }
     public function changeState($quizId){
         $quiz=Quiz::findOrFail($quizId);
         $userID=auth()->user()->user_data['role_data']['id'];
         $OwnerID=CurriculumTeacher::findOrFail($quiz['curriculum_teacher_id'])->teacher_id;
         if($userID===$OwnerID ){
-        $quiz->available=!$quiz->available;
-        $quiz->save();
-        return [
-            'success'=>true,
-            'message'=>'Quiz status changed',
-            'data'=>$quiz
-        ];
+            $quiz->available=!$quiz->available;
+            $quiz->save();
+            return [
+                'success'=>true,
+                'message'=>'Quiz status changed',
+                'data'=>$quiz
+            ];
         }
     }
 }

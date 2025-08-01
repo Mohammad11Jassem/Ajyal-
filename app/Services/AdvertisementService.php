@@ -87,7 +87,7 @@ class AdvertisementService
             'body' => $data['body'],
         ]);
 
-        // Update images (optional: delete old and upload new)
+
         if (isset($data['images'])) {
             $advertisement->images()->delete();
             foreach ($data['images'] as $newImage) {
@@ -123,7 +123,6 @@ class AdvertisementService
         try{
         $advertisement = Advertisement::with('images')->findOrFail($id);
 
-        // Delete associated image files from storage
         foreach ($advertisement->images as $image) {
 
             if(File::exists($image->path))
@@ -156,16 +155,16 @@ class AdvertisementService
 
     public function getAllTeacherAdvertisement(){
         try{
-            $user = Auth::guard('sanctum')->user(); // returns null if not authenticated
+            $user = Auth::guard('sanctum')->user();
             $perPage = 10;
             if ($user && in_array($user->getRoleNames()->first(),[ "Manager","Secretariat"])) {
                 $perPage = 3;
             }
 
             $advertisements = Advertisement::where('advertisable_type', Teacher::class)
-            ->orderByDesc('created_at')
-            ->with('images')
-            ->paginate($perPage);
+                                ->orderByDesc('created_at')
+                                ->with('images')
+                                ->paginate($perPage);
             //$advertisement=Advertisement::where('advertisable_type',Teacher::class)->orderByDesc('created_at')->with('images')->paginate(10);
             return [
                 'success' => true,
@@ -211,10 +210,9 @@ class AdvertisementService
                 $perPage = 3;
             }
             $advertisement=Advertisement::where('advertisable_type',null)
-
-            ->orderByDesc('created_at')
-            ->with('images')
-            ->paginate($perPage);
+                    ->orderByDesc('created_at')
+                    ->with('images')
+                    ->paginate($perPage);
 
             return [
                 'success' => true,
