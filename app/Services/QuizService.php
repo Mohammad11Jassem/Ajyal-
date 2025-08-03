@@ -138,11 +138,11 @@ class QuizService
                 ->first();
 
             if (!$studentQuiz) {
-                throw new \Exception('Student quiz not started');
+                throw new Exception('Student quiz not started');
             }
 
             if ($studentQuiz->is_submit) {
-                throw new \Exception('Quiz already submitted');
+                throw new Exception('Quiz already submitted');
             }
 
             $totalScore = 0;
@@ -172,7 +172,7 @@ class QuizService
                     $totalScore += $question->mark;
                 }
             }
-
+            // try & catch
             $studentQuiz->update([
                 'result' => $totalScore,
                 'is_submit' => true,

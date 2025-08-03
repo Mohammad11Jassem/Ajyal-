@@ -75,7 +75,9 @@ class StudentPerformanceAnalysisService
             $count++;
         }
 
-        return round(sqrt($sumOfSquares / $count), 2);
+        return [
+            'result'=>round(sqrt($sumOfSquares / $count), 2),
+        ];
     }
 
 
@@ -118,6 +120,7 @@ class StudentPerformanceAnalysisService
         return [
                 // 'subject'=>Curriculum::where('id',$curriculumId)->with('subject')->first(),
                 'average_score' => round($average, 2),
+                'total_quizzes'=>$totalQuizzes,
                 'exams' => $quizData,
         ];
     }
@@ -136,7 +139,9 @@ class StudentPerformanceAnalysisService
             $count++;
         }
 
-        return round(sqrt($sumOfSquares / $count), 2);
+        return [
+            'result'=>round(sqrt($sumOfSquares / $count), 2),
+        ];
     }
 
 
@@ -161,11 +166,14 @@ class StudentPerformanceAnalysisService
             ($paperCount * $meanPaper)
         ) / ($quizCount + $paperCount);
 
-        return round($combinedMean, 2);
+        // return round($combinedMean, 2);
         // return [
         //     'meanQuiz'=>$meanQuiz,
         //     'meanPaper'=>$meanPaper
         // ];
+        return [
+            'result'=>round($combinedMean, 2),
+        ];
     }
 
     public function calculateCombinedStandardDeviation($curriculumId)
@@ -183,8 +191,8 @@ class StudentPerformanceAnalysisService
         $meanQuiz = $quizStats['average_score'];
         $meanPaper = $paperStats['average_score'];
 
-        $stdQuiz = $this->calculateStandardDeviationForQuiz($curriculumId);
-        $stdPaper = $this->calculateStandardDeviationForPaperExam($curriculumId);
+        $stdQuiz = $this->calculateStandardDeviationForQuiz($curriculumId)['result'];
+        $stdPaper = $this->calculateStandardDeviationForPaperExam($curriculumId)['result'];
 
         $combinedVarianceDenominator =
             (($quizCount - 1) * pow($stdQuiz, 2)) +
@@ -196,11 +204,15 @@ class StudentPerformanceAnalysisService
         // $combinedStd = sqrt($combinedVarianceNumerator / $combinedVarianceDenominator);
         $combinedStd = sqrt($combinedVarianceDenominator);
 
-        return round($combinedStd, 2);
+        // return round($combinedStd, 2);
+        return [
+            'result'=>round($combinedStd, 2),
+        ];
     }
 
     public function quizzes($curriculumId)
     {
+
         $studentID=1;
         $studentPaper = Student::paperExamForSubject($curriculumId)->find($studentID);
         $studentExams=$studentPaper->paperExams->map(function ($studentExam) {
@@ -247,7 +259,7 @@ class StudentPerformanceAnalysisService
         $subjects=Course::findOrFail($courseId)->curriculums;
         // return $subjects;
         foreach($subjects as $subject){
-            $means[]=$this->calculateCombinedMean($subject->id);
+            $means[]=$this->calculateCombinedMean($subject->id)['result'];
         }
 
         $meanSum=0;
@@ -256,7 +268,9 @@ class StudentPerformanceAnalysisService
             $meanSum+=$mean;
             $subjectCount++;
         }
-        return round($this->getTheMarkByPercentage(100,$meanSum/$subjectCount),2);
+        return [
+            'result'=>round($this->getTheMarkByPercentage(100,$meanSum/$subjectCount),2),
+        ];
     }
 
 

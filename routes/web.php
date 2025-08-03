@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\SubjectType;
 use App\Http\Controllers\StripeController;
 use App\Http\Resources\PrevQuizeResource;
 use App\Mail\TestMail;
@@ -21,3 +22,4 @@ Route::get('ser/{id}',[StudentPerformanceAnalysisService::class,'calculateTotalM
 Route::get('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');
 Route::get('/stripe/success', [StripeController::class, 'success'])->name('stripe.success');
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+

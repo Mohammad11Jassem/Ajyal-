@@ -14,6 +14,7 @@ enum SubjectType :string
         ];
     }
     public static function getTypeId($id){
+        //switch case
         if($id==1)
             return self::NinthGrade;
         elseif($id==2)

@@ -22,7 +22,7 @@ class StripeController extends Controller
                 'price_data' => [
                     'currency' => 'usd',
                     'product_data' => [
-                        'name' => 'Sample Product',
+                        'name' => 'Course price',
                     ],
                     'unit_amount' => 1000, // = $10.00
                 ],

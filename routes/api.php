@@ -2,6 +2,7 @@
 
 
 use App\Exports\StudentsExport;
+use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CourseController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PaperExamController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\StudentPerformanceAnalysisController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
@@ -317,6 +319,8 @@ Route::prefix('question')->controller(QuestionController::class)->group(function
     Route::get('/show/{questionID}',  'show');
 });
 
+
+
 // Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);
 // Route::post('import-excel',[ExcelController::class,'importExcel']);
 
@@ -327,4 +331,27 @@ Route::get('testapi',function(){
     return response()->json([
         'data'=>$data
     ]);
+});
+
+
+Route::prefix('absence')->controller(AbsenceController::class)->group(function () {
+
+    Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->group(function(){
+        Route::post('/store-absences',  'store');
+    });
+});
+
+Route::prefix('analysis')->controller(StudentPerformanceAnalysisController::class)->group(function () {
+
+      Route::middleware(['auth:sanctum','role:Parent|Student'])->group(function(){
+
+        Route::get('quiz-mean/{curriculumId}',  'claculateMeanForQuiz');
+        Route::get('quiz-stddev/{curriculumId}',  'calculateStandardDeviationForQuiz');
+        Route::get('paper-mean/{curriculumId}', 'claculateMeanForPaperExam');
+        Route::get('paper-stddev/{curriculumId}', 'calculateStandardDeviationForPaperExam');
+        Route::get('combined-mean/{curriculumId}', 'calculateCombinedMean');
+        Route::get('combined-stddev/{curriculumId}', 'calculateCombinedStandardDeviation');
+        Route::get('quizzes/{curriculumId}', 'quizzes');
+        Route::get('total-mean/{courseId}', 'calculateTotalMean');
+    });
 });

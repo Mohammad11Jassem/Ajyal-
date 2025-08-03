@@ -22,5 +22,9 @@ class Registration extends Model
     public function Student(){
         return $this->belongsTo(Student::class);
     }
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
+    }
 
 }

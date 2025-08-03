@@ -6,6 +6,7 @@ use App\Http\Requests\Advertisement\AddAdvertisementRequest;
 use App\Http\Requests\Advertisement\UpdateAdvertisementRequest;
 use App\Models\Advertisement;
 use App\Services\AdvertisementService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,8 @@ class AdvertisementController extends Controller
      */
     public function store(AddAdvertisementRequest $addAdvertisementRequest)
     {
+
+
         $result=$this->advertisementService->createAdvertisement($addAdvertisementRequest->validated());
         if (!$result['success']) {
             return response()->json([

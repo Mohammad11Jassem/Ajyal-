@@ -62,7 +62,8 @@ class CourseController extends Controller
         if($courseDetails['succuss']){
             return $this->success('تم إضافة الكورس بنجاح',$courseDetails['data']);
         }
-        return $this->badRequest($courseDetails['message']);
+        // return $this->badRequest($courseDetails['message']);
+        return $this->badRequest('فشل انشاء الكورس');
     }
 
     public function show($id)
