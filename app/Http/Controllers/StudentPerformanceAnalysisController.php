@@ -55,4 +55,14 @@ class StudentPerformanceAnalysisController extends Controller
         return $this->success('المتوسط العام لكل الكورس ',$this->service->calculateTotalMean($courseId));
 
     }
+    public function calculateMean($curriculumId)
+    {
+        return $this->success('المتوسط للمادة ',$this->service->calculateMean($curriculumId));
+
+    }
+    public function calculateStddev($curriculumId)
+    {
+        return $this->success('الانحراف المعياري للمادة',$this->service->calculateStddev($curriculumId));
+
+    }
 }

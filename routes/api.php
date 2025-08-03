@@ -353,5 +353,7 @@ Route::prefix('analysis')->controller(StudentPerformanceAnalysisController::clas
         Route::get('combined-stddev/{curriculumId}', 'calculateCombinedStandardDeviation');
         Route::get('quizzes/{curriculumId}', 'quizzes');
         Route::get('total-mean/{courseId}', 'calculateTotalMean');
+        Route::get('mean/{curriculumId}', 'calculateMean');
+        Route::get('stddev/{curriculumId}', 'calculateStddev');
     });
 });

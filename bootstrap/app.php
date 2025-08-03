@@ -37,9 +37,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // $app->singleton(ExceptionHandler::class, Handler::class);
 
         // comment here
-        $exceptions->renderable(function (Throwable $e, $request) {
-            $handler = app(Handler::class);
-            return $handler->render($request, $e);
-        });
+        // $exceptions->renderable(function (Throwable $e, $request) {
+        //     $handler = app(Handler::class);
+        //     return $handler->render($request, $e);
+        // });
     })
     ->create();
