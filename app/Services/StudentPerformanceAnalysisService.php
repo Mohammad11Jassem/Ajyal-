@@ -74,9 +74,12 @@ class StudentPerformanceAnalysisService
             $sumOfSquares+=pow($exam['score']-$mean,2);
             $count++;
         }
-
+        $result=0;
+        if($count!=0) {
+           $result=round(sqrt($sumOfSquares / $count), 2);
+        }
         return [
-            'result'=>round(sqrt($sumOfSquares / $count), 2),
+            'result'=>$result,
         ];
     }
 
@@ -138,9 +141,12 @@ class StudentPerformanceAnalysisService
             $sumOfSquares+=pow($exam['score']-$mean,2);
             $count++;
         }
-
+        $result=0;
+        if($count!=0) {
+           $result=round(sqrt($sumOfSquares / $count), 2);
+        }
         return [
-            'result'=>round(sqrt($sumOfSquares / $count), 2),
+            'result'=>$result,
         ];
     }
 
@@ -185,7 +191,9 @@ class StudentPerformanceAnalysisService
         $paperCount = count($paperStats['exams']);
 
         if ($quizCount + $paperCount <= 1) {
-            return 0;
+            return [
+                'result'=>0,
+            ];
         }
 
         $meanQuiz = $quizStats['average_score'];
