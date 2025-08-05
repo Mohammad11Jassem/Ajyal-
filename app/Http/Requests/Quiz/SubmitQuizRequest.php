@@ -42,25 +42,25 @@ class SubmitQuizRequest extends FormRequest
             'answers.*.choice_id.exists' => 'A choice does not exist.',
         ];
     }
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $answers = $this->input('answers', []);
+    // public function withValidator($validator)
+    // {
+    //     $validator->after(function ($validator) {
+    //         $answers = $this->input('answers', []);
 
-            foreach ($answers as $index => $answer) {
-                $questionId = $answer['question_id'] ?? null;
-                $choiceId = $answer['choice_id'] ?? null;
+    //         foreach ($answers as $index => $answer) {
+    //             $questionId = $answer['question_id'] ?? null;
+    //             $choiceId = $answer['choice_id'] ?? null;
 
-                if ($questionId && $choiceId) {
-                    $isValid = Choice::where('id', $choiceId)
-                        ->where('question_id', $questionId)
-                        ->exists();
+    //             if ($questionId && $choiceId) {
+    //                 $isValid = Choice::where('id', $choiceId)
+    //                     ->where('question_id', $questionId)
+    //                     ->exists();
 
-                    if (! $isValid) {
-                        $validator->errors()->add("answers.$index.choice_id", "The selected choice does not belong to the given question.");
-                    }
-                }
-            }
-        });
-    }
+    //                 if (! $isValid) {
+    //                     $validator->errors()->add("answers.$index.choice_id", "The selected choice does not belong to the given question.");
+    //                 }
+    //             }
+    //         }
+    //     });
+    // }
 }
