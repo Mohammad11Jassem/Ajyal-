@@ -6,9 +6,11 @@ use App\Http\Requests\Advertisement\AddAdvertisementRequest;
 use App\Http\Requests\Advertisement\UpdateAdvertisementRequest;
 use App\Models\Advertisement;
 use App\Services\AdvertisementService;
+use App\Services\ImageService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Validator;
 
 class AdvertisementController extends Controller
 {
@@ -144,5 +146,28 @@ class AdvertisementController extends Controller
             'data' => $result['data']
         ], 200);
 
+    }
+
+
+    public function deleteImage(Request $request){
+        $validator = Validator::make($request->all(), [
+            'image_id'=>'required|exists:images,id'
+        ]);
+        if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+        ], 422);
+        }
+        $service=new ImageService;
+        $result=$service->deleteImage($request->image_id);
+        if (!$result['success']) {
+            return response()->json([
+                'message' => $result['message']
+            ], 422);
+        }
+        return response()->json([
+            'message' => $result['message']
+        ], 200);
     }
 }

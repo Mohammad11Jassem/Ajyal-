@@ -89,7 +89,7 @@ class AdvertisementService
 
 
         if (isset($data['images'])) {
-            $advertisement->images()->delete();
+            // $advertisement->images()->delete();
             foreach ($data['images'] as $newImage) {
                 if ($newImage->isValid()) {
                     $image=$advertisement->images()->create(['path' => '']);

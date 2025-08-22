@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\AddScheduleImageRequest;
 use App\Http\Requests\Course\GetAllStudentWithClassRequest;
 use App\Http\Requests\Course\RegisterStudentRequest;
 use App\Http\Requests\Course\SortStudentRequest;
@@ -127,7 +128,7 @@ class CourseController extends Controller
         $result = $this->courseService->registerStudent($registerStudentRequest->validated());
 
         if(!$result['success'])
-        return $this->error($result['error'], 500);
+        return $this->error($result['message'], 500);
 
         return $this->success($result['message']);
     }
@@ -199,5 +200,13 @@ class CourseController extends Controller
         return $this->success('كورسات هذا الطالب',$courses);
     }
 
+    public function studentCoursesWithDetails(){
+        $courses=$this->courseService->studentCoursesWithDetails();
+        return $this->success('تفاصيل كورسات هذا الطالب',$courses);
+    }
+    public function addScheduleToClassroom(AddScheduleImageRequest $addScheduleImageRequest){
+        $result=$this->courseService->addScheduleToClassroom($addScheduleImageRequest->validated());
+        return $this->success('تم إضافة البرنامج إلى الشعبة الصفية  ',$result['data']);
+    }
 
 }

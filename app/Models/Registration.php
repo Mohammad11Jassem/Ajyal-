@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,4 +28,7 @@ class Registration extends Model
         return $this->hasMany(Absence::class);
     }
 
+    public function sort(){
+        return $this->hasOne(SortStudent::class);
+    }
 }

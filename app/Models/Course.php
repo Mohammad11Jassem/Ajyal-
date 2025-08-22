@@ -58,4 +58,12 @@ class Course extends Model
     {
         return $this->hasMany(Registration::class );
     }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class );
+    }
+    public function classroomCourses()
+    {
+        return $this->hasMany(ClassroomCourse::class);
+    }
 }

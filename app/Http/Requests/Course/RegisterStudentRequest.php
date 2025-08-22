@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Course;
 
+use App\Models\Invoice;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,15 +31,23 @@ class RegisterStudentRequest extends FormRequest
                 Rule::unique('registrations')->where(function ($query) {
                 return $query->where('student_id', $this->student_id);
             }),],
-            'payment'=>['required','integer']
+            'invoice'=>['array'],
+            'invoice.*' => [ 'numeric','exists:invoices,id',
+                function ($attribute, $value, $fail) {
+                    $invoice = Invoice::find($value);
+                    if (!$invoice || $invoice->course_id != $this->course_id) {
+                        $fail('The selected invoice does not belong to the specified course.');
+                    }
+                }
+        ],
         ];
     }
     public function messages()
-{
-    return [
-        // 'course_id.unique' => 'This student is already registered in this course.',
-        'course_id.unique' => 'هذا الطالب مسجل بالفعل في هذه الدورة.',
-    ];
-}
+    {
+        return [
+            // 'course_id.unique' => 'This student is already registered in this course.',
+            'course_id.unique' => 'هذا الطالب مسجل بالفعل في هذه الدورة.',
+        ];
+    }
 
 }

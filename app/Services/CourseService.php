@@ -166,7 +166,6 @@ class CourseService
 
     }
 
-
     public function registerStudent(array $data){
         try{
             DB::beginTransaction();
@@ -176,24 +175,26 @@ class CourseService
                     'student_id' => $data['student_id']
                 ]);
 
-                $payment = Payment::create([
-                    'registration_id' => $registration->id,
-                    'price' => $data['payment']
-                ]);
-
+                if($data['invoice']!=null)
+                foreach($data['invoice'] as $invoice){
+                    Payment::create([
+                        'registration_id'=> $registration->id,
+                        'invoice_id'=>$invoice,
+                    ]);
+                }
                 DB::commit();
 
                 return [
                     'success'=>true,
-                    'message' => 'تم التسجيل والدفع بنجاح.',
+                    'message' => '.تم التسجيل والدفع بنجاح',
                 ];
             } catch (\Exception $e) {
                 DB::rollBack();
 
                 return [
                     'success'=>false,
-                    'error' => 'فشل التسجيل والدفع',
-                    'message' => $e->getMessage()
+                    'message' => 'فشل التسجيل والدفع',
+                    'error' => $e->getMessage()
                 ];
             }
 
@@ -236,6 +237,16 @@ class CourseService
                         'error' => 'فشل فرز الطلاب ',
                         'message' => 'عدد الطلاب أكبر من المتاح ضمن الصف'
                     ];
+                }
+                //change class
+                foreach($data['registration_id'] as $re){
+                    $sort_student=SortStudent::where('registration_id',$re)->first();
+                    if($sort_student){
+                    $old_classRoom=ClassroomCourse::where('id',$sort_student->classroom_course_id)->first();
+                    $old_classRoom->capacity++;
+                    $old_classRoom->save();
+                    $sort_student->delete();
+                    }
                 }
 
                 $classRoom->registrations()->attach($data['registration_id']);
@@ -316,4 +327,59 @@ class CourseService
         return $courses;
     }
 
+    public function studentCoursesWithDetails(){
+        $courses=Course::whereHas('registration',function($query){
+            $query->where('student_id',auth()->user()->user_data['role_data']['id']);
+        })->with(['classroomCourses' => function($query) {
+            $query->whereHas('sortStudents.registration', function($q) {
+                    $q->where('student_id', auth()->user()->user_data['role_data']['id']);
+                })
+                ->with(['image','classroom', 'sortStudents' => function($q) {
+                    $q->whereHas('registration', function($qr) {
+                        $qr->where('student_id', auth()->user()->user_data['role_data']['id']);
+                    });
+                }]);
+        }])
+        ->get();
+        return $courses;
+
+    }
+
+    public function addScheduleToClassroom(array $data)
+    {
+        $classRoomCourse = ClassroomCourse::findOrFail($data['classroom_course_id']);
+
+        // Check if schedule file exists in the data array
+        if (isset($data['schedule']) && $data['schedule']->isValid()) {
+            $imageFile = $data['schedule'];
+
+            // Create the image record first
+            $image = $classRoomCourse->image()->create([
+                'path' => '' // Temporary empty path
+            ]);
+
+            // Generate unique image name
+            $imageName = time() . $image->id . '.' . $imageFile->getClientOriginalExtension();
+
+            // Move the file to the desired location
+            $imageFile->move(public_path('schedule'), $imageName);
+
+            // Update the image record with the correct path
+            $imagePath = 'schedule/' . $imageName;
+            $image->update(['path' => $imagePath]);
+
+            // Reload the relationship to get updated data
+            $classRoomCourse->load('image');
+
+            return [
+                'success' => true,
+                'data' => $classRoomCourse->image,
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'No valid schedule file provided',
+        ];
+    }
 }

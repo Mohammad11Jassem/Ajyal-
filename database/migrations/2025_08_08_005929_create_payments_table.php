@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('registration_id')->constrained()->onDelete('cascade');
-            $table->decimal('price');
+            $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
+            $table->dateTime('payment_date')->useCurrent();
             $table->timestamps();
         });
     }
