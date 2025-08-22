@@ -8,6 +8,7 @@ use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CourseController;
 
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
@@ -15,6 +16,8 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PaperExamController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\StudentPerformanceAnalysisController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
@@ -90,6 +93,7 @@ Route::middleware('throttle:api')->group(function () {
             Route::middleware(['auth:sanctum','role:Parent'])->group(function(){
 
                 Route::get('/profile', 'profile');
+                Route::get('/parent-students', 'parentStudent');
 
             });
         });
@@ -252,6 +256,8 @@ Route::middleware('throttle:api')->group(function () {
                 Route::get('/my_solved_quiz_details/{id}',  'mySolvedQuizDetails')->middleware('role:Student');
                 Route::post('/delete',  'delete')->middleware('role:Teacher');
                 Route::post('/change_available',  'changeState')->middleware('role:Teacher');
+                Route::get('/get-all-course-quiz/{courseId}',  'getAllCourseQuiz')->middleware('role:Teacher|Manager|Secretariat');
+                Route::get('/get-quiz-result/{quizId}',  'getQuizResult')->middleware('role:Teacher|Manager|Secretariat');
 
             });
             // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
@@ -280,6 +286,7 @@ Route::middleware('throttle:api')->group(function () {
 
             Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->group(function(){
                 Route::post('/store-absences',  'store');
+                Route::get('/today-absence/{courseId}',  'todayAbsence');
             });
         });
 
@@ -300,4 +307,19 @@ Route::middleware('throttle:api')->group(function () {
             });
         });
 
+        Route::prefix('issue')->group(function () {
+            Route::post('/add-issue', [IssueController::class, 'addIssue']);
+            Route::get('get-is-fqa-issues/{id}', [IssueController::class, 'getIsFqaIssue']);
+            Route::get('get-normal-issues/{id}', [IssueController::class, 'getNormalIssue']);
+            Route::post('change-issue-status/{id}', [IssueController::class, 'changeIssueStatus']);
+            Route::post('delete-issue/{id}', [IssueController::class, 'destroy'])->middleware('auth:sanctum');
+        });
+
+        Route::prefix('reply')->group(function () {
+            Route::post('add-reply', [ReplyController::class, 'addReply'])->middleware('auth:sanctum');
+            Route::delete('/{id}', [ReplyController::class, 'destroy']);
+        });
 });
+
+
+Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');

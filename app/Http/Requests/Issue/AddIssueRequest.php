@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Absence;
+namespace App\Http\Requests\Issue;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAbsenceRequest extends FormRequest
+class AddIssueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class StoreAbsenceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'absence_date' => 'required|date',
-            'classroom_course_id' => 'required|exists:classroom_courses,id',
-            'registration_ids' => 'required|array',
-            'registration_ids.*' => 'exists:registrations,id',
+            'community_id' => 'required|exists:communities,id',
+            'body' => 'required|string',
+            'is_fqa' => 'boolean'
         ];
     }
 }
