@@ -26,7 +26,7 @@ class StoreStudentRequest extends FormRequest
         return [
             'first_name'        => 'required|string',
             'last_name'         => 'required|string',
-            'number_civial'     => 'required|string',
+            'number_civial'     => 'required|numeric',
             'address'           => 'required|string',
             'birthdate'         =>'date',
             'class_level'       =>Rule::enum(SubjectType::class),

@@ -7,6 +7,7 @@ use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CourseController;
 
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
@@ -17,6 +18,7 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
+use App\Models\ClassroomCourse;
 use App\Models\Curriculum;
 use App\Models\CurriculumFile;
 use App\Models\Student;
@@ -82,6 +84,7 @@ Route::prefix('student')->group(function () {
         });
         Route::middleware(['auth:sanctum','role:Student'])->controller(CourseController::class)->group(function () {
             Route::get('my-courses','studentCourses');
+            Route::get('my-courses-with-details','studentCoursesWithDetails');
         });
 
 
@@ -269,6 +272,8 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
         Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
         Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
         Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
+        Route::post('/add-schedule-to-classroom-at-course', 'addScheduleToClassroom');
+
 
             Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
             Route::get('/get-files/{curriculumId}', 'getFiles');
@@ -317,14 +322,30 @@ Route::prefix('question')->controller(QuestionController::class)->group(function
     Route::get('/show/{questionID}',  'show');
 });
 
+
+
+//invoices
+Route::prefix('invoice')->controller(InvoiceController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::post('/addInvoice','store');
+        Route::get('/allInvoices/{courseID}','show')->middleware('role:Manager');
+    });
+
+});
+
+//Image
+Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->middleware(['auth:sanctum','role:Manager|Secretariat']);
+
 // Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);
 // Route::post('import-excel',[ExcelController::class,'importExcel']);
 
 // Route::post('store-paperExam',[PaperExamController::class,'store']);
 
 Route::get('testapi',function(){
-    $data=User::paginate(3);
-    return response()->json([
-        'data'=>$data
-    ]);
+    // $data=User::paginate(3);
+    // return response()->json([
+    //     'data'=>$data
+    // ]);
+ $classroomCourse = ClassroomCourse::with('image')->where('id',1)->first();
+    return response()->json(["data"=> $classroomCourse]);
 });
