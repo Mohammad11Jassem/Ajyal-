@@ -346,6 +346,4 @@ Route::get('testapi',function(){
     // return response()->json([
     //     'data'=>$data
     // ]);
- $classroomCourse = ClassroomCourse::with('image')->where('id',1)->first();
-    return response()->json(["data"=> $classroomCourse]);
 });

@@ -32,6 +32,8 @@ class StudentsExport implements FromCollection , WithHeadings , ShouldAutoSize, 
         //         $query->where('course_id', $classroomCourseId);
         //     })
         //     ->get();
+
+        //
           return Student::whereHas('courses', function($query) use($courseId){
                     $query->where('courses.id',$courseId);
             })->whereHas('courses.classroomCourse.sortStudents', function ($query) use ($classroomCourseId) {
@@ -44,7 +46,7 @@ class StudentsExport implements FromCollection , WithHeadings , ShouldAutoSize, 
                             'student_number' =>$student->student_Id_number,
                             'student_name' =>"$student->first_name"." $student->last_name" ,
                             'father_name' => $student->father_name,
-                            'mark' => '', 
+                            'mark' => '',
                         ];
                     });
     }

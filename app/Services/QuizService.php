@@ -138,18 +138,18 @@ class QuizService
                 ->first();
 
             if (!$studentQuiz) {
-                throw new \Exception('Student quiz not started');
+                throw new Exception('Student quiz not started');
             }
 
-            if ($studentQuiz->is_submit) {
-                throw new \Exception('Quiz already submitted');
+            if ($studentQuiz->is_submit && $studentQuiz->result) {
+                throw new Exception('Quiz already submitted');
             }
 
             $totalScore = 0;
 
             foreach ($data['answers'] as $answer) {
                 $question = Question::find($answer['question_id']);
-                $choice = Choice::find($answer['choice_id'])??null;
+                $choice = Choice::find($answer['choice_id']??null);
 
                 // Throw exception if question or choice not found
                 // if (!$question || !$choice) {
@@ -172,7 +172,7 @@ class QuizService
                     $totalScore += $question->mark;
                 }
             }
-
+            // try & catch
             $studentQuiz->update([
                 'result' => $totalScore,
                 'is_submit' => true,
