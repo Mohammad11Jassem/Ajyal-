@@ -138,4 +138,15 @@ class QuizController extends Controller
         }
         return $this->success('تم تغيير حالة الاختبار',$result['data']);
     }
+
+    public function getAllCourseQuiz($courseId)
+    {
+        $result=$this->quizService->getAllCourseQuiz($courseId);
+        return $this->success('الإمتحانات وتفاصيلها',$result);
+    }
+    public function getQuizResult($quizId)
+    {
+        $result=$this->quizService->getQuizResult($quizId);
+        return $this->success('تفاصيل الامتحان مع الطلاب',$result);
+    }
 }

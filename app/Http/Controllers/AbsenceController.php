@@ -24,5 +24,13 @@ class AbsenceController extends Controller
 
         return $this->success('تم تسجيل الغياب بنجاح',$createdAbsences);
     }
+    public function todayAbsence($courseId)
+    {
+
+        $todayAbsences = $this->absenceService->todayAbsence($courseId);
+
+        return $this->success('شعب الغياب',$todayAbsences);
+    }
+
 
 }

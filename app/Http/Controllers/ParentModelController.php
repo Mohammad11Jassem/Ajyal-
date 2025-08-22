@@ -51,4 +51,9 @@ class ParentModelController extends Controller
       public function profile(){
         return auth()->user()->user_data;
       }
+
+    public function parentStudent(){
+        $studnets=$this->parentService->parentStudent();
+        return $this->success('طلابي',$studnets);
+    }
 }

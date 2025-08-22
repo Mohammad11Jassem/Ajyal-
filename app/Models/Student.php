@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\DB;
 
 class Student extends Model
@@ -76,10 +77,10 @@ class Student extends Model
                     ->withPivot('mark');
                     // ->withTimestamps();
     }
-    public function scopePaperExamForSubject($query,$id)
+    public function scopePaperExamForSubject($query,$curriculumId)
     {
-        return $query->with('paperExams',function($q) use($id){
-            $q->where('curriculum_id',$id)->orderBy('exam_date', 'asc');
+        return $query->with('paperExams',function($q) use($curriculumId){
+            $q->where('curriculum_id',$curriculumId)->orderBy('exam_date', 'asc');
         });
     }
 
@@ -110,5 +111,14 @@ class Student extends Model
         return $this->hasManyThrough(Absence::class, Registration::class);
     }
 
+    public function issues(): MorphMany
+    {
+        return $this->morphMany(Issue::class, 'author');
+    }
+
+    public function replies(): MorphMany
+    {
+        return $this->morphMany(Reply::class, 'author');
+    }
 
 }

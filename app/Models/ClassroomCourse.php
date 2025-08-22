@@ -25,8 +25,15 @@ class ClassroomCourse extends Model
     public function sortStudents(){
         return $this->hasMany(SortStudent::class,'classroom_course_id');
     }
+
+
+    public function absenceDates()
+    {
+        return $this->hasMany(AbsenceDate::class);
+
     public function image()
     {
         return $this->morphOne(Image::class, 'imageable');
+
     }
 }

@@ -22,7 +22,7 @@ class StudentPerformanceAnalysisService
         // $totalQuizzes2 = 0;
         $totalQuizzes = Quiz::whereHas('curriculumTeacher',function($query) use($curriculumId){
                 $query->where('curriculum_id',$curriculumId);
-        })->get()->count();;
+        })->get()->count();
 
         foreach ($quizzes as $studentQuiz) {
             if($studentQuiz->result){

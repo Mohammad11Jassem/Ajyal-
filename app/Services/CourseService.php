@@ -155,7 +155,9 @@ class CourseService
                             ->get()
                             ->map(function ($classRoomCourse) {
                                 return [
-                                    'id' => $classRoomCourse->classRoom->id,
+                                    // 'id' => $classRoomCourse->classRoom->id,
+                                    'id' => $classRoomCourse->id,
+                                    // 'classRoomCourse_id' => $classRoomCourse->id,
                                     'class_number' => $classRoomCourse->classRoom->class_number,
                                     'capacity'=>$classRoomCourse->classRoom->capacity,
                                     'remaining_capacity'=>$classRoomCourse->capacity,
@@ -209,6 +211,10 @@ class CourseService
 
     public function curriculumsCourse($courseId){
         // return Course::with('subjects')->findOrFail($courseId);
+        if(auth()->user()->hasAnyRole('Teacher|Manager|Secretariat')){
+            return Course::with('curriculums.subject','curriculums.teachers')->findOrFail($courseId);
+
+        }
         return Course::with('curriculums.subject')->findOrFail($courseId);
     }
 

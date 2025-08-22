@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Teacher extends Model
 {
@@ -35,5 +36,15 @@ class Teacher extends Model
     public function curriculums()
     {
         return $this->belongsToMany(Curriculum::class, 'curriculum_teachers');
+    }
+
+    public function issues(): MorphMany
+    {
+        return $this->morphMany(Issue::class, 'author');
+    }
+
+    public function replies(): MorphMany
+    {
+        return $this->morphMany(Reply::class, 'author');
     }
 }

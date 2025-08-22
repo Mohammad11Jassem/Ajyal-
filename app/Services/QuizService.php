@@ -7,6 +7,7 @@ use App\Http\Resources\QuizResource;
 use App\Http\Resources\QuizWithoutQustionsResource;
 use App\Http\Resources\SolvedQuizResource;
 use App\Models\Choice;
+use App\Models\Course;
 use App\Models\CurriculumTeacher;
 use App\Models\Question;
 use App\Models\Quiz;
@@ -302,5 +303,71 @@ class QuizService
                 'data'=>$quiz
             ];
         }
+    }
+
+    public function getAllCourseQuiz($courseId)
+    {
+       $quizzes= Quiz::whereHas('curriculumTeacher.curriculum.course', function($q)use($courseId) {
+                    $q->where('id', $courseId);
+                })->with('studentQuizzes')
+                ->withCount('markedQuestions')
+                ->get();
+
+        $withResults = [];
+        $withoutResults = [];
+        foreach ($quizzes as $quiz) {
+            $mean = 0;
+            $studentQuizzesCount=$quiz->studentQuizzes->count();
+            if ($studentQuizzesCount > 0) {
+                // $mean = $quiz->studentQuizzes->avg('result');
+                $meanSum=0;
+                foreach ($quiz->studentQuizzes as $studentQuiz) {
+                    $meanSum+=$this->getTheMarkByPercentage($quiz['marked_questions_count'],$studentQuiz['result']);
+                }
+                $withResults[] = [
+                    'id' => $quiz->id,
+                    'curriculum_teacher_id'=>$quiz->curriculum_teacher_id,
+                    'topic_id'=>$quiz->topic_id,
+                    'curriculum_id'=>$quiz->curriculum_id,
+                    'name' => $quiz->name,
+                    'type' => $quiz->type,
+                    'available' => $quiz->available,
+                    'start_time' => $quiz->start_time,
+                    'duration' => $quiz->duration,
+                    'mean_result' => round($meanSum/$studentQuizzesCount, 2),
+                ];
+            } else {
+                $withoutResults[] = [
+                    'id' => $quiz->id,
+                    'curriculum_teacher_id'=>$quiz->curriculum_teacher_id,
+                    'topic_id'=>$quiz->topic_id,
+                    'curriculum_id'=>$quiz->curriculum_id,
+                    'name' => $quiz->name,
+                    'type' => $quiz->type,
+                    'available' => $quiz->available,
+                    'start_time' => $quiz->start_time,
+                    'duration' => $quiz->duration,
+                    'mean_result' => 0,
+                ];
+            }
+        }
+
+       return [
+            'with_results' => $withResults,
+            'without_results' => $withoutResults,
+       ];
+
+    }
+
+    private function getTheMarkByPercentage($maxMark,$studentMark)
+    {
+        // if($questionNumber==0)$questionNumber=1;
+        return 100*($studentMark/$maxMark);
+    }
+
+    public function getQuizResult($quizId)
+    {
+        $quiz=Quiz::with('studentQuizzes.student')->findOrFail($quizId);
+        return $quiz;
     }
 }

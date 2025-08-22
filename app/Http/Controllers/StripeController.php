@@ -39,10 +39,10 @@ class StripeController extends Controller
             ],
         ]);
 
-        return redirect($response->url);
-        // return response()->json([
-        //     'checkout_url' => $response->url,
-        // ]);
+        // return redirect($response->url);
+        return response()->json([
+            'checkout_url' => $response->url,
+        ]);
     }
 
     public function success(Request $request)
@@ -57,11 +57,13 @@ class StripeController extends Controller
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
         $session = $stripe->checkout->sessions->retrieve($sessionId);
 
-        return [
-            'status'=>$session->payment_status,
-             'orderId' => $session->metadata->order_id,
-             'userId' => $session->metadata->user_id,
-        ];
+        // return [
+        //     'status'=>$session->payment_status,
+        //      'orderId' => $session->metadata->order_id,
+        //      'userId' => $session->metadata->user_id,
+        // ];
+
+        return view('test');
 
 
     }

@@ -3,20 +3,57 @@
 namespace App\Services;
 
 use App\Models\Absence;
+use App\Models\AbsenceDate;
+use App\Models\ClassroomCourse;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AbsenceService
 {
     public function store($data)
     {
-        $absences = [];
-
-        foreach ($data['registration_ids'] as $registrationId) {
-            $absences[] = Absence::create([
-                'absences_date' => $data['absences_date'],
-                'registration_id' => $registrationId,
+       return DB::transaction(function() use($data){
+            $absenceDate=AbsenceDate::create([
+                'classroom_course_id'=>$data['classroom_course_id'],
+                'absence_date'=>$data['absence_date'],
             ]);
-        }
+            $absences = [];
 
-        return $absences;
+            foreach ($data['registration_ids'] as $registrationId) {
+                $absences[] = Absence::create([
+                    'absence_date_id' => $absenceDate->id,
+                    'registration_id' => $registrationId,
+                ]);
+            }
+
+            return $absences;
+        });
+    }
+
+    public function todayAbsence($courseId)
+    {
+        return DB::transaction(function() use($courseId){
+
+            $today = Carbon::today()->toDateString();
+            $classroomsWithAbsence = ClassroomCourse::where('course_id', $courseId)
+                    ->whereHas('absenceDates', function($query) use ($today) {
+                        $query->where('absence_date', $today);
+                    })
+                    ->with('classRoom')
+                    ->get();
+
+            // Classrooms that did NOT take absence today
+            $classroomsWithoutAbsence = ClassroomCourse::where('course_id', $courseId)
+                ->whereDoesntHave('absenceDates', function($query) use ($today) {
+                    $query->where('absence_date', $today);
+                })->with('classRoom')
+                ->get();
+
+            return [
+                'classrooms_with_absence'=>$classroomsWithAbsence,
+                'classrooms_without_absence'=>$classroomsWithoutAbsence
+            ];
+        });
+
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ParentModel;
 use App\Models\User;
+use Dom\ParentNode;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -40,13 +41,13 @@ class ParentService
                         return $linkData['success'];
                     }
 
-                    
+
                     $token = $user->createToken('token')->plainTextToken;
                     // dd($linkData);
 
                 return [
                     'success'=>true,
-                    'parent'=>$parent,
+                    'parent'=>ParentModel::where('id',$parent->id)->with('students')->first(),
                     'token'=>$token,
                     // 'linkData'=>$linkData
                 ];
@@ -78,5 +79,10 @@ class ParentService
             'parent' => $user->user_data['role_data'],
             'token' => $token,
         ];
+    }
+
+    public function parentStudent(){
+        $parent=ParentModel::where('id',auth()->user()->user_data['role_data']['id'])->first();
+        return $parent->students;
     }
 }
