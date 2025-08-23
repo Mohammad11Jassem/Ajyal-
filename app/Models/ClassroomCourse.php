@@ -30,6 +30,7 @@ class ClassroomCourse extends Model
     public function absenceDates()
     {
         return $this->hasMany(AbsenceDate::class);
+    }
 
     public function image()
     {

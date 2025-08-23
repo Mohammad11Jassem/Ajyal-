@@ -2,6 +2,7 @@
 
 
 use App\Exports\StudentsExport;
+use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CourseController;
@@ -102,20 +103,19 @@ Route::prefix('student')->group(function () {
 
 Route::prefix('parent')->controller(ParentModelController::class)->group(function () {
     Route::post('/register', 'registerParent');
+
     Route::post('/login', 'loginParent');
     Route::middleware(['auth:sanctum','role:Parent'])->group(function(){
 
         Route::get('/profile', 'profile');
+        Route::get('/parent-students', 'parentStudent');
+
+
 
     });
 });
 
 
-
-
-
-                Route::get('/profile', 'profile');
-                Route::get('/parent-students', 'parentStudent');
 
 // Admin/Manager Routes
 Route::prefix('admin')->group(function () {
@@ -272,21 +272,21 @@ Route::prefix('advertisement')->group(function () {
 //course
 Route::prefix('course')->controller(CourseController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function(){
-        Route::post('registerAtCourse','registerAtCourse');
-        Route::post('sortStudent','sortStudent');
-        Route::get('AllStudent/{course_id}','AllStudent');
-        Route::post('AllStudentAtClass','AllStudentAtClass');
+            Route::post('registerAtCourse','registerAtCourse');
+            Route::post('sortStudent','sortStudent');
+            Route::get('AllStudent/{course_id}','AllStudent');
+            Route::post('AllStudentAtClass','AllStudentAtClass');
 
-        Route::post('/create', 'store')->middleware('role:Secretariat|Manager');
-        Route::post('/delete/{id}', 'delete')->middleware('role:Secretariat|Manager');
-        // Route::post('/update/{id}', 'update');
-        Route::get('/show/{id}', 'show');
-        // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
-        Route::get('/all-courses', 'AllCourses');
-        Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
-        Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
-        Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
-        Route::post('/add-schedule-to-classroom-at-course', 'addScheduleToClassroom');
+            Route::post('/create', 'store')->middleware('role:Secretariat|Manager');
+            Route::post('/delete/{id}', 'delete')->middleware('role:Secretariat|Manager');
+            // Route::post('/update/{id}', 'update');
+            Route::get('/show/{id}', 'show');
+            // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
+            Route::get('/all-courses', 'AllCourses');
+            Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
+            Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
+            Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
+            Route::post('/add-schedule-to-classroom-at-course', 'addScheduleToClassroom');
 
 
             Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
@@ -294,58 +294,38 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
             Route::get('/show-file/{fileId}', 'showFile');
             Route::post('/store-file', 'storeFile');
 
-        Route::prefix('excel')->controller(ExcelController::class)->group(function () {
-             Route::post('download-excel','downloadStudentsExcel')->middleware('role:Secretariat|Manager');
-        });
-
-        Route::prefix('quiz')->controller(QuizController::class)->group(function () {
-
-            Route::middleware(['auth:sanctum'])->group(function(){
-                Route::post('/create',  'store')->middleware('role:Teacher');
-                Route::post('/update',  'update')->middleware('role:Teacher');
-                Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
-                Route::get('/all_questions/{quizID}',  'getAllQuestions');
-                Route::post('/enter/{quizID}',  'enterQuiz')->middleware('role:Student');
-                Route::post('/submit',  'submitAnswers')->middleware('role:Student');
-                Route::get('/my_solved_quizzes/{id}',  'mySolvedQuizzes')->middleware('role:Student');
-                Route::get('/my_solved_quiz_details/{id}',  'mySolvedQuizDetails')->middleware('role:Student');
-                Route::post('/delete',  'delete')->middleware('role:Teacher');
-                Route::post('/change_available',  'changeState')->middleware('role:Teacher');
-                Route::get('/get-all-course-quiz/{courseId}',  'getAllCourseQuiz')->middleware('role:Teacher|Manager|Secretariat');
-                Route::get('/get-quiz-result/{quizId}',  'getQuizResult')->middleware('role:Teacher|Manager|Secretariat');
-
+            Route::prefix('excel')->controller(ExcelController::class)->group(function () {
+                Route::post('download-excel','downloadStudentsExcel')->middleware('role:Secretariat|Manager');
             });
-            // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
+            Route::post('store-paperExam',[PaperExamController::class,'store'])->middleware('role:Secretariat|Manager');
         });
+    });
+    Route::prefix('quiz')->controller(QuizController::class)->group(function () {
 
-        Route::post('store-paperExam',[PaperExamController::class,'store'])->middleware('role:Secretariat|Manager');
+        Route::middleware(['auth:sanctum'])->group(function(){
+            Route::post('/create',  'store')->middleware('role:Teacher');
+            Route::post('/update',  'update')->middleware('role:Teacher');
+            Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
+            Route::get('/all_questions/{quizID}',  'getAllQuestions');
+            Route::post('/enter/{quizID}',  'enterQuiz')->middleware('role:Student');
+            Route::post('/submit',  'submitAnswers')->middleware('role:Student');
+            Route::get('/my_solved_quizzes/{id}',  'mySolvedQuizzes')->middleware('role:Student');
+            Route::get('/my_solved_quiz_details/{id}',  'mySolvedQuizDetails')->middleware('role:Student');
+            Route::post('/delete',  'delete')->middleware('role:Teacher');
+            Route::post('/change_available',  'changeState')->middleware('role:Teacher');
+            Route::get('get-all-course-quiz/{courseId}',  'getAllCourseQuiz')->middleware('role:Teacher|Manager|Secretariat');
+            Route::get('/get-quiz-result/{quizId}',  'getQuizResult')->middleware('role:Teacher|Manager|Secretariat');
+
+        });
+        // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
     });
 
-
-});
 
 Route::prefix('classroom')->controller(ClassroomController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('all-classrooms','getClasses');
     });
 
-});
-Route::prefix('quiz')->controller(QuizController::class)->group(function () {
-
-    Route::middleware(['auth:sanctum'])->group(function(){
-        Route::post('/create',  'store')->middleware('role:Teacher');
-        Route::post('/update',  'update')->middleware('role:Teacher');
-        Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
-        Route::get('/all_questions/{quizID}',  'getAllQuestions');
-        Route::post('/enter/{quizID}',  'enterQuiz')->middleware('role:Student');
-        Route::post('/submit',  'submitAnswers')->middleware('role:Student');
-        Route::get('/my_solved_quizzes/{id}',  'mySolvedQuizzes')->middleware('role:Student');
-        Route::get('/my_solved_quiz_details/{id}',  'mySolvedQuizDetails')->middleware('role:Student');
-        Route::post('/delete',  'delete')->middleware('role:Teacher');
-        Route::post('/change_available',  'changeState')->middleware('role:Teacher');
-
-    });
-    // Route::get('/all_quizzes_for_curriculum/{id}',  'getAllQuizzesForSubject');
 });
 
 Route::prefix('question')->controller(QuestionController::class)->group(function () {
@@ -369,6 +349,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
 
 });
 
+        Route::prefix('absence')->controller(AbsenceController::class)->group(function () {
 
             Route::middleware(['auth:sanctum','role:Secretariat|Manager'])->group(function(){
                 Route::post('/store-absences',  'store');
