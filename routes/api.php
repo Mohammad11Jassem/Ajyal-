@@ -357,6 +357,24 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
             });
         });
 
+
+    Route::prefix('analysis')->controller(StudentPerformanceAnalysisController::class)->group(function () {
+
+                Route::middleware(['auth:sanctum','role:Parent|Student'])->group(function(){
+
+                    Route::get('quiz-mean/{curriculumId}',  'claculateMeanForQuiz');
+                    Route::get('quiz-stddev/{curriculumId}',  'calculateStandardDeviationForQuiz');
+                    Route::get('paper-mean/{curriculumId}', 'claculateMeanForPaperExam');
+                    Route::get('paper-stddev/{curriculumId}', 'calculateStandardDeviationForPaperExam');
+                    Route::get('combined-mean/{curriculumId}', 'calculateCombinedMean');
+                    Route::get('combined-stddev/{curriculumId}', 'calculateCombinedStandardDeviation');
+                    Route::get('quizzes/{curriculumId}', 'quizzes');
+                    Route::get('total-mean/{courseId}', 'calculateTotalMean');
+                    Route::get('mean/{curriculumId}', 'calculateMean');
+                    Route::get('stddev/{curriculumId}', 'calculateStddev');
+                });
+            });
+
 //Image
 Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->middleware(['auth:sanctum','role:Manager|Secretariat']);
 
