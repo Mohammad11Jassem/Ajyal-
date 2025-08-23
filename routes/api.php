@@ -368,10 +368,15 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
                     Route::get('paper-stddev/{curriculumId}', 'calculateStandardDeviationForPaperExam');
                     Route::get('combined-mean/{curriculumId}', 'calculateCombinedMean');
                     Route::get('combined-stddev/{curriculumId}', 'calculateCombinedStandardDeviation');
+
                     Route::get('quizzes/{curriculumId}', 'quizzes');
                     Route::get('total-mean/{courseId}', 'calculateTotalMean');
                     Route::get('mean/{curriculumId}', 'calculateMean');
                     Route::get('stddev/{curriculumId}', 'calculateStddev');
+
+                    Route::get('student/{studentId}/curriculum/{curriculumId}', 'quizzesType');
+                    Route::get('student/{studentId}/subjects-mean/{courseId}', 'SubjectsMean');
+                    Route::get('student/{studentId}/total-mean/{courseId}', 'calculateTotalMeanForParent');
                 });
             });
 

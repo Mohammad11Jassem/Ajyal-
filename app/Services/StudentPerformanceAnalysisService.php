@@ -10,10 +10,10 @@ use App\Models\Student;
 
 class StudentPerformanceAnalysisService
 {
-    public function claculateMeanForQuiz($curriculumId)
+    public function claculateMeanForQuiz($curriculumId, $studentID)
     {
         // $curriculumId=1;
-        $studentID=auth()->user()->user_data['role_data']['id'];
+        // $studentID=auth()->user()->user_data['role_data']['id'];
         $student = Student::studentQuizzesForSubject($curriculumId)->find($studentID);
 
         $quizzes = $student->studentQuizzes;
@@ -61,10 +61,10 @@ class StudentPerformanceAnalysisService
         return 100*($studentMark/$maxMark);
     }
 
-    public function calculateStandardDeviationForQuiz($curriculumId)
+    public function calculateStandardDeviationForQuiz($curriculumId,$studentID)
     {
 
-        $dataMean=$this->claculateMeanForQuiz($curriculumId);
+        $dataMean=$this->claculateMeanForQuiz($curriculumId,$studentID);
         $mean=$dataMean['average_score'];
 
 
@@ -86,10 +86,10 @@ class StudentPerformanceAnalysisService
 
 
     // paper Exam
-    public function claculateMeanForPaperExam($curriculumId)
+    public function claculateMeanForPaperExam($curriculumId,$studentID)
     {
         // $curriculumId=1;
-        $studentID=auth()->user()->user_data['role_data']['id'];
+        // $studentID=auth()->user()->user_data['role_data']['id'];
         $student = Student::paperExamForSubject($curriculumId)->find($studentID);
 
         $quizzes = $student->paperExams;
@@ -129,10 +129,10 @@ class StudentPerformanceAnalysisService
         ];
     }
 
-    public function calculateStandardDeviationForPaperExam($curriculumId)
+    public function calculateStandardDeviationForPaperExam($curriculumId,$studentID)
     {
 
-        $dataMean=$this->claculateMeanForPaperExam($curriculumId);
+        $dataMean=$this->claculateMeanForPaperExam($curriculumId,$studentID);
         $mean=$dataMean['average_score'];
 
 
@@ -152,10 +152,10 @@ class StudentPerformanceAnalysisService
     }
 
 
-    public function calculateCombinedMean($curriculumId)
+    public function calculateCombinedMean($curriculumId,$studentID)
     {
-        $quizStats = $this->claculateMeanForQuiz($curriculumId);
-        $paperStats = $this->claculateMeanForPaperExam($curriculumId);
+        $quizStats = $this->claculateMeanForQuiz($curriculumId,$studentID);
+        $paperStats = $this->claculateMeanForPaperExam($curriculumId,$studentID);
 
         // $quizCount = count($quizStats['exams']);
         $quizCount = $quizStats['total_quizzes'];
@@ -183,10 +183,10 @@ class StudentPerformanceAnalysisService
         ];
     }
 
-    public function calculateCombinedStandardDeviation($curriculumId)
+    public function calculateCombinedStandardDeviation($curriculumId,$studentID)
     {
-        $quizStats = $this->claculateMeanForQuiz($curriculumId);
-        $paperStats = $this->claculateMeanForPaperExam($curriculumId);
+        $quizStats = $this->claculateMeanForQuiz($curriculumId,$studentID);
+        $paperStats = $this->claculateMeanForPaperExam($curriculumId,$studentID);
 
         $quizCount = count($quizStats['exams']);
         $paperCount = count($paperStats['exams']);
@@ -200,8 +200,8 @@ class StudentPerformanceAnalysisService
         $meanQuiz = $quizStats['average_score'];
         $meanPaper = $paperStats['average_score'];
 
-        $stdQuiz = $this->calculateStandardDeviationForQuiz($curriculumId)['result'];
-        $stdPaper = $this->calculateStandardDeviationForPaperExam($curriculumId)['result'];
+        $stdQuiz = $this->calculateStandardDeviationForQuiz($curriculumId,$studentID)['result'];
+        $stdPaper = $this->calculateStandardDeviationForPaperExam($curriculumId,$studentID)['result'];
 
         $combinedVarianceDenominator =
             (($quizCount - 1) * pow($stdQuiz, 2)) +
@@ -219,10 +219,10 @@ class StudentPerformanceAnalysisService
         ];
     }
 
-    public function quizzes($curriculumId)
+    public function quizzes($curriculumId,$studentID)
     {
 
-        $studentID=auth()->user()->user_data['role_data']['id'];
+        // $studentID=auth()->user()->user_data['role_data']['id'];
         $studentPaper = Student::paperExamForSubject($curriculumId)->find($studentID);
         $studentExams=$studentPaper->paperExams->map(function ($studentExam) {
                 return [
@@ -264,13 +264,13 @@ class StudentPerformanceAnalysisService
 
     }
 
-    public function calculateTotalMean($courseId)
+    public function calculateTotalMean($courseId,$studentID)
     {
         $means=[];
         $subjects=Course::findOrFail($courseId)->curriculums;
         // return $subjects;
         foreach($subjects as $subject){
-            $means[]=$this->calculateCombinedMean($subject->id)['result'];
+            $means[]=$this->calculateCombinedMean($subject->id,$studentID)['result'];
         }
 
         $meanSum=0;
@@ -283,11 +283,11 @@ class StudentPerformanceAnalysisService
             'result'=>round($this->getTheMarkByPercentage(100,$meanSum/$subjectCount),2),
         ];
     }
-    public function calculateMean($curriculumId)
+    public function calculateMean($curriculumId,$studentID)
     {
-       $quizMean=$this->claculateMeanForQuiz($curriculumId);
-       $paperMean=$this->claculateMeanForPaperExam($curriculumId);
-       $totalMean=$this->calculateCombinedMean($curriculumId);
+       $quizMean=$this->claculateMeanForQuiz($curriculumId,$studentID);
+       $paperMean=$this->claculateMeanForPaperExam($curriculumId,$studentID);
+       $totalMean=$this->calculateCombinedMean($curriculumId,$studentID);
 
        return [
             // 'paper_exam'=>$paperMean,
@@ -303,17 +303,43 @@ class StudentPerformanceAnalysisService
             'both'=>$totalMean,
        ];
     }
-    public function calculateStddev($curriculumId)
+    public function calculateStddev($curriculumId,$studentID)
     {
-       $quizStddev=$this->calculateStandardDeviationForQuiz($curriculumId);
-       $paperStddev=$this->calculateStandardDeviationForPaperExam($curriculumId);
-       $totalStddev=$this->calculateCombinedStandardDeviation($curriculumId);
+       $quizStddev=$this->calculateStandardDeviationForQuiz($curriculumId,$studentID);
+       $paperStddev=$this->calculateStandardDeviationForPaperExam($curriculumId,$studentID);
+       $totalStddev=$this->calculateCombinedStandardDeviation($curriculumId,$studentID);
 
        return [
             'paper_exam'=>$paperStddev['result'],
             'quiz'=>$quizStddev['result'],
             'both'=>$totalStddev['result'],
        ];
+    }
+
+    public function SubjectsMean($courseId,$studentId)
+    {
+        $means=[];
+        $subjects=Course::with('curriculums.subject')->findOrFail($courseId);
+        // $this->calculateCombinedMean($subject->id,$studentId)['result']
+        // return $subjects;
+        foreach($subjects['curriculums'] as $curriculum){
+            $means[]=[
+                'id'=>$curriculum['id'],
+                'name'=>$curriculum['subject']['name'],
+                'mean'=>$this->calculateCombinedMean($curriculum->id,$studentId)['result']
+            ];
+        }
+
+        return $means;
+
+    }
+    public function quizzesType($curriculumId,$studentId)
+    {
+        $quizzes=$this->quizzes($curriculumId,$studentId);
+        return [
+            'paper_exams'=>$quizzes['paper_exams'],
+            'quizzes'=>$quizzes['quiz'],
+        ];
     }
 
 

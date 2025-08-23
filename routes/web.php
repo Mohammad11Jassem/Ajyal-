@@ -24,7 +24,9 @@ use Maatwebsite\Excel\Row;
 Route::get('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');
 Route::get('/stripe/success', [StripeController::class, 'success'])->name('stripe.success');
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
-
+Route::get('/view', function () {
+    return view('test');
+});
 
 
 // Route::middleware('throttle:2,1')->group(function () {

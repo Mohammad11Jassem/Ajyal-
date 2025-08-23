@@ -367,7 +367,8 @@ class QuizService
 
     public function getQuizResult($quizId)
     {
-        $quiz=Quiz::with('studentQuizzes.student')->findOrFail($quizId);
+        $quiz=Quiz::with('studentQuizzes.student:id,user_id,first_name,last_name,father_name')
+                    ->withCount( 'markedQuestions as max_degree')->findOrFail($quizId);
         return $quiz;
     }
 }
