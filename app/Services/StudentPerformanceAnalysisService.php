@@ -230,11 +230,13 @@ class StudentPerformanceAnalysisService
                     'curriculum_id'=>$studentExam->curriculum_id,
                     'quiz_name' => $studentExam->title,
                     'exam_date'=>$studentExam->exam_date,
-                    'result' => $studentExam->pivot->mark,
-                    'max_score'=>$studentExam->max_degree,
+                    // 'result' => $studentExam->pivot->mark,
+                    'result' =>round($this->getTheMarkByPercentage($studentExam->max_degree,$studentExam->pivot->mark),2),
+                    'max_score'=>round($this->getTheMarkByPercentage($studentExam->max_degree,$studentExam->max_degree),2),
+                    // 'max_score'=>$studentExam->max_degree,
                 ];
             });
-
+            //round($this->getTheMarkByPercentage(,),2)
         $studentQuiz = Student::studentQuizzesForSubject($curriculumId)->find($studentID);
         $quizzes = $studentQuiz->studentQuizzes->map(function ($studentQuiz) {
                 return [
@@ -242,8 +244,9 @@ class StudentPerformanceAnalysisService
                     'curriculum_id' => $studentQuiz->quiz->curriculum_id,
                     'quiz_name' => $studentQuiz->quiz->name,
                     'exam_date' => $studentQuiz->quiz->start_time,
-                    'result' => $studentQuiz->result,
-                    'max_score' => $studentQuiz->quiz->markedQuestions->count(),
+                    // 'result' => $studentQuiz->result,
+                    'result' => round($this->getTheMarkByPercentage($studentQuiz->quiz->markedQuestions->count(),$studentQuiz->result),2),
+                    'max_score' => round($this->getTheMarkByPercentage($studentQuiz->quiz->markedQuestions->count(),$studentQuiz->quiz->markedQuestions->count()),2),
                 ];
             });
 

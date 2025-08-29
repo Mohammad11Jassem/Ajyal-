@@ -24,7 +24,7 @@ class StoreAbsenceRequest extends FormRequest
         return [
             'absence_date' => 'required|date',
             'classroom_course_id' => 'required|exists:classroom_courses,id',
-            'registration_ids' => 'required|array',
+            'registration_ids' => 'array',
             'registration_ids.*' => 'exists:registrations,id',
         ];
     }

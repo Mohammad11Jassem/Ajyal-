@@ -283,10 +283,10 @@ class QuestionService
 
             if (isset($data['image'])) {
                 // Delete old image if exists
-                if ($question->image) {
-                    File::delete($question->image->path);
-                    $question->image()->delete();
-                }
+                // if ($question->image) {
+                //     File::delete($question->image->path);
+                //     $question->image()->delete();
+                // }
                 $this->saveQuestionImage($data['image'],$question);
                 // $path = $request->file('image')->store('question_images', 'public');
 

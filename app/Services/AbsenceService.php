@@ -19,11 +19,14 @@ class AbsenceService
             ]);
             $absences = [];
 
-            foreach ($data['registration_ids'] as $registrationId) {
-                $absences[] = Absence::create([
-                    'absence_date_id' => $absenceDate->id,
-                    'registration_id' => $registrationId,
-                ]);
+            if(isset($data['registration_ids'])){
+
+                foreach ($data['registration_ids'] as $registrationId) {
+                    $absences[] = Absence::create([
+                        'absence_date_id' => $absenceDate->id,
+                        'registration_id' => $registrationId,
+                    ]);
+                }
             }
 
             return $absences;
@@ -35,6 +38,11 @@ class AbsenceService
         return DB::transaction(function() use($courseId){
 
             $today = Carbon::today()->toDateString();
+            //   return [
+            //     'today'=>$today,
+            //     'classrooms_with_absence'=>"bla",
+            //     'classrooms_without_absence'=>"bla"
+            // ];
             $classroomsWithAbsence = ClassroomCourse::where('course_id', $courseId)
                     ->whereHas('absenceDates', function($query) use ($today) {
                         $query->where('absence_date', $today);
