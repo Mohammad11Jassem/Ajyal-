@@ -66,7 +66,7 @@ class SubjectController extends Controller
     public function create(CreateSubjectRequest $createSubjectRequest)
     {
         $data = $createSubjectRequest->validated();
-        
+
         try {
             // return $data['name'];
             $subject = $this->subjectService->create($data);
@@ -109,5 +109,11 @@ class SubjectController extends Controller
         $data['ScientificBaccalaureate']=$this->subjectService->all('البكالوريا العلمية');
         $data['NinthGrade']=$this->subjectService->all('الصف التاسع');
         return $this->success("allSubjects",$data);
+    }
+    public function allArchivedSubjects(){
+        $data['LiteraryBaccalaureate']=$this->subjectService->allArchivedSubjects('البكالوريا الأدبية');
+        $data['ScientificBaccalaureate']=$this->subjectService->allArchivedSubjects('البكالوريا العلمية');
+        $data['NinthGrade']=$this->subjectService->allArchivedSubjects('الصف التاسع');
+        return $this->success("المواد المؤرشفة فقط",$data);
     }
 }

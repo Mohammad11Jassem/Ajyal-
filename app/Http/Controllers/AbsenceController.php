@@ -32,5 +32,11 @@ class AbsenceController extends Controller
         return $this->success('شعب الغياب',$todayAbsences);
     }
 
+    public function getAbsence($studentId)
+    {
+        $absence=$this->absenceService->getAbsence($studentId);
+        return $this->success('غيابات الطالب',$absence);
+    }
+
 
 }

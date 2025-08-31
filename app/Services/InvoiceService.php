@@ -48,7 +48,7 @@ class InvoiceService
         }
     }
 
-    public function payInvoices(array $data){
+        public function payInvoices(array $data){
         try{
                 return DB::transaction(function () use ($data) {
                     $invoice = Invoice::findOrFail($data['invoice_id']);
@@ -69,10 +69,5 @@ class InvoiceService
             ];
         }
     }
-
-
-
-
-
 
 }

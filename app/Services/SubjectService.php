@@ -70,4 +70,11 @@ class SubjectService
         return $subject;
     }
 
+    public function allArchivedSubjects($type)
+    {
+         $enumType=SubjectType::from($type);
+        // return $enumType;
+        return $this->subjectRepo->allArchivedSubjects($enumType);
+    }
+
 }

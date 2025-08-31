@@ -173,6 +173,9 @@ class QuizService
                     $totalScore += $question->mark;
                 }
             }
+            $quiz=Quiz::findOrFail($data['quiz_id']);
+            $maxDegree=$quiz->markedQuestions()->count();
+
             // try & catch
             $studentQuiz->update([
                 'result' => $totalScore,
@@ -182,7 +185,7 @@ class QuizService
             return [
                 'success' => true,
                 'message' => 'Quiz submitted successfully',
-                // 'data' => $totalScore,
+                'data' => ($totalScore/$maxDegree)*100,
             ];
         });
     }
@@ -201,14 +204,25 @@ class QuizService
             }
 
 
+            // $quizzes = $student->quizzes()
+            //         ->with('assignment')
+            //         ->withPivot(['result', 'is_submit'])
+            //         ->wherePivot('is_submit', true)
+            //         ->get()
+            //         ->filter(function ($quiz) use ($curriculumId) {
+            //             return $quiz->curriculum_id == $curriculumId;
+            //         });
+
             $quizzes = $student->quizzes()
-                    ->with('assignment')
-                    ->withPivot(['result', 'is_submit'])
-                    ->wherePivot('is_submit', true)
-                    ->get()
-                    ->filter(function ($quiz) use ($curriculumId) {
-                        return $quiz->curriculum_id == $curriculumId;
-                    });
+                            ->with('assignment')
+                            ->withCount('markedQuestions as max_degree') // نجيب العلامة الكاملة
+                            ->withPivot(['result', 'is_submit'])
+                            ->wherePivot('is_submit', true)
+                            ->get()
+                            ->filter(function ($quiz) use ($curriculumId) {
+                                return $quiz->curriculum_id == $curriculumId;
+                            });
+
 
             return [
                 'success' => true,
@@ -367,7 +381,22 @@ class QuizService
 
     public function getQuizResult($quizId)
     {
-        $quiz=Quiz::with('studentQuizzes.student')->findOrFail($quizId);
+        $quiz=Quiz::with('studentQuizzes.student:id,user_id,first_name,last_name,father_name')
+                    ->withCount( 'markedQuestions as max_degree')->findOrFail($quizId);
+
+        $realMaxDegree = $quiz->max_degree ?: 1;
+
+
+        $quiz->max_degree = 100;
+
+        // تحويل نتائج الطلاب إلى نسبة مئوية
+        $quiz->studentQuizzes->transform(function ($studentQuiz) use ($realMaxDegree) {
+            $studentMark = (float) $studentQuiz->result;
+            // $studentQuiz->result = round(100 * ($studentMark / $realMaxDegree), 2);
+            $studentQuiz->result =round($this->getTheMarkByPercentage($realMaxDegree,$studentMark),2);
+
+            return $studentQuiz;
+        });
         return $quiz;
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Absence;
+namespace App\Http\Requests\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAbsenceRequest extends FormRequest
+class PayRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,7 @@ class StoreAbsenceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'absence_date' => 'required|date',
-            'classroom_course_id' => 'required|exists:classroom_courses,id',
-            'registration_ids' => 'array',
-            'registration_ids.*' => 'exists:registrations,id',
+            'invoice_id'=>'required|exists:invoices,id',
         ];
     }
 }

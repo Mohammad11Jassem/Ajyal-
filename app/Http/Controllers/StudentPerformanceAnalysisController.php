@@ -17,52 +17,78 @@ class StudentPerformanceAnalysisController extends Controller
 
     public function claculateMeanForQuiz($curriculumId)
     {
-        return $this->success('المتوسط الحسابي للاختبارات الإلكترونية لهذه المادة',$this->service->claculateMeanForQuiz($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('المتوسط الحسابي للاختبارات الإلكترونية لهذه المادة',$this->service->claculateMeanForQuiz($curriculumId,$studentID));
     }
 
     public function calculateStandardDeviationForQuiz($curriculumId)
     {
-        return $this->success('الانحراف المعياري للاختبارات الإلكترونية لهذه المادة',$this->service->calculateStandardDeviationForQuiz($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('الانحراف المعياري للاختبارات الإلكترونية لهذه المادة',$this->service->calculateStandardDeviationForQuiz($curriculumId,$studentID));
     }
 
     public function claculateMeanForPaperExam($curriculumId)
     {
-        return $this->success('المتوسط الحسابي للاختبارات الكتابية لهذه المادة',$this->service->claculateMeanForPaperExam($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('المتوسط الحسابي للاختبارات الكتابية لهذه المادة',$this->service->claculateMeanForPaperExam($curriculumId,$studentID));
     }
 
     public function calculateStandardDeviationForPaperExam($curriculumId)
     {
-        return $this->success('الانحراف المعياري للاختبارات الكتابية لهذه المادة',$this->service->calculateStandardDeviationForPaperExam($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('الانحراف المعياري للاختبارات الكتابية لهذه المادة',$this->service->calculateStandardDeviationForPaperExam($curriculumId,$studentID));
     }
 
     public function calculateCombinedMean($curriculumId)
     {
-        return $this->success('المتوسط الحسابي العام للمادة',$this->service->calculateCombinedMean($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('المتوسط الحسابي العام للمادة',$this->service->calculateCombinedMean($curriculumId,$studentID));
     }
 
     public function calculateCombinedStandardDeviation($curriculumId)
     {
-        return $this->success('الانحراف المعياري العام للمادة',$this->service->calculateCombinedStandardDeviation($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('الانحراف المعياري العام للمادة',$this->service->calculateCombinedStandardDeviation($curriculumId,$studentID));
     }
 
     public function quizzes($curriculumId)
     {
-        return $this->success('الامتحانات الكتابية والالترونية',$this->service->quizzes($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('الامتحانات الكتابية والالترونية',$this->service->quizzes($curriculumId,$studentID));
     }
 
     public function calculateTotalMean($courseId)
     {
-        return $this->success('المتوسط العام لكل الكورس ',$this->service->calculateTotalMean($courseId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('المتوسط العام لكل الكورس ',$this->service->calculateTotalMean($courseId,$studentID));
 
     }
     public function calculateMean($curriculumId)
     {
-        return $this->success('المتوسط للمادة ',$this->service->calculateMean($curriculumId));
+        $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('المتوسط للمادة ',$this->service->calculateMean($curriculumId,$studentID));
 
     }
     public function calculateStddev($curriculumId)
     {
-        return $this->success('الانحراف المعياري للمادة',$this->service->calculateStddev($curriculumId));
+         $studentID=auth()->user()->user_data['role_data']['id'];
+        return $this->success('الانحراف المعياري للمادة',$this->service->calculateStddev($curriculumId,$studentID));
+
+    }
+    public function quizzesType($studentId,$curriculumId)
+    {
+        return $this->success('الامتحانات الكتابية والالترونية',$this->service->quizzesType($curriculumId,$studentId));
+
+    }
+    public function SubjectsMean($studentId,$courseId)
+    {
+        return $this->success('معدلات المواد',$this->service->SubjectsMean($studentId,$courseId));
+
+    }
+
+    public function calculateTotalMeanForParent($studentId,$courseId)
+    {
+        return $this->success('المتوسط العام لكل الكورس ',$this->service->calculateTotalMean($courseId,$studentId));
 
     }
 }

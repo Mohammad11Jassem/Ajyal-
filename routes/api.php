@@ -218,6 +218,7 @@ Route::middleware(['auth:sanctum','role:Secretariat|Manager|Teacher'])->prefix('
 
     Route::get('/classes-type', 'getClasses'); // get subject Type
     Route::get('/all-subjects', 'allSubjects'); // get subject Type
+    Route::get('/all-archived-subjects', 'allArchivedSubjects');
 
     Route::get('/{id}', 'find'); // get subject by id
     Route::get('/{id}/with-topics', 'findWithTopics'); // get subject with topics
@@ -357,6 +358,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
                 Route::post('/store-absences',  'store');
                 Route::get('/today-absence/{courseId}',  'todayAbsence');
             });
+            Route::get('/get-absence/{studentId}',  'getAbsence')->middleware('auth:sanctum','role:Parent|Student');
         });
 
 
@@ -370,10 +372,15 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
                     Route::get('paper-stddev/{curriculumId}', 'calculateStandardDeviationForPaperExam');
                     Route::get('combined-mean/{curriculumId}', 'calculateCombinedMean');
                     Route::get('combined-stddev/{curriculumId}', 'calculateCombinedStandardDeviation');
+
                     Route::get('quizzes/{curriculumId}', 'quizzes');
                     Route::get('total-mean/{courseId}', 'calculateTotalMean');
                     Route::get('mean/{curriculumId}', 'calculateMean');
                     Route::get('stddev/{curriculumId}', 'calculateStddev');
+
+                    Route::get('student/{studentId}/curriculum/{curriculumId}', 'quizzesType');
+                    Route::get('student/{studentId}/subjects-mean/{courseId}', 'SubjectsMean');
+                    Route::get('student/{studentId}/total-mean/{courseId}', 'calculateTotalMeanForParent');
                 });
             });
 
@@ -425,4 +432,4 @@ Route::get('testapi',function(){
 });
 
 
-Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');
+Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session')->middleware('auth:sanctum','role:Student');
