@@ -173,6 +173,9 @@ class QuizService
                     $totalScore += $question->mark;
                 }
             }
+            $quiz=Quiz::findOrFail($data['quiz_id']);
+            $maxDegree=$quiz->markedQuestions()->count();
+
             // try & catch
             $studentQuiz->update([
                 'result' => $totalScore,
@@ -182,7 +185,7 @@ class QuizService
             return [
                 'success' => true,
                 'message' => 'Quiz submitted successfully',
-                'data' => $totalScore,
+                'data' => ($totalScore/$maxDegree)*100,
             ];
         });
     }
@@ -219,7 +222,7 @@ class QuizService
                             ->filter(function ($quiz) use ($curriculumId) {
                                 return $quiz->curriculum_id == $curriculumId;
                             });
-                       
+
 
             return [
                 'success' => true,
