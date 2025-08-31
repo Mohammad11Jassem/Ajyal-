@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
             $table->dateTime('payment_date')->useCurrent();
             $table->timestamps();
+            $table->unique(['registration_id', 'invoice_id']);
         });
     }
 

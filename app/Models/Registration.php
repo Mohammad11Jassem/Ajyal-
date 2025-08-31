@@ -31,4 +31,8 @@ class Registration extends Model
     public function sort(){
         return $this->hasOne(SortStudent::class);
     }
+
+    public function course(){
+        return $this->belongsTo(Course::class);
+    }
 }

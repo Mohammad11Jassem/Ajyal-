@@ -182,7 +182,7 @@ class QuizService
             return [
                 'success' => true,
                 'message' => 'Quiz submitted successfully',
-                'data' => $totalScore,
+                // 'data' => $totalScore,
             ];
         });
     }

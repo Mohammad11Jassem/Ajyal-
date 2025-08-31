@@ -18,6 +18,7 @@ use App\Http\Controllers\StudentController;
 
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PaperExamController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuizController;
 
@@ -345,6 +346,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('/addInvoice','store');
         Route::get('/allInvoices/{courseID}','show')->middleware('role:Manager');
+        Route::post('/pay','payInvoices')->middleware('role:Manager|Secretariat|Student');
     });
 
 });
@@ -397,6 +399,22 @@ Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->m
             Route::post('add-reply', [ReplyController::class, 'addReply'])->middleware('auth:sanctum');
             Route::delete('/{id}', [ReplyController::class, 'destroy']);
         });
+
+
+
+
+
+//Payments
+Route::prefix('payment')->controller(PaymentController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/students/{student}/courses/{course}/payments','getStudentPayments')->middleware('role:Manager|Secretariat|Student|Parent');
+        Route::get('/courses/{course}/payments','getCoursePayments')->middleware('role:Manager');
+        Route::get('/invoices/{invoice}/students/payments','getInvoicePaymentStatus')->middleware('role:Manager|Secretariat');
+        Route::get('/students/{student}/courses/payments/invoices','getCoursesPayments')->middleware('role:Student');
+
+    });
+
+});
 
 Route::get('testapi',function(){
     // $data=User::paginate(3);

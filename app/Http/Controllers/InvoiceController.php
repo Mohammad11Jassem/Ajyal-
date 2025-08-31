@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Invoice\AddInvoicesRequest;
+use App\Http\Requests\Invoice\PayInvoicesRequest;
 use App\Models\Invoice;
 use App\Services\InvoiceService;
+use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
+    use HttpResponse;
     protected InvoiceService $invoiceService;
 
     public function __construct(InvoiceService $invoiceService)
@@ -51,27 +54,15 @@ class InvoiceController extends Controller
         ], 201);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoice $invoice)
-    {
-        //
+
+    public function payInvoices(PayInvoicesRequest $payInvoicesRequest){
+        // return $this->success( 'test','$result');
+        $result=$this->invoiceService->payInvoices($payInvoicesRequest->validated());
+        if (!$result['success']) {
+            return $this->error( $result['message'],$result);
+        }
+        return $this->success( $result['message'],$result);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Invoice $invoice)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Invoice $invoice)
-    {
-        //
-    }
 }
