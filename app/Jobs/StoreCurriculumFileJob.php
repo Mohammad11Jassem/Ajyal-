@@ -34,10 +34,12 @@ class StoreCurriculumFileJob implements ShouldQueue
         // $file->move(public_path('Curriculumfiles'), $fileName);
         // $filePath = 'Curriculumfiles/' . $this->data['fileName'];
 
-         CurriculumFile::create([
-            'curriculum_id' => $this->curriculumId,
-            'title' => $this->data['title'],
-            'file_path' =>$this->data['filePath'],
-        ]);
+        //  CurriculumFile::create([
+        //     'curriculum_id' => $this->curriculumId,
+        //     'title' => $this->data['title'],
+        //     'file_path' =>$this->data['filePath'],
+        // ]);
+        Log::info('Hello world! from Job!!');
+
     }
 }

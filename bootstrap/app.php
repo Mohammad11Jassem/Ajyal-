@@ -1,10 +1,13 @@
 <?php
 
 use App\Exceptions\Handler;
+use App\Jobs\StoreCurriculumFileJob;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -41,5 +44,11 @@ return Application::configure(basePath: dirname(__DIR__))
         //     $handler = app(Handler::class);
         //     return $handler->render($request, $e);
         // });
+    }) ->withSchedule(function (Schedule $schedule) {
+        // $schedule->call(function () {
+        //     // Log::info('Hello world!');
+
+        // })->everySecond();
+        // $schedule->job(new StoreCurriculumFileJob())->everySecond();
     })
-    ->create();
+    ->create(); 

@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Course;
 use App\Models\Invoice;
+use App\Models\Registration;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceService
 {
@@ -44,5 +46,28 @@ class InvoiceService
         ];
         }
     }
-    
+
+        public function payInvoices(array $data){
+        try{
+                return DB::transaction(function () use ($data) {
+                    $invoice = Invoice::findOrFail($data['invoice_id']);
+                    $registration=Registration::where('student_id',$data['student_id'])->where('course_id',$invoice->course->id)->first();
+                    // here you can add payment logic (e.g., mark as paid, call payment gateway)
+                    $payment = $invoice->payments()->create(['registration_id'=>$registration->id]);
+                    return [
+                            'success'=>true,
+                            'message' => 'تم دفع الفاتورة بنجاح',
+                            // 'data'=>$payment
+                        ];
+                });
+        }catch(Exception $e){
+            return [
+                'success'=>false,
+                'message'=>'فشلت عملية الدفع',
+                'error'=>$e->getMessage()
+            ];
+        }
+    }
+
+
 }

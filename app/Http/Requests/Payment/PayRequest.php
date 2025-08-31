@@ -22,7 +22,7 @@ class PayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'invoice_id'=>'required|exists:invoices,id',
         ];
     }
 }

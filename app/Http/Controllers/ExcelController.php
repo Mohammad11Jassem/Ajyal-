@@ -6,6 +6,7 @@ use App\Exports\StudentsExport;
 use App\Http\Requests\ExcelFile\DownloadFileRequest;
 use App\Http\Requests\ExcelFile\ImportExcelRequest;
 use App\Imports\StudentMarksImport;
+use App\Jobs\ExportStudentsJob;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -16,8 +17,24 @@ class ExcelController extends Controller
         $data=$downloadFileRequest->validated();
         // $data['classroom_course_id']=;
         // $data['course_id']=;
-        $filename = "طلاب الشعبة (رقم {$data['classroom_course_id']}).xlsx";
-        return Excel::download(new StudentsExport($data['course_id'],$data['classroom_course_id']), $filename);
+        // $filename = "طلاب الشعبة (رقم {$data['classroom_course_id']}).xlsx";
+        // return Excel::download(new StudentsExport($data['course_id'],$data['classroom_course_id']), $filename);
+
+        // $data = $downloadFileRequest->validated();
+        // // $filename = "طلاب_الشعبة_{$classroomCourseId}.xlsx";
+
+        $classroomCourseId=$data['classroom_course_id'];
+        $filename = "class_{$classroomCourseId}.xlsx";
+
+        ExportStudentsJob::dispatch(
+            $data['course_id'],
+            $data['classroom_course_id'],
+            $filename
+        );
+
+        return response()->json([
+            'message'=>'تم تشكيل الملف'
+        ]);
     }
 
     public function importExcel(ImportExcelRequest $request)

@@ -26,6 +26,10 @@ class Subject extends Model
     {
         return $query->where('archived', false);
     }
+    public function scopeArchived($query)
+    {
+        return $query->where('archived', true);
+    }
     public function topics()
     {
         return $this->hasMany(Topic::class);

@@ -30,6 +30,16 @@ class SubjectRepository implements SubjectRepositoryInterface
 
         return $query;
     }
+    public function allArchivedSubjects(?SubjectType $type = null)
+    {
+        $query = Subject::archived()->where('type', $type)->get();
+
+        // if ($type) {
+        //     $query->where('type', $type);
+        // }
+
+        return $query;
+    }
 
     public function findWithTopics($id)
     {

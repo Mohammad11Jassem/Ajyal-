@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Payment\PayRequest;
+use App\Models\Invoice;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
@@ -10,7 +12,13 @@ use Stripe\Checkout\Session;
 
 class StripeController extends Controller
 {
-      public function checkout()
+    protected $invoiceService;
+
+    public function __construct(InvoiceService $invoiceService)
+    {
+        $this->invoiceService = $invoiceService;
+    }
+    public function checkout()
     {
         return view('stripe.checkout'); // Create this Blade view
     }
@@ -19,7 +27,7 @@ class StripeController extends Controller
     {
         $data =$payRequest->validated();
         return DB::transaction(function() use($data){
-            // $invoice=
+            $invoice=Invoice::findOrFail($data['invoice_id']);
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
             $response=$stripe->checkout->sessions->create([
@@ -27,9 +35,9 @@ class StripeController extends Controller
                     'price_data' => [
                         'currency' => 'usd',
                         'product_data' => [
-                            'name' => 'Course price',
+                            'name' => 'invoice price',
                         ],
-                        'unit_amount' => 1000, // = $10.00
+                        'unit_amount' => $invoice['value'], // = $10.00
                         // 'unit_amount' => $invoice, // = $10.00
                     ],
                     'quantity' => 1,
@@ -37,15 +45,13 @@ class StripeController extends Controller
                 'mode' => 'payment',
                 'success_url' => route('stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('stripe.cancel'),
-                'metadata' => [
-                'order_id' => 'order_id',
-                'user_id' =>'user_id' ,
-                // 'order_id' => $order->id,
-                // 'user_id' => $user->id,
-                ],
                 // 'metadata' => [
-                //     'invoice' => $invoice,
+                //     'order_id' => 'order_id',
+                //     'user_id' =>'user_id' ,
                 // ],
+                'metadata' => [
+                    'invoice_id' => $invoice['id'],
+                ],
             ]);
 
             // return redirect($response->url);
@@ -57,24 +63,32 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
+        return DB::transaction(function() use($request){
         // return 'Payment success';
-        $sessionId = $request->get('session_id');
+            $sessionId = $request->get('session_id');
 
-        if (!$sessionId) {
-            return response()->json(['error' => 'No session ID'], 400);
-        }
+            if (!$sessionId) {
+                return response()->json(['error' => 'No session ID'], 400);
+            }
 
-        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-        $session = $stripe->checkout->sessions->retrieve($sessionId);
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+            $session = $stripe->checkout->sessions->retrieve($sessionId);
 
-        // return [
-        //     'status'=>$session->payment_status,
-        //      'orderId' => $session->metadata->order_id,
-        //      'userId' => $session->metadata->user_id,
-        // ];
+            $this->invoiceService->payInvoices([
+                [
+                    'invoice_id'=>$session->metadata->invoice_id,
+                    'student_id'=>auth()->user()->user_data['role_data']['id'],
+                ]
+            ]);
 
-        return view('test');
+            // return [
+            //     'status'=>$session->payment_status,
+            //      'orderId' => $session->metadata->order_id,
+            //      'userId' => $session->metadata->user_id,
+            // ];
 
+            return view('test');
+        });
 
     }
 

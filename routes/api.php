@@ -217,6 +217,7 @@ Route::middleware(['auth:sanctum','role:Secretariat|Manager|Teacher'])->prefix('
 
     Route::get('/classes-type', 'getClasses'); // get subject Type
     Route::get('/all-subjects', 'allSubjects'); // get subject Type
+    Route::get('/all-archived-subjects', 'allArchivedSubjects');
 
     Route::get('/{id}', 'find'); // get subject by id
     Route::get('/{id}/with-topics', 'findWithTopics'); // get subject with topics
@@ -355,6 +356,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
                 Route::post('/store-absences',  'store');
                 Route::get('/today-absence/{courseId}',  'todayAbsence');
             });
+            Route::get('/get-absence/{studentId}',  'getAbsence')->middleware('auth:sanctum','role:Parent|Student');
         });
 
 
@@ -412,4 +414,4 @@ Route::get('testapi',function(){
 });
 
 
-Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');
+Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session')->middleware('auth:sanctum','role:Student');

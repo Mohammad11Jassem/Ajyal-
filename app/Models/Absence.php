@@ -15,4 +15,9 @@ class Absence extends Model
     {
         return $this->belongsTo(Registration::class);
     }
+
+    public function absenceDate()
+    {
+        return $this->belongsTo(AbsenceDate::class);
+    }
 }

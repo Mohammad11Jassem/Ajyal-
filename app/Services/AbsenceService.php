@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AbsenceResource;
 use App\Models\Absence;
 use App\Models\AbsenceDate;
 use App\Models\ClassroomCourse;
+use App\Models\Registration;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -63,5 +65,13 @@ class AbsenceService
             ];
         });
 
+    }
+
+    public function getAbsence($studentId)
+    {
+        $registration = Registration::with(['course', 'absenceDays'])
+                    ->where('student_id', $studentId)
+                    ->first();
+          return  new AbsenceResource($registration);
     }
 }
