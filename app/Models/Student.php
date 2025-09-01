@@ -121,4 +121,8 @@ class Student extends Model
         return $this->morphMany(Reply::class, 'author');
     }
 
+    public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->father_name} {$this->last_name}";
+    }
 }
