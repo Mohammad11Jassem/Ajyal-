@@ -385,7 +385,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
             });
 
 //Image
-Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->middleware(['auth:sanctum','role:Manager|Secretariat']);
+Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->middleware(['auth:sanctum','role:Manager|Secretariat|Teacher']);
 
 
 // Route::post('excel',[ExcelController::class,'downloadStudentsExcel']);
@@ -396,10 +396,11 @@ Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->m
 
         Route::prefix('issue')->group(function () {
             Route::post('/add-issue', [IssueController::class, 'addIssue']);
-            Route::get('get-is-fqa-issues/{id}', [IssueController::class, 'getIsFqaIssue']);
-            Route::get('get-normal-issues/{id}', [IssueController::class, 'getNormalIssue']);
-            Route::post('change-issue-status/{id}', [IssueController::class, 'changeIssueStatus']);
-            Route::post('delete-issue/{id}', [IssueController::class, 'destroy'])->middleware('auth:sanctum');
+            Route::get('get-is-fqa-issues/{communityId}', [IssueController::class, 'getIsFqaIssue']);
+            Route::get('get-normal-issues/{communityId}', [IssueController::class, 'getNormalIssue']);
+            Route::get('get-my-issue/{communityId}', [IssueController::class, 'getMyIssue']);
+            Route::post('delete-issue/{communityId}', [IssueController::class, 'destroy'])->middleware('auth:sanctum');
+            Route::post('change-issue-status/{issueId}', [IssueController::class, 'changeIssueStatus']);
         });
 
         Route::prefix('reply')->group(function () {

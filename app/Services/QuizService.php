@@ -325,6 +325,7 @@ class QuizService
                     $q->where('id', $courseId);
                 })->with('studentQuizzes')
                 ->withCount('markedQuestions')
+                ->available()
                 ->get();
 
         $withResults = [];

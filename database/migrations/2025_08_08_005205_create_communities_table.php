@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('communities', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            // $table->string('title');
             $table->foreignId('curriculum_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

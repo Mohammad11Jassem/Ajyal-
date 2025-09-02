@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\StoreCurriculumFileJob;
 use App\Models\Classroom;
 use App\Models\ClassroomCourse;
+use App\Models\Community;
 use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumFile;
@@ -51,6 +52,11 @@ class CourseService
                 $curriculum = Curriculum::create([
                     'course_id' => $course->id,
                     'subject_id' => $subject['subject_id'],
+                ]);
+
+                 Community::create([
+                    // 'title'=>'', // edit
+                    'curriculum_id'=>$curriculum->id
                 ]);
 
                 $curriculum->teachers()->attach($subject['teachers']);

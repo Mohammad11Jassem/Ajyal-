@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Community;
 use App\Models\Course;
 use App\Models\Curriculum;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -45,7 +46,10 @@ class CourseSeeder extends Seeder
                 'course_id' => $course->id,
                 'subject_id' => $subject['subject_id'],
             ]);
-
+              Community::create([
+                    // 'title'=>'', // edit
+                    'curriculum_id'=>$curriculum->id
+            ]);
             $curriculum->teachers()->attach($subject['teachers']);
         }
 
@@ -80,7 +84,10 @@ class CourseSeeder extends Seeder
                 'course_id' => $course->id,
                 'subject_id' => $subject['subject_id'],
             ]);
-
+              Community::create([
+                    // 'title'=>'', // edit
+                    'curriculum_id'=>$curriculum->id
+            ]);
             $curriculum->teachers()->attach($subject['teachers']);
         }
     }

@@ -47,4 +47,9 @@ class Curriculum extends Model
     {
         return $this->hasMany(CurriculumTeacher::class);
     }
+
+    public function community()
+    {
+        return $this->hasOne(Community::class);
+    }
 }

@@ -27,7 +27,7 @@ class AbsenceDateSeeder extends Seeder
 
          Absence::create([
             'absence_date_id' => 1,
-            'registration_id' => 1, 
+            'registration_id' => 1,
         ]);
 
         Absence::create([
@@ -42,7 +42,7 @@ class AbsenceDateSeeder extends Seeder
         ]);
 
         Absence::create([
-            'absence_date_id' => 3,
+            'absence_date_id' => 2,
             'registration_id' => 2,
         ]);
     }

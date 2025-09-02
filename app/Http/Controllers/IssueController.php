@@ -40,4 +40,8 @@ class IssueController extends Controller
     {
          return $this->success('تم حذف السؤال',$this->issueService->destroy($communityId));
     }
+    public function getMyIssue($communityId)
+    {
+         return $this->success('تم حذف السؤال',$this->issueService->destroy($communityId));
+    }
 }

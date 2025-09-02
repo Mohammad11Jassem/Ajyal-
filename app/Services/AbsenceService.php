@@ -39,7 +39,9 @@ class AbsenceService
     {
         return DB::transaction(function() use($courseId){
 
-            $today = Carbon::today()->toDateString();
+            // $today = Carbon::now()->toDateTimeString();// with time
+            $today = Carbon::now()->toDateString();
+
             //   return [
             //     'today'=>$today,
             //     'classrooms_with_absence'=>"bla",

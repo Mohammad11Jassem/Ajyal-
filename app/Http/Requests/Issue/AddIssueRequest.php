@@ -22,8 +22,9 @@ class AddIssueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'community_id' => 'required|exists:communities,id',
+            'curriculum_id' => 'required|exists:curricula,id',
             'body' => 'required|string',
+            'image'=>'nullable|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'is_fqa' => 'boolean'
         ];
     }

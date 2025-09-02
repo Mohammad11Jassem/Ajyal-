@@ -2,15 +2,32 @@
 
 namespace App\Services;
 
+use App\Models\Curriculum;
 use App\Models\Issue;
 use App\Models\Student;
 use App\Models\Teacher;
 use Exception;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class IssueService
 {
 
+    public function saveIssueImage(UploadedFile $imageFile, $relatedModel, string $folder = 'questions')
+    {
+        // Create a temporary image record
+        $image = $relatedModel->image()->create([
+            'path' => '' // Temporary, updated after file move
+        ]);
+
+        $imageName = time() . $image->id . '.' . $imageFile->getClientOriginalExtension();
+        $imageFile->move(public_path($folder), $imageName);
+
+        $imagePath = $folder . '/' . $imageName;
+        $image->path = $imagePath;
+        $image->save();
+
+    }
     public function addIssue(array $data)
     {
          return DB::transaction(function () use ($data) {
@@ -26,36 +43,65 @@ class IssueService
              // $data['author_id'] = $user->id;
              // $data['author_type'] = get_class($user);
              // return $user;
+             $curriculum=Curriculum::where('id',$data['curriculum_id'])->first();
+             $communityId=$curriculum->community['id'];
              $issue=$userData->issues()->create([
-                     'community_id' => $data['community_id'],
+                     'community_id' => $communityId,
                      'body' => $data['body'],
                      'is_fqa' => $data['is_fqa']??0,
                  ]);
-
+            if (isset($data['image'])) {
+                $this->saveIssueImage($data['image'],$issue,'issues');
+            }
              return $issue;
          });
     }
 
 
-    private function getIssue($communityId,$isFqa)
+    private function getIssue($curriculumId,$isFqa)
     {
-         return DB::transaction(function () use ($communityId,$isFqa) {
+         return DB::transaction(function () use ($curriculumId,$isFqa) {
+            $curriculum=Curriculum::where('id',$curriculumId)->first();
+            $communityId=$curriculum->community['id'];
 
-             return Issue::where('is_fqa',$isFqa)->where('community_id',$communityId)->get();
+            if(auth()->user()->hasRole('Student')){
+
+                return Issue::where('is_fqa', $isFqa)
+                            ->where('community_id', $communityId)
+                            ->where('author_id', '!=', auth()->user()->user_data['role_data']['id'])
+                            ->with('image')
+                            ->get();
+             }
+            return Issue::where('is_fqa', $isFqa)
+                        ->where('community_id', $communityId)
+                        ->with('image')
+                        ->get();
          });
     }
-    public function getNormalIssue($communityId)
+    public function getNormalIssue($curriculumId)
     {
-         return DB::transaction(function () use ($communityId) {
+         return DB::transaction(function () use ($curriculumId) {
 
-             return $this->getIssue($communityId,0);
+             return $this->getIssue($curriculumId,0);
          });
     }
-    public function getIsFqaIssue($communityId)
+    public function getIsFqaIssue($curriculumId)
     {
-         return DB::transaction(function () use ($communityId) {
+            return DB::transaction(function () use ($curriculumId) {
 
-             return $this->getIssue($communityId,1);
+                return $this->getIssue($curriculumId,1);
+            });
+    }
+    public function getMyIssue($curriculumId)
+    {
+         return DB::transaction(function () use ($curriculumId) {
+            $curriculum=Curriculum::where('id',$curriculumId)->first();
+            $communityId=$curriculum->community['id'];
+             return Issue::where('is_fqa', 0)
+                            ->where('community_id', $communityId)
+                            ->where('author_id', auth()->user()->user_data['role_data']['id'])
+                            ->with('image')
+                            ->get();
          });
     }
     public function changeIssueStatus($communityId)

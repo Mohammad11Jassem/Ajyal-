@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Community extends Model
 {
-    protected $fillable = ['title', 'curriculum_id'];
+    protected $fillable = ['curriculum_id'];
 
     public function curriculum()
     {
