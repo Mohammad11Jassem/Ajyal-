@@ -3,6 +3,7 @@
 use App\Enum\SubjectType;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\StripeController;
+use App\Http\Requests\CreateAndRegisterStudentRequest;
 use App\Http\Resources\AbsenceResource;
 use App\Http\Resources\PrevQuizeResource;
 use App\Mail\TestMail;
@@ -29,27 +30,18 @@ Route::get('/stripe/session', [StripeController::class, 'session'])->name('strip
 Route::get('/stripe/success', [StripeController::class, 'success'])->name('stripe.success');
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 Route::get('/view', function () {
+    return User::all();
+});
+Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
+     $validated = $request->validated();
 
-    $studentId = 1; // example student id
+    $studentData = $validated['student'];
+    $registerData = $validated['registration'];
 
-    $absenceDays = \App\Models\Absence::whereHas('registration', function ($q) use ($studentId) {
-            $q->where('student_id', $studentId);
-        })
-        ->with('absenceDate','registration.course') // eager load date relation
-        ->get();
-        // ->pluck('absenceDate.absence_date'); // only get the date
-
-    $registration = \App\Models\Registration::where('student_id', $studentId)->first();
-
-    // $absenceDays = $registration->absences()
-    //     ->with('absenceDate')
-    //     ->get();
-
-    $registration = \App\Models\Registration::with(['course', 'absenceDays'])
-                    ->where('student_id', $studentId)
-                    ->first();
-    return  new AbsenceResource($registration);
-
+    return response()->json([
+        'studentData'=>$studentData,
+        'registerData'=>$registerData,
+    ]);
 });
 
 

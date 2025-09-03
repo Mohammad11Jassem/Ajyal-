@@ -2,14 +2,33 @@
 
 namespace App\Services;
 
+use App\Http\Resources\IssueWithRepliesResource;
+use App\Http\Resources\StudentReplyRescource;
+use App\Http\Resources\TeacherReplyRescource;
 use App\Models\Issue;
 use App\Models\Student;
 use App\Models\Teacher;
 use Exception;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class ReplyService
 {
+    public function saveIssueImage(UploadedFile $imageFile, $relatedModel, string $folder = 'questions')
+    {
+        // Create a temporary image record
+        $image = $relatedModel->image()->create([
+            'path' => '' // Temporary, updated after file move
+        ]);
+
+        $imageName = time() . $image->id . '.' . $imageFile->getClientOriginalExtension();
+        $imageFile->move(public_path($folder), $imageName);
+
+        $imagePath = $folder . '/' . $imageName;
+        $image->path = $imagePath;
+        $image->save();
+
+    }
     public function addReply(array $data){
 
         return DB::transaction(function () use ($data) {
@@ -32,7 +51,25 @@ class ReplyService
                     'issue_id'=>$data['issue_id'],
                     'body'=>$data['body'],
             ]);
-            return $reply;
+            if (isset($data['image'])) {
+                $this->saveIssueImage($data['image'],$reply,'replies');
+            }
+            if(auth()->user()->hasRole('Teacher')){
+
+                return new TeacherReplyRescource($reply);
+            }
+            return new StudentReplyRescource($reply);
          });
+    }
+
+    public function getReplies($issueId){
+
+        return DB::transaction(function () use($issueId)  {
+            $issue = Issue::with(['replies' => function ($query) {
+                        $query->orderBy('created_at', 'asc');
+                     }, 'replies.author'])
+                    ->findOrFail($issueId);
+            return new IssueWithRepliesResource($issue);
+        });
     }
 }

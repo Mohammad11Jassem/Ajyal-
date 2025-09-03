@@ -23,25 +23,25 @@ class IssueController extends Controller
         return $this->success('تم إضافة السؤال',$issue);
     }
 
-    public function getNormalIssue($communityId)
+    public function getNormalIssue($curriculumId)
     {
-        return $this->success('الأسئلة العادية',$this->issueService->getNormalIssue($communityId));
+        return $this->success('الأسئلة العادية',$this->issueService->getNormalIssue($curriculumId));
     }
-    public function getIsFqaIssue($communityId)
+    public function getIsFqaIssue($curriculumId)
     {
-        return $this->success('الأسئلة المكررة',$this->issueService->getIsFqaIssue($communityId));
+        return $this->success('الأسئلة المكررة',$this->issueService->getIsFqaIssue($curriculumId));
     }
 
-    public function changeIssueStatus($communityId)
+    public function changeIssueStatus($issueId)
     {
-         return $this->success('تم تغيير حالة السؤال',$this->issueService->changeIssueStatus($communityId));
+         return $this->success('تم تغيير حالة السؤال',$this->issueService->changeIssueStatus($issueId));
     }
-    public function destroy($communityId)
+    public function destroy($issueId)
     {
-         return $this->success('تم حذف السؤال',$this->issueService->destroy($communityId));
+         return $this->success('تم حذف السؤال',$this->issueService->destroy($issueId));
     }
-    public function getMyIssue($communityId)
+    public function getMyIssue($curriculumId)
     {
-         return $this->success('تم حذف السؤال',$this->issueService->destroy($communityId));
+         return $this->success('أسئلتي',$this->issueService->getMyIssue($curriculumId));
     }
 }

@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             SubmittedQuizSeeder::class,
             SortStudentSeeder::class,
             AbsenceDateSeeder::class,
+            IssueSeeder::class,
+            ReplySeeder::class,
         ]);
 
         // User::factory()->create([

@@ -14,6 +14,7 @@ class RegisterStudentRequest extends FormRequest
     public function authorize(): bool
     {
         return $this->user()->hasAnyRole(['Manager', 'Secretariat',]);
+        // return true;
 
     }
 

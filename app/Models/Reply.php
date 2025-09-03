@@ -17,4 +17,8 @@ class Reply extends Model
     {
         return $this->morphTo();
     }
+    public function image()
+    {
+        return $this->morphOne(Image::class,'imageable');
+    }
 }
