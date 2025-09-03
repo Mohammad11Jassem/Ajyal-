@@ -17,6 +17,8 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 class QuizService
 {
     public function create(array $data)
@@ -88,18 +90,38 @@ class QuizService
                       ->where('curriculum_id',$id);
             })->get();
         }
-        return Quiz::available()->whereDoesntHave('student')->whereHas('assignment',function($query)use($id){
-                $query->where('curriculum_id',$id);
-            })->get();
+        // $quzzes=Quiz::available()->whereDoesntHave('student')->whereHas('assignment',function($query)use($id){
+        //         $query->where('curriculum_id',$id);
+        //     })->get();
+        $studentId = auth()->user()->user_data['role_data']['id'];
+
+        $quizzes = Quiz::available()
+            ->whereDoesntHave('studentQuizzes', function ($q) use ($studentId) {
+                $q->where('student_id', $studentId);
+            })
+            ->whereHas('assignment', function ($q) use ($id) {
+                $q->where('curriculum_id', $id);
+            })
+            ->get();
+        return $quizzes;
     }
 
     public function StartQuiz($quizID){
         try{
             $user=auth()->user();
+            $student = $user->student;
+            $studentQuiz = $student->studentQuizzes()
+                ->where('quiz_id', $quizID)
+                ->first();
+
+            if ($studentQuiz) {
+                throw new Exception('Quiz already submitted');
+            }
             if($user && $user->hasRole('Student')){
-                $user->student->studentQuizzes()->create(['quiz_id'=>$quizID,
-                'is_submit'=>1,
-            ]);
+                $user->student->studentQuizzes()->create([
+                    'quiz_id'=>$quizID,
+                    'is_submit'=>1,
+                ]);
                 return [
                     'success'=>true,
                     'message'=>'نتمنى لكم امتحاناً موفقاً',
@@ -125,13 +147,13 @@ class QuizService
             $user = auth()->user();
 
             if (!$user || !$user->hasRole('Student')) {
-                throw new \Exception('Unauthorized');
+                throw new Exception('Unauthorized');
             }
 
             $student = $user->student;
 
             if (!$student) {
-                throw new \Exception('Student record not found');
+                throw new Exception('Student record not found');
             }
 
             $studentQuiz = $student->studentQuizzes()
@@ -142,9 +164,9 @@ class QuizService
                 throw new Exception('Student quiz not started');
             }
 
-            if ($studentQuiz->is_submit && $studentQuiz->result) {
-                throw new Exception('Quiz already submitted');
-            }
+            // if ($studentQuiz->is_submit && $studentQuiz->result) {
+            //     throw new Exception('Quiz already submitted');
+            // }
 
             $totalScore = 0;
 
