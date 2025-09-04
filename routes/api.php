@@ -270,6 +270,24 @@ Route::prefix('advertisement')->group(function () {
 
         });
 });
+Route::prefix('course')->controller(CourseController::class)->group(function () {
+                Route::get('/all-courses', 'AllCourses');
+                Route::get('/show/{id}', 'show');
+});
+
+Route::prefix('student')->group(function () {
+    Route::controller(TeacherController::class)->group(function () {
+            Route::get('profile/{id}', 'profile');
+            // All teachers
+            Route::get('allTeachers','allTeachers');
+            //Specific teachers
+            Route::get('specificTeachers/{subject_id}','specificTeachers');
+            //level teachers
+            Route::get('levelTeachers/{level_id}','levelTeachers');
+
+        });
+});
+
 
 
 //course
@@ -282,10 +300,10 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
 
             Route::post('/create', 'store')->middleware('role:Secretariat|Manager');
             Route::post('/delete/{id}', 'delete')->middleware('role:Secretariat|Manager');
-            // Route::post('/update/{id}', 'update');
-            Route::get('/show/{id}', 'show');
-            // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
-            Route::get('/all-courses', 'AllCourses');
+                // Route::post('/update/{id}', 'update');
+            //Route::get('/show/{id}', 'show');//public
+                // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
+            //Route::get('/all-courses', 'AllCourses');//public
             Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
             Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
             Route::get('/curricula-course/{courseId}', 'curriculumsCourse');

@@ -64,7 +64,7 @@ class Quiz extends Model
     }
     public function student()
     {
-        return $this->hasMany(StudentQuiz::class)
+        return $this->hasOne(StudentQuiz::class)
             ->where('student_id',auth()->user()->user_data['role_data']['id']);
             // ->where('student_id',1);
     }
