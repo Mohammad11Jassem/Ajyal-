@@ -68,6 +68,7 @@ class Quiz extends Model
             ->where('student_id',auth()->user()->user_data['role_data']['id']);
             // ->where('student_id',1);
     }
+
     public function studentQuizzes(): HasMany
     {
         return $this->hasMany(StudentQuiz::class);

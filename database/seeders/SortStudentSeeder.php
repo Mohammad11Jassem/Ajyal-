@@ -18,19 +18,38 @@ class SortStudentSeeder extends Seeder
             'registration_id' => 1,
             'classroom_course_id' =>1,
         ]);
-        SortStudent::firstOrCreate([
-            'registration_id' => 2,
-            'classroom_course_id' =>4,
-        ]);
+        // SortStudent::firstOrCreate([
+        //     'registration_id' => 2,
+        //     'classroom_course_id' =>4,
+        // ]);
 
         //s2
+        SortStudent::firstOrCreate([
+            'registration_id' => 2,
+            'classroom_course_id' =>1,
+        ]);
+        // SortStudent::firstOrCreate([
+        //     'registration_id' => 4,
+        //     'classroom_course_id' =>4,
+        // ]);
+
+        //s3
         SortStudent::firstOrCreate([
             'registration_id' => 3,
             'classroom_course_id' =>1,
         ]);
+        //s4
         SortStudent::firstOrCreate([
             'registration_id' => 4,
-            'classroom_course_id' =>4,
+            'classroom_course_id' =>1,
         ]);
+        //s5
+        SortStudent::firstOrCreate([
+            'registration_id' => 5,
+            'classroom_course_id' =>1,
+        ]);
+
+
+
     }
 }

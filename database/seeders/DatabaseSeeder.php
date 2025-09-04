@@ -27,11 +27,14 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             CourseSeeder::class,
             CurriculumFileSeeder::class,
+            InvoiceSeeder::class,
             RegistrationSeeder::class,
             QuizSeeder::class,
             SubmittedQuizSeeder::class,
             SortStudentSeeder::class,
             AbsenceDateSeeder::class,
+            IssueSeeder::class,
+            ReplySeeder::class,
         ]);
 
         // User::factory()->create([

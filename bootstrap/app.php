@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\Handler;
+use App\Jobs\QuizCheckJob;
 use App\Jobs\StoreCurriculumFileJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -46,9 +47,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // });
     }) ->withSchedule(function (Schedule $schedule) {
         // $schedule->call(function () {
-        //     // Log::info('Hello world!');
+        //     Log::info('Hello world!');
 
         // })->everySecond();
         // $schedule->job(new StoreCurriculumFileJob())->everySecond();
+        $schedule->job(new QuizCheckJob())->everySecond();
+
+        // while ($true) {
+        //     php artisan schedule:run
+        //     Start-Sleep -Seconds 60
+        // }
     })
-    ->create(); 
+    ->create();

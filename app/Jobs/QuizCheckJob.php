@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuizCheckJob implements ShouldQueue
 {
@@ -18,7 +19,7 @@ class QuizCheckJob implements ShouldQueue
      */
     public function __construct()
     {
-        //
+
     }
 
     /**
@@ -26,7 +27,8 @@ class QuizCheckJob implements ShouldQueue
      */
     public function handle(): void
     {
-           $quizzes = Quiz::where('start_time','<',Carbon::today())->get();
+        Log::info("message");
+        $quizzes = Quiz::where('start_time','<',Carbon::now()->toDateString())->get();
         foreach($quizzes as $quiz){
             $courseId = $quiz->assignment->curriculum->course['id'];
             $quizId=$quiz['id'];
@@ -43,7 +45,7 @@ class QuizCheckJob implements ShouldQueue
                 ->get();
 
             foreach($students as $student){
-                $tempStudent=Student::find($student['student_id']);
+                $tempStudent=Student::find($student->student_id);
                 $tempStudent->studentQuizzes()->create([
                     'quiz_id'=>$quizId,
                     'result'=>0,

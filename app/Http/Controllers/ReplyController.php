@@ -21,4 +21,8 @@ class ReplyController extends Controller
         $data=$addReplyRequest->validated();
         return $this->success('تم إضافة الرد',$this->replyService->addReply($data));
     }
+    public function getReplies($issueId){
+
+        return $this->success('الردود على هذه القضية',$this->replyService->getReplies($issueId));
+    }
 }

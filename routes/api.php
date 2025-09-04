@@ -31,6 +31,7 @@ use App\Http\Controllers\StudentPerformanceAnalysisController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TopicController;
+use App\Http\Requests\CreateAndRegisterStudentRequest;
 use App\Models\ClassroomCourse;
 use App\Models\Curriculum;
 use App\Models\CurriculumFile;
@@ -302,9 +303,10 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
             Route::post('/create', 'store')->middleware('role:Secretariat|Manager');
             Route::post('/delete/{id}', 'delete')->middleware('role:Secretariat|Manager');
                 // Route::post('/update/{id}', 'update');
-            // Route::get('/show/{id}', 'show');
+
+            //Route::get('/show/{id}', 'show');//public
                 // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
-            // Route::get('/all-courses', 'AllCourses');
+            //Route::get('/all-courses', 'AllCourses');//public
             Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
             Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
             Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
@@ -414,18 +416,25 @@ Route::post('/image/delete', [AdvertisementController::class, 'deleteImage'])->m
 // Route::post('store-paperExam',[PaperExamController::class,'store']);
 
 
-        Route::prefix('issue')->group(function () {
-            Route::post('/add-issue', [IssueController::class, 'addIssue']);
-            Route::get('get-is-fqa-issues/{communityId}', [IssueController::class, 'getIsFqaIssue']);
-            Route::get('get-normal-issues/{communityId}', [IssueController::class, 'getNormalIssue']);
-            Route::get('get-my-issue/{communityId}', [IssueController::class, 'getMyIssue']);
-            Route::post('delete-issue/{communityId}', [IssueController::class, 'destroy'])->middleware('auth:sanctum');
-            Route::post('change-issue-status/{issueId}', [IssueController::class, 'changeIssueStatus']);
-        });
+Route::prefix('issue')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+
+        Route::post('/add-issue', [IssueController::class, 'addIssue']);
+        Route::get('get-is-fqa-issues/{curriculumId}', [IssueController::class, 'getIsFqaIssue']);
+        Route::get('get-normal-issues/{curriculumId}', [IssueController::class, 'getNormalIssue']);
+        Route::get('get-my-issues/{curriculumId}', [IssueController::class, 'getMyIssue']);
+        Route::post('delete-issue/{issueId}', [IssueController::class, 'destroy']);
+        Route::post('change-issue-status/{issueId}', [IssueController::class, 'changeIssueStatus']);
+    });
+});
 
         Route::prefix('reply')->group(function () {
-            Route::post('add-reply', [ReplyController::class, 'addReply'])->middleware('auth:sanctum');
-            Route::delete('/{id}', [ReplyController::class, 'destroy']);
+            Route::middleware(['auth:sanctum'])->group(function(){
+
+                Route::post('add-reply', [ReplyController::class, 'addReply']);
+                Route::get('get-replies/{issueId}', [ReplyController::class, 'getReplies']);
+                Route::delete('/{id}', [ReplyController::class, 'destroy']);
+            });
         });
 
 
@@ -478,3 +487,16 @@ Route::get('test',[NotificationController::class,'add']);
 
 
 Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session')->middleware('auth:sanctum','role:Student');
+
+
+Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
+     $validated = $request->validated();
+
+    $studentData = $validated['student'];
+    $registerData = $validated['registration'];
+
+    return response()->json([
+        'studentData'=>$studentData,
+        'registerData'=>$registerData,
+    ]);
+})->middleware('auth:sanctum');

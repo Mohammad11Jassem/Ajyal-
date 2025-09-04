@@ -162,7 +162,9 @@ class StudentPerformanceAnalysisService
         $paperCount = count($paperStats['exams']);
 
         if ($quizCount + $paperCount === 0) {
-            return 0;
+             return [
+                'result'=>0,
+            ];
         }
 
         $meanQuiz = $quizStats['average_score'];
