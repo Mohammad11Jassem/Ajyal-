@@ -125,4 +125,8 @@ class Student extends Model
     {
         return "{$this->first_name} {$this->father_name} {$this->last_name}";
     }
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }

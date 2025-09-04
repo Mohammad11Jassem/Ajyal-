@@ -38,6 +38,7 @@ class PaymentService
         if(auth()->user()->hasRole('Student')){
             return [
                 'message'=>'فواتيري غير المدفوعة في كورس معين',
+                // 'course' => $course,
                 'unpaid_invoices' => $unpaid->values(),
             ];
         }

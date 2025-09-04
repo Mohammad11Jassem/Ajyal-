@@ -17,6 +17,8 @@ use App\Http\Controllers\ParentModelController;
 use App\Http\Controllers\StudentController;
 
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\NoteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaperExamController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuestionController;
@@ -32,9 +34,11 @@ use App\Http\Controllers\TopicController;
 use App\Models\ClassroomCourse;
 use App\Models\Curriculum;
 use App\Models\CurriculumFile;
+use App\Models\Notification;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
@@ -83,13 +87,13 @@ Route::prefix('student')->group(function () {
 
     });
         Route::middleware(['auth:sanctum','role:Student'])->controller(TeacherController::class)->group(function () {
-            Route::get('profile/{id}', 'profile');
+            // Route::get('profile/{id}', 'profile');//public
             // All teachers
-            Route::get('allTeachers','allTeachers');
+            // Route::get('allTeachers','allTeachers');//public
             //Specific teachers
-            Route::get('specificTeachers/{subject_id}','specificTeachers');
+            // Route::get('specificTeachers/{subject_id}','specificTeachers');//public
             //level teachers
-            Route::get('levelTeachers/{level_id}','levelTeachers');
+            // Route::get('levelTeachers/{level_id}','levelTeachers');//public
 
 
         });
@@ -269,7 +273,23 @@ Route::prefix('advertisement')->group(function () {
 
         });
 });
+Route::prefix('course')->controller(CourseController::class)->group(function () {
+                Route::get('/all-courses', 'AllCourses');
+                Route::get('/show/{id}', 'show');
+});
 
+Route::prefix('student')->group(function () {
+    Route::controller(TeacherController::class)->group(function () {
+            Route::get('profile/{id}', 'profile');
+            // All teachers
+            Route::get('allTeachers','allTeachers');
+            //Specific teachers
+            Route::get('specificTeachers/{subject_id}','specificTeachers');
+            //level teachers
+            Route::get('levelTeachers/{level_id}','levelTeachers');
+
+        });
+});
 
 //course
 Route::prefix('course')->controller(CourseController::class)->group(function () {
@@ -281,10 +301,10 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
 
             Route::post('/create', 'store')->middleware('role:Secretariat|Manager');
             Route::post('/delete/{id}', 'delete')->middleware('role:Secretariat|Manager');
-            // Route::post('/update/{id}', 'update');
-            Route::get('/show/{id}', 'show');
-            // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
-            Route::get('/all-courses', 'AllCourses');
+                // Route::post('/update/{id}', 'update');
+            // Route::get('/show/{id}', 'show');
+                // Route::post('/delete/{id}', 'destroy')->middleware('role:Secretariat|Manager');
+            // Route::get('/all-courses', 'AllCourses');
             Route::get('/courses-filter', 'getCurrentAndIncomingCourses');
             Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
             Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
@@ -424,13 +444,37 @@ Route::prefix('payment')->controller(PaymentController::class)->group(function (
 
 });
 
+//Notes
+Route::prefix('note')->controller(NoteController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::post('/add','storeNote')->middleware('role:Manager');
+        Route::get('/student/{student}/notes','studentNotes');
+        Route::get('/all_notes','allNotes');
+    });
+
+});
+
+//Notifications
+Route::prefix('notification')->controller(NotificationController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/notes/notifications','getNotesNotifications');
+        Route::get('/absences/notifications','getAbscencesNotifications');
+        Route::get('/invoices/notifications','getInvoicesNotifications');
+        Route::get('/notifications','getNotifications');
+    });
+
+});
+
+
+
 Route::get('testapi',function(){
     // $data=User::paginate(3);
     // return response()->json([
     //     'data'=>$data
     // ]);
-
 });
+
+Route::get('test',[NotificationController::class,'add']);
 
 
 Route::post('/stripe/session', [StripeController::class, 'session'])->name('stripe.session')->middleware('auth:sanctum','role:Student');
