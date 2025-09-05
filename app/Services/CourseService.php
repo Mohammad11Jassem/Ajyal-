@@ -326,9 +326,9 @@ class CourseService
     }
 
 
-    public function studentCourses(){
-        $courses=Course::whereHas('registration',function($query){
-            $query->where('student_id',auth()->user()->user_data['role_data']['id']);
+    public function studentCourses($studentId){
+        $courses=Course::whereHas('registration',function($query)use($studentId){
+            $query->where('student_id',$studentId);
         })->get();
         return $courses;
     }
@@ -399,4 +399,8 @@ class CourseService
                 'data' => $schedule_image,
             ];
     }
+
+
+
+
 }

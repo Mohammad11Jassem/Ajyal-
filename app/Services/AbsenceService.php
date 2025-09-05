@@ -84,11 +84,12 @@ class AbsenceService
 
     }
 
-    public function getAbsence($studentId)
+    public function getAbsence($studentId,$courseId)
     {
         $registration = Registration::with(['course', 'absenceDays'])
                     ->where('student_id', $studentId)
+                    ->where('course_id', $courseId)
                     ->first();
-          return  new AbsenceResource($registration);
+        return  new AbsenceResource($registration);
     }
 }

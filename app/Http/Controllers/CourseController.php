@@ -195,8 +195,8 @@ class CourseController extends Controller
         }
     }
 
-    public function studentCourses(){
-        $courses=$this->courseService->studentCourses();
+    public function studentCoursess($studentId){
+        $courses=$this->courseService->studentCourses($studentId);
         return $this->success('كورسات هذا الطالب',$courses);
     }
 
@@ -212,5 +212,8 @@ class CourseController extends Controller
         $result=$this->courseService->allScheduleForCourse($courseId);
         return $this->success('كل برامج الشعب الصفية في كورس معين ',$result['data']);
     }
+
+
+
 
 }
