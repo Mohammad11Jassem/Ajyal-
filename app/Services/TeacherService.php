@@ -234,12 +234,12 @@ class TeacherService
                 'message' => 'الرجاء تسجيل الدخول أولاً'
             ];
         }
-        if(!$user->verifyCode['confirmed']){
-            return [
-                'success'=>false,
-                'message' => 'الرجاء تأكيد الحساب أولاً'
-            ];
-        }
+        // if(!$user?->verifyCode['confirmed']){
+        //     return [
+        //         'success'=>false,
+        //         'message' => 'الرجاء تأكيد الحساب أولاً'
+        //     ];
+        // }
         if($user->id != $teacher->user_id || !Hash::check($data['password'], $user->password)){
             return[
                 'success'=>false,

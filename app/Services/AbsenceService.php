@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\AbsenceResource;
+use App\Jobs\SendNotificationJob;
 use App\Models\Absence;
 use App\Models\AbsenceDate;
 use App\Models\ClassroomCourse;
@@ -24,10 +25,24 @@ class AbsenceService
             if(isset($data['registration_ids'])){
 
                 foreach ($data['registration_ids'] as $registrationId) {
-                    $absences[] = Absence::create([
+                    $absence = Absence::create([
                         'absence_date_id' => $absenceDate->id,
                         'registration_id' => $registrationId,
                     ]);
+                    $absences[]=$absence;
+                    // send notifications
+                    $registration = Registration::with('student.parents.user')->findOrFail($registrationId);
+                    $studentName = $registration?->student?->first_name . ' ' . $registration?->student?->last_name;
+
+                    $users = $registration->student->parents->map(function($parent){
+                        return $parent->user;
+                    });
+                   $message = [
+                        'title' => 'إشعار غياب',
+                        'body'  => "لقد تم تسجيل غياب على الطالب {$studentName}"
+                    ];
+                    SendNotificationJob::dispatch($message,$users,$absence);
+
                 }
             }
 

@@ -6,11 +6,14 @@ use App\Http\Controllers\StripeController;
 use App\Http\Requests\CreateAndRegisterStudentRequest;
 use App\Http\Resources\AbsenceResource;
 use App\Http\Resources\PrevQuizeResource;
+use App\Jobs\SendNotificationJob;
 use App\Mail\TestMail;
 use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumTeacher;
+use App\Models\Invoice;
 use App\Models\Quiz;
+use App\Models\Registration;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\StudentPerformanceAnalysisService;
@@ -31,9 +34,18 @@ Route::get('/stripe/success', [StripeController::class, 'success'])->name('strip
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 
 Route::get('/view', function () {
-    // return User::all();
-    $user=User::where('id',1)->get();
-    return $user;
+    // $users = Quiz::eligibleStudents(1);
+        $inv=Invoice::find(1);
+        // return get_class($inv);
+        $users=User::where('id',6)->get();
+                    // إعداد الرسالة مع اسم الاختبار
+                    $message = [
+                        'title' => 'تسجيل فاتورة',
+                        'body'  => "تم تسجيل فاتورة بنجاح"
+                    ];
+
+                    // إرسال الإشعار
+                    SendNotificationJob::dispatch($message, $users,$inv);
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
      $validated = $request->validated();

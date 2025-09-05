@@ -17,8 +17,8 @@ class NotificationService
             'user_id'=>$data['user_id'],
             'title'=>$data['title'],
             'body'=>$data['body'],
-            'notifiable_type'=>$Model??null,
-            'notifiable_id'=>$Model->id??null
+            'notifiable_type' =>get_class($Model)??null,
+            'notifiable_id'=>$Model?->id??null
         ]);
         return [
             'success'=>true,
@@ -48,7 +48,7 @@ class NotificationService
         // }
     }
     public function getInvoicesNotifications(){
-        $notifications=Notification::where('notifiable_type',Invoice::class)->get();
+        $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Invoice::class)->get();
         return [
             'success'=>true,
             'message'=>'كل إشعارات الفواتير ',
@@ -56,7 +56,7 @@ class NotificationService
         ];
     }
     public function getAbscencesNotifications(){
-        $notifications=Notification::where('notifiable_type',Absence::class)->get();
+        $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Absence::class)->get();
         return [
             'success'=>true,
             'message'=>'كل إشعارات الغياب ',
@@ -64,7 +64,7 @@ class NotificationService
         ];
     }
     public function getNotesNotifications(){
-        $notifications=Notification::where('notifiable_type',Note::class)->get();
+        $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Note::class)->get();
         return [
             'success'=>true,
             'message'=>'كل إشعارات الملاحظات ',
@@ -72,7 +72,7 @@ class NotificationService
         ];
     }
     public function getNotifications(){
-        $notifications=Notification::paginate(10);
+        $notifications=Notification::where('user_id',auth()->id())->paginate(10);
         return [
             'success'=>true,
             'message'=>'كل الإشعارات  ',

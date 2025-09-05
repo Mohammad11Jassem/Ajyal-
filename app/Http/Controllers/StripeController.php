@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Payment\PayRequest;
+use App\Jobs\SendNotificationJob;
 use App\Models\Invoice;
+use App\Models\User;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +55,7 @@ class StripeController extends Controller
                 'metadata' => [
                     'invoice_id' => $invoice['id'],
                     'student_id'=>auth()->user()->user_data['role_data']['id'],
+                    'user_id'=>auth()->id(),
                 ],
             ]);
 
@@ -84,6 +87,25 @@ class StripeController extends Controller
                     'student_id'=>$session->metadata->student_id,
             ]);
 
+            $invoice=Invoice::find($session->metadata->invoice_id);
+             //send notification
+            $users = User::where('id',$session->metadata->user_id)->get();
+
+            $message = [
+                'title' => 'تسديد فاتورة',
+                'body'  => 'تم تسديد فاتورةالكترونياً بنجاح'
+            ];
+
+            SendNotificationJob::dispatch($message, $users,$invoice);
+            //send notification
+            $managers = User::role('Manager', 'api')->get();
+
+             $message = [
+                'title' => 'تسديد فاتورة',
+                'body'  => 'تم تسديد فاتورةالكترونياً بنجاح'
+            ];
+
+            SendNotificationJob::dispatch($message, $managers,$invoice);
             // return [
             //     'status'=>$session->payment_status,
             //      'orderId' => $session->metadata->order_id,

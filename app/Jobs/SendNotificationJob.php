@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendNotificationJob implements ShouldQueue
 {
@@ -31,6 +32,8 @@ class SendNotificationJob implements ShouldQueue
     // }
     public function __construct(array $message, $users, $model = null)
     {
+
+
         $this->message = $message;
         // users ممكن تكون Collection من Eloquent أو Array من IDs
         $this->users   = $users;
@@ -53,27 +56,28 @@ class SendNotificationJob implements ShouldQueue
     public function handle(): void
     {
         $notificationService = app(NotificationService::class);
-
         foreach ($this->users as $user) {
             // إذا users مرسلة كـ IDs نجيبها من DB
             if (is_numeric($user)) {
                 $user = User::find($user);
             }
+            Log::info('user id: '.$user['id']);
 
-            if (!$user || !$user->fcm_token) {
-                continue;
-            }
-
-            // 1. إرسال الإشعار
-            PushNotification::sendNotification($this->message, $user->fcm_token);
-
-                // 2. تخزين الإشعار
-                $notificationService->store([
-                    'user_id'=>$user->id,
+            $notti=  $notificationService->store([
+                    'user_id'=>$user['id'],
                     'title' => $this->message['title'],
                     'body'  => $this->message['body'],
                     'model' => $this->model,
                 ]);
+            if (!$user || !$user->fcm_token) {
+                // continue;
+            }
+
+            // 1. إرسال الإشعار
+            // PushNotification::sendNotification($this->message, $user->fcm_token);
+
+                // 2. تخزين الإشعار
+
 
         }
     }

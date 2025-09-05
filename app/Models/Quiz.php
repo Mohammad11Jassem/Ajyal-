@@ -33,6 +33,14 @@ class Quiz extends Model
     {
         return $query->where('available', 1);
     }
+    public function scopeEligibleStudents($query, $quizId)
+    {
+        // جلب الـ Quiz مع العلاقات المطلوبة
+        $quiz = $query->with('assignment.curriculum.course.students.user')->find($quizId);
+
+        // جلب الطلاب المرتبطين بالكورس
+        return $quiz?->assignment?->curriculum?->course?->students?->map(fn($student) => $student->user);
+    }
     // public function curriculum()
     // {
     //     return $this->belongsTo(Curriculum::class);

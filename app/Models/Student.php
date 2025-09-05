@@ -43,9 +43,9 @@ class Student extends Model
         });
     }
 
-    public function parents():BelongsToMany
+    public function parents(): BelongsToMany
     {
-        return $this->belongsToMany(ParentModel::class, 'parent_student', 'student_id', 'parent_model_id');
+        return $this->belongsToMany(ParentModel::class, 'parent_model_students', 'student_id', 'parent_model_id');
     }
     public function courses():BelongsToMany
     {
