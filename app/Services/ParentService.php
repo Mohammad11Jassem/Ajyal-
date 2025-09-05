@@ -25,6 +25,7 @@ class ParentService
 
                  $user = User::create([
                      'password' => bcrypt($data['password']),
+                     'fcm_token' => $data['fcm_token']??null,
                  ]);
                  $user->assignRole(Role::findByName('Parent', 'api'));
                  $parent = ParentModel::create([
@@ -69,7 +70,7 @@ class ParentService
         }
 
         $token = $user->createToken('parent-token')->plainTextToken;
-
+        $user->fcm_token=$data['fcm_token']??null;
         // $parent=[
         //     ...$user->user_data['role_data'],
         //     ...$token,

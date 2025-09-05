@@ -31,7 +31,9 @@ Route::get('/stripe/success', [StripeController::class, 'success'])->name('strip
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 
 Route::get('/view', function () {
-    return User::all();
+    // return User::all();
+    $user=User::where('id',1)->get();
+    return $user;
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
      $validated = $request->validated();

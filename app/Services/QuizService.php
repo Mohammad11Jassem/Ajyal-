@@ -81,14 +81,25 @@ class QuizService
         ];
     }
 
-    public function getAllQuizzesForSubject($id){
+    public function getAllQuizzesForSubject($curriculumId){
 
         if(auth()->user()->hasRole('Teacher')){
             // return Quiz::where('curriculum_id',$id)->get();
-            return Quiz::whereHas('assignment',function($query)use($id){
+            $quizzes=Quiz::whereHas('assignment',function($query)use($curriculumId){
                 $query->where('teacher_id',auth()->user()->user_data['role_data']['id'])
-                      ->where('curriculum_id',$id);
+                      ->where('curriculum_id',$curriculumId);
             })->get();
+
+            // نضيف خاصية "is_active" لكل كويز
+            return $quizzes->map(function ($quiz) {
+                $start   = Carbon::parse($quiz->start_time);
+                $end = $start->copy()->addMinutes((float) $quiz->duration);
+                $now     = now();
+
+                 $quiz->available_to_watch = $end->lt($now);
+
+                return $quiz;
+            });
         }
         // $quzzes=Quiz::available()->whereDoesntHave('student')->whereHas('assignment',function($query)use($id){
         //         $query->where('curriculum_id',$id);
@@ -99,8 +110,8 @@ class QuizService
             ->whereDoesntHave('studentQuizzes', function ($q) use ($studentId) {
                 $q->where('student_id', $studentId);
             })
-            ->whereHas('assignment', function ($q) use ($id) {
-                $q->where('curriculum_id', $id);
+            ->whereHas('assignment', function ($q) use ($curriculumId) {
+                $q->where('curriculum_id', $curriculumId);
             })
             ->get();
         return $quizzes;
@@ -169,30 +180,32 @@ class QuizService
             // }
 
             $totalScore = 0;
+            if(isset($data['answers'])){
 
-            foreach ($data['answers'] as $answer) {
-                $question = Question::find($answer['question_id']);
-                $choice = Choice::find($answer['choice_id']??null);
+                foreach ($data['answers'] as $answer) {
+                    $question = Question::find($answer['question_id']);
+                    $choice = Choice::find($answer['choice_id']??null);
 
-                // Throw exception if question or choice not found
-                // if (!$question || !$choice) {
-                //     throw new ModelNotFoundException('Invalid question or choice');
-                // }
+                    // Throw exception if question or choice not found
+                    // if (!$question || !$choice) {
+                    //     throw new ModelNotFoundException('Invalid question or choice');
+                    // }
 
-                // Check if choice belongs to the question
-                // if ($choice?->question_id !== $question->id) {
-                //     throw new \Exception('Choice does not belong to question');
-                // }
+                    // Check if choice belongs to the question
+                    // if ($choice?->question_id !== $question->id) {
+                    //     throw new \Exception('Choice does not belong to question');
+                    // }
 
-                // Save answer
-                $studentQuiz->answers()->create([
-                    'question_id' => $question->id,
-                    'selected_choice_id' => $choice?->id??null,
-                    'answered_at'=>Carbon::now(),
-                ]);
+                    // Save answer
+                    $studentQuiz->answers()->create([
+                        'question_id' => $question->id,
+                        'selected_choice_id' => $choice?->id??null,
+                        'answered_at'=>Carbon::now(),
+                    ]);
 
-                if ($choice?->is_correct) {
-                    $totalScore += $question->mark;
+                    if ($choice?->is_correct) {
+                        $totalScore += $question->mark;
+                    }
                 }
             }
             $quiz=Quiz::findOrFail($data['quiz_id']);
@@ -330,6 +343,17 @@ class QuizService
         $quiz=Quiz::findOrFail($quizId);
         $userID=auth()->user()->user_data['role_data']['id'];
         $OwnerID=CurriculumTeacher::findOrFail($quiz['curriculum_teacher_id'])->teacher_id;
+
+           if (!$quiz->available) {
+                if ($quiz->allQuestions()->count() === 0) {
+                    return [
+                        'success' => false,
+                        'message' => 'لا يمكن جعل الكويز متاحاً لأنه لا يحتوي على أي سؤال',
+                        'data'=>$quiz
+                    ];
+                }
+            }
+
         if($userID===$OwnerID ){
             $quiz->available=!$quiz->available;
             $quiz->save();
@@ -355,6 +379,27 @@ class QuizService
         foreach ($quizzes as $quiz) {
             $mean = 0;
             $studentQuizzesCount=$quiz->studentQuizzes->count();
+
+            // حساب وقت الانتهاء
+            $endTime = Carbon::parse((int) $quiz->start_time)->addMinutes((int) $quiz->duration);
+            $stillRunning = Carbon::now()->lessThan($endTime);
+
+            // إذا الامتحان ما خلص → ضمه مباشرة إلى withoutResults
+            if ($stillRunning) {
+                $withoutResults[] = [
+                    'id' => $quiz->id,
+                    'curriculum_teacher_id'=>$quiz->curriculum_teacher_id,
+                    'topic_id'=>$quiz->topic_id,
+                    'curriculum_id'=>$quiz->curriculum_id,
+                    'name' => $quiz->name,
+                    'type' => $quiz->type,
+                    'available' => $quiz->available,
+                    'start_time' => $quiz->start_time,
+                    'duration' => $quiz->duration,
+                    'mean_result' => 0,
+                ];
+                continue; // نتخطى بقية المنطق
+            }
             if ($studentQuizzesCount > 0) {
                 // $mean = $quiz->studentQuizzes->avg('result');
                 $meanSum=0;

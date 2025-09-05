@@ -73,6 +73,7 @@ class StudentService
                 return null;
             }
             $student->password=$data['password'];
+            $student->fcm_token=$data['fcm_token']??null;
             $student->save();
             $token = $student->createToken('token')->plainTextToken;
             return [
@@ -96,7 +97,8 @@ class StudentService
 
             // $user->tokens()->delete();
             $token = $user->createToken('token')->plainTextToken;
-
+            $user->fcm_token=$data['fcm_token']??null;
+            $user->save();
             return [
                 'student' => $student,
                 'token' => $token

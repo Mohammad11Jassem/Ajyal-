@@ -24,6 +24,7 @@ class StudentLoginRequest extends FormRequest
         return [
             'access_code' => 'required|string|min:8',
             'password'=>'required|min:8',
+            'fcm_token'=>'string',
         ];
     }
 }

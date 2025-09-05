@@ -14,6 +14,7 @@ class NotificationService
     {
         $Model=$data['model']??null;
         $notification=Notification::create([
+            'user_id'=>$data['user_id'],
             'title'=>$data['title'],
             'body'=>$data['body'],
             'notifiable_type'=>$Model??null,

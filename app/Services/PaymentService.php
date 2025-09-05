@@ -128,49 +128,51 @@ class PaymentService
     }
 
 
+
 /*
     public function getCoursesPayments($studentId)
     {
 
-    $registrations = Registration::with(['course.invoices.payments'])
-        ->where('student_id', $studentId)
-        ->get();
+    // $registrations = Registration::with(['course.invoices.payments'])
+    //     ->where('student_id', $studentId)
+    //     ->get();
 
-        $courses = $registrations->map(function ($registration) {
-        $course = $registration->course;
+    // $courses = $registrations->map(function ($registration) {
+    //     $course = $registration->course;
 
-        $invoices = $course->invoices;
+    //     $invoices = $course->invoices;
 
-        // Split into paid & unpaid for this student
-        // $paid = $invoices->filter(function ($invoice) use ($registration) {
-        //     return $invoice->payments
-        //         ->where('registration_id', $registration->id)
-        //         ->isNotEmpty();
-        // });
-        $paid = $invoices->filter(function ($invoice) {
-            return $invoice->payments->isNotEmpty(); // Now payments are already filtered to this student
-        });
+    //     // Split into paid & unpaid for this student
+    //     // $paid = $invoices->filter(function ($invoice) use ($registration) {
+    //     //     return $invoice->payments
+    //     //         ->where('registration_id', $registration->id)
+    //     //         ->isNotEmpty();
+    //     // });
+    //     $paid = $invoices->filter(function ($invoice) {
+    //         return $invoice->payments->isNotEmpty(); // Now payments are already filtered to this student
+    //     });
 
-        $unpaid = $invoices->filter(function ($invoice) use ($registration) {
-            return $invoice->payments
-                ->where('registration_id', $registration->id)
-                ->isEmpty();
-        });
 
-        return [
-            'course'          => $course->makeHidden(['invoices']),
-            'paid_invoices'   => $paid->values(),
-            'unpaid_invoices' => $unpaid->values(),
-        ];
-        });
+    //     $unpaid = $invoices->filter(function ($invoice) use ($registration) {
+    //         return $invoice->payments
+    //             ->where('registration_id', $registration->id)
+    //             ->isEmpty();
+    //     });
 
-        return [
-            'message' => 'قائمة بكورساتي مع الفواتير المدفوعة وغير المدفوعة ',
-            'data' => $courses
-        ];
-        }
-*/
-public function getCoursesPayments($studentId)
+    //     return [
+    //         'course'          => $course->makeHidden(['invoices']),
+    //         'paid_invoices'   => $paid->values(),
+    //         'unpaid_invoices' => $unpaid->values(),
+    //     ];
+    // });
+
+    //     return [
+    //         'message' => 'قائمة بكورساتي مع الفواتير المدفوعة وغير المدفوعة ',
+    //         'data' => $courses
+    //     ];
+    //     }
+
+    public function getCoursesPayments($studentId)
 {
     $registrations = Registration::with([
         'course.invoices' => function ($query) use ($studentId) {
@@ -184,7 +186,56 @@ public function getCoursesPayments($studentId)
     ->where('student_id', $studentId)
     ->get();
 
-    $courses = $registrations->map(function ($registration) {
+        $courses = $registrations->map(function ($registration) {
+        $course = $registration->course;
+
+        // Now invoices only contain payments for this student's registration
+        $invoices = $course->invoices;
+
+
+        // Split into paid & unpaid for this student
+        // $paid = $invoices->filter(function ($invoice) use ($registration) {
+        //     return $invoice->payments
+        //         ->where('registration_id', $registration->id)
+        //         ->isNotEmpty();
+        // });
+        $paid = $invoices->filter(function ($invoice) {
+            return $invoice->payments->isNotEmpty(); // Now payments are already filtered to this student
+
+        });
+
+        $unpaid = $invoices->filter(function ($invoice) {
+            return $invoice->payments->isEmpty();
+        });
+
+        return [
+            'course'          => $course->makeHidden(['invoices']),
+            'paid_invoices'   => $paid->values(),
+            'unpaid_invoices' => $unpaid->values(),
+        ];
+    });
+
+        return [
+            'message' => 'قائمة بكورساتي مع الفواتير المدفوعة وغير المدفوعة ',
+            'data' => $courses
+        ];
+        }
+*/
+        public function getCoursesPayments($studentId)
+        {
+            $registrations = Registration::with([
+                'course.invoices' => function ($query) use ($studentId) {
+                    $query->with(['payments' => function ($query) use ($studentId) {
+                        $query->whereHas('registration', function ($q) use ($studentId) {
+                            $q->where('student_id', $studentId);
+                        });
+                    }]);
+                }
+            ])
+            ->where('student_id', $studentId)
+            ->get();
+
+        $courses = $registrations->map(function ($registration) {
         $course = $registration->course;
 
         // Now invoices only contain payments for this student's registration

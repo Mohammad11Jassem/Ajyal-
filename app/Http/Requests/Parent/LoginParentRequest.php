@@ -24,6 +24,7 @@ class LoginParentRequest extends FormRequest
         return [
             'phone_number' => 'required|string',
             'password' => 'required|string',
+            'fcm_token'=>'string',
         ];
     }
 }
