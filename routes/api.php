@@ -98,9 +98,10 @@ Route::prefix('student')->group(function () {
 
 
         });
-        Route::middleware(['auth:sanctum','role:Student'])->controller(CourseController::class)->group(function () {
-            Route::get('my-courses','studentCourses');
-            Route::get('my-courses-with-details','studentCoursesWithDetails');
+        Route::middleware(['auth:sanctum'])->controller(CourseController::class)->group(function () {
+            Route::get('my-courses/{studentId}','studentCoursess')->middleware('role:Student|Parent|Manager|Secretariat');
+            Route::get('my-courses-with-details','studentCoursesWithDetails')->middleware('role:Student');
+
         });
 
 
@@ -381,7 +382,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
                 Route::post('/store-absences',  'store');
                 Route::get('/today-absence/{courseId}',  'todayAbsence');
             });
-            Route::get('/get-absence/{studentId}',  'getAbsence')->middleware('auth:sanctum','role:Parent|Student');
+            Route::get('/get-absence/{studentId}/course/{courseId}',  'getAbsence')->middleware('auth:sanctum','role:Parent|Student');
         });
 
 
