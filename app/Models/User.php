@@ -71,6 +71,14 @@ public function verifyCode()
     return $this->hasOne(VerifyCode::class);
 }
 
+public function scopeForQuiz($query, $quizId)
+{
+    return $query->whereHas('student.courses', function ($q) use ($quizId) {
+        $q->whereHas('curriculums.quizzes', function ($q2) use ($quizId) {
+            $q2->where('quizzes.id', $quizId);
+        });
+    });
+}
 
 public function getUserDataAttribute()
 {

@@ -55,10 +55,11 @@ class InvoiceService
                     $registration=Registration::where('student_id',$data['student_id'])->where('course_id',$invoice->course->id)->first();
                     // here you can add payment logic (e.g., mark as paid, call payment gateway)
                     $payment = $invoice->payments()->create(['registration_id'=>$registration->id]);
+
                     return [
                             'success'=>true,
                             'message' => 'تم دفع الفاتورة بنجاح',
-                            // 'data'=>$payment
+                            'data'=>$invoice
                         ];
                 });
         }catch(Exception $e){

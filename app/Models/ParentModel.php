@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ParentModel extends Model
 {
     //
+        protected $table = 'parent_models'; // <-- مهم حتى يفرق عن جدول الربط
      protected $fillable=[
         'user_id','phone_number','name',
     ];

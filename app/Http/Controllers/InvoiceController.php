@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Invoice\AddInvoicesRequest;
 use App\Http\Requests\Invoice\PayInvoicesRequest;
+use App\Jobs\SendNotificationJob;
 use App\Models\Invoice;
+use App\Models\User;
 use App\Services\InvoiceService;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
@@ -61,6 +63,27 @@ class InvoiceController extends Controller
         if (!$result['success']) {
             return $this->error( $result['message'],$result);
         }
+
+        //send notification
+        $users = User::where('id',auth()->id())->get();
+
+        $message = [
+            'title' => 'تسديد فاتورة',
+            'body'  => 'تم تسديد فاتورة جديدة'
+        ];
+
+        SendNotificationJob::dispatch($message, $users,$result['data']);
+        //send notification
+        $managers = User::role('Manager', 'api')->get();
+
+        $message = [
+            'title' => 'تسديد فاتورة',
+            'body'  => 'تم تسديد فاتورة جديدة'
+        ];
+
+        SendNotificationJob::dispatch($message, $managers,$result['data']);
+
+
         return $this->success( $result['message'],$result);
     }
 

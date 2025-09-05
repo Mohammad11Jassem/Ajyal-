@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumTeacher;
 use App\Models\Invoice;
+use App\Models\ParentModel;
+use App\Models\ParentStudent;
 use App\Models\Payment;
 use App\Models\Question;
 use App\Models\Quiz;
@@ -66,6 +68,21 @@ class FileSeeder extends Seeder
                 'path'=>'teachers/teacher.jpg'
             ]);
         }
+
+        // ادخال آباء
+        $records=Storage::json('Json_file/parent_models.json');
+        foreach($records as $record){
+            $parent=ParentModel::create($record);
+            $user=User::find($parent->user_id);
+            $user->assignRole(Role::findByName('Parent', 'api'));
+        }
+        // ربط الآباء بالابناء
+        $records=Storage::json('Json_file/parent_model_students.json');
+        foreach($records as $record){
+            $parent=ParentStudent::create($record);
+        }
+
+
 
         //تسجيل كل استاذ وشو بدرس
         $records=Storage::json('Json_file/teacher_subjects.json');
@@ -176,7 +193,7 @@ class FileSeeder extends Seeder
         $records=Storage::json('Json_file/advertisements.json');
         foreach($records as $record){
             $Advertisement=Advertisement::create($record);
-            
+
             if ($Advertisement->advertisable instanceof \App\Models\Teacher) {
                 $Advertisement->images()->create([
                     'path'=>'advertisements/teacher.jpg'

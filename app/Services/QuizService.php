@@ -6,6 +6,7 @@ use App\Http\Resources\QuestionResource;
 use App\Http\Resources\QuizResource;
 use App\Http\Resources\QuizWithoutQustionsResource;
 use App\Http\Resources\SolvedQuizResource;
+use App\Jobs\SendNotificationJob;
 use App\Models\Choice;
 use App\Models\Course;
 use App\Models\CurriculumTeacher;
@@ -30,6 +31,20 @@ class QuizService
                                                     ->first();
                 $data['curriculum_teacher_id']=$curriculmTeacher['id'];
                 $quiz=Quiz::create($data);
+
+                if($quiz->available){
+                    // جلب المستخدمين المؤهلين
+                    $users = Quiz::eligibleStudents($quiz->id);
+
+                    // إعداد الرسالة مع اسم الاختبار
+                    $message = [
+                        'title' => 'امتحان جديد',
+                        'body'  => "تم نشر امتحان جديد باسم: {$quiz->name}"
+                    ];
+
+                    // إرسال الإشعار
+                    SendNotificationJob::dispatch($message, $users);
+                }
                 return [
                     'success' => true,
                     'message' => 'Quiz created successfully',
@@ -357,6 +372,20 @@ class QuizService
         if($userID===$OwnerID ){
             $quiz->available=!$quiz->available;
             $quiz->save();
+
+             if($quiz->available){
+                    // جلب المستخدمين المؤهلين
+                    $users = Quiz::eligibleStudents($quiz->id);
+
+                    // إعداد الرسالة مع اسم الاختبار
+                    $message = [
+                        'title' => 'امتحان جديد',
+                        'body'  => "تم نشر امتحان جديد باسم: {$quiz->name}"
+                    ];
+
+                    // إرسال الإشعار
+                    SendNotificationJob::dispatch($message, $users);
+                }
             return [
                 'success'=>true,
                 'message'=>'Quiz status changed',
