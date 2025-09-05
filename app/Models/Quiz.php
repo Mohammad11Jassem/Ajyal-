@@ -54,6 +54,10 @@ class Quiz extends Model
     {
         return $this->hasMany(Question::class)->whereNull('parent_question_id');
     }
+    public function allQuestions()
+    {
+        return $this->hasMany(Question::class);
+    }
     public function markedQuestions()
     {
         return $this->hasMany(Question::class)->whereHas('choices');

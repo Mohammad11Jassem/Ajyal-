@@ -24,7 +24,8 @@ class StudentRegisterRequest extends FormRequest
         return [
             'user_id'=>'required|exists:users,id',
             'access_code'=>'required|string|min:8',
-            'password'=>'required|confirmed|min:8'
+            'password'=>'required|confirmed|min:8',
+            'fcm_token'=>'string',
         ];
     }
 }

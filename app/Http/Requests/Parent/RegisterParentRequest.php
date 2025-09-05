@@ -26,6 +26,7 @@ class RegisterParentRequest extends FormRequest
             'phone_number' => 'required|string|unique:parent_models,phone_number',
             'password' => 'required|string|min:6|confirmed',
             'student_id_qr' => 'required|string',
+            'fcm_token'=>'string',
         ];
     }
 }

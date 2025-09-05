@@ -20,6 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'password',
+        'fcm_token'
     ];
 
     /**
@@ -30,6 +31,7 @@ class User extends Authenticatable
     protected $hidden = [
         // 'password',
         'remember_token',
+        'fcm_token'
     ];
 
     /**

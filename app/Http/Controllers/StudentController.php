@@ -155,8 +155,8 @@ class StudentController extends Controller
 
         try {
             $data=$linkStudentRequest->validated();
-            // $data['parent_id']=auth()->user()->user_data['role_data']['id'];
-            $data['parent_id']=1;
+            $data['parent_id']=auth()->user()->user_data['role_data']['id'];
+            // $data['parent_id']=1;
             $linkData=$this->studentService->linkStudent($data);
             if(!$linkData['success']){
                 return $this->badRequest('تم ربط الطالب سابقاً');

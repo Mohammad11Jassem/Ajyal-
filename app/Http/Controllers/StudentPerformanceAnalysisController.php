@@ -82,7 +82,7 @@ class StudentPerformanceAnalysisController extends Controller
     }
     public function SubjectsMean($studentId,$courseId)
     {
-        return $this->success('معدلات المواد',$this->service->SubjectsMean($studentId,$courseId));
+        return $this->success('معدلات المواد',$this->service->SubjectsMean($courseId,$studentId));
 
     }
 

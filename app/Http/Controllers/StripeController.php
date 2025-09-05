@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use Stripe\StripeClient;
 
 class StripeController extends Controller
 {
@@ -37,7 +38,7 @@ class StripeController extends Controller
                         'product_data' => [
                             'name' => 'invoice price',
                         ],
-                        'unit_amount' => $invoice['value'], // = $10.00
+                        'unit_amount' => (int) $invoice['value'], // = $10.00
                         // 'unit_amount' => $invoice, // = $10.00
                     ],
                     'quantity' => 1,
@@ -51,6 +52,7 @@ class StripeController extends Controller
                 // ],
                 'metadata' => [
                     'invoice_id' => $invoice['id'],
+                    'student_id'=>auth()->user()->user_data['role_data']['id'],
                 ],
             ]);
 
@@ -63,22 +65,23 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
+
         return DB::transaction(function() use($request){
-        // return 'Payment success';
+            // return 'Payment success';
             $sessionId = $request->get('session_id');
 
             if (!$sessionId) {
                 return response()->json(['error' => 'No session ID'], 400);
             }
 
-            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+            $stripe = new StripeClient(env('STRIPE_SECRET'));
             $session = $stripe->checkout->sessions->retrieve($sessionId);
 
-            $this->invoiceService->payInvoices([
-                [
+
+           $in= $this->invoiceService->payInvoices([
+
                     'invoice_id'=>$session->metadata->invoice_id,
-                    'student_id'=>auth()->user()->user_data['role_data']['id'],
-                ]
+                    'student_id'=>$session->metadata->student_id,
             ]);
 
             // return [
@@ -87,13 +90,13 @@ class StripeController extends Controller
             //      'userId' => $session->metadata->user_id,
             // ];
 
-            return view('test');
+            return view('successPayment');
         });
 
     }
 
     public function cancel()
     {
-        return 'Payment canceled!';
+        return view('fail-payment');
     }
 }

@@ -447,7 +447,7 @@ Route::prefix('payment')->controller(PaymentController::class)->group(function (
         Route::get('/students/{student}/courses/{course}/payments','getStudentPayments')->middleware('role:Manager|Secretariat|Student|Parent');
         Route::get('/courses/{course}/payments','getCoursePayments')->middleware('role:Manager');
         Route::get('/invoices/{invoice}/students/payments','getInvoicePaymentStatus')->middleware('role:Manager|Secretariat');
-        Route::get('/students/{student}/courses/payments/invoices','getCoursesPayments')->middleware('role:Student');
+        Route::get('/students/{student}/courses/payments/invoices','getCoursesPayments')->middleware('role:Student|Parent');
 
     });
 
