@@ -388,4 +388,15 @@ class CourseService
             'message' => 'No valid schedule file provided',
         ];
     }
+
+    public function allScheduleForCourse($CourseId)
+    {
+        $course=Course::findOrFail($CourseId);
+        $schedule_image=$course->classroomCourses->load('image');
+
+            return [
+                'success' => true,
+                'data' => $schedule_image,
+            ];
+    }
 }

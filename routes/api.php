@@ -311,6 +311,7 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
             Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
             Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
             Route::post('/add-schedule-to-classroom-at-course', 'addScheduleToClassroom');
+            Route::get('/all-schedule/course/{courseId}', 'allScheduleForCourse');
 
 
             Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
@@ -447,7 +448,7 @@ Route::prefix('payment')->controller(PaymentController::class)->group(function (
         Route::get('/students/{student}/courses/{course}/payments','getStudentPayments')->middleware('role:Manager|Secretariat|Student|Parent');
         Route::get('/courses/{course}/payments','getCoursePayments')->middleware('role:Manager');
         Route::get('/invoices/{invoice}/students/payments','getInvoicePaymentStatus')->middleware('role:Manager|Secretariat');
-        Route::get('/students/{student}/courses/payments/invoices','getCoursesPayments')->middleware('role:Student');
+        Route::get('/students/{student}/courses/payments/invoices','getCoursesPayments')->middleware('role:Student|Parent');
 
     });
 

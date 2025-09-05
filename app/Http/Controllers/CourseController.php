@@ -208,5 +208,9 @@ class CourseController extends Controller
         $result=$this->courseService->addScheduleToClassroom($addScheduleImageRequest->validated());
         return $this->success('تم إضافة البرنامج إلى الشعبة الصفية  ',$result['data']);
     }
+    public function allScheduleForCourse($courseId){
+        $result=$this->courseService->allScheduleForCourse($courseId);
+        return $this->success('كل برامج الشعب الصفية في كورس معين ',$result['data']);
+    }
 
 }
