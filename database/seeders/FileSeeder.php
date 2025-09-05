@@ -50,6 +50,7 @@ class FileSeeder extends Seeder
             User::create($record);
         }
 
+
         // ادخال الطلاب
         $records=Storage::json('Json_file/students.json');
         foreach($records as $record){
@@ -57,6 +58,7 @@ class FileSeeder extends Seeder
             $user=User::find($Student->user_id);
             $user->assignRole(Role::findByName('Student', 'api'));
         }
+
 
         //ادخال الاساتذة
         $records=Storage::json('Json_file/teachers.json');
@@ -89,8 +91,6 @@ class FileSeeder extends Seeder
         foreach($records as $record){
             TeacherSubject::create($record);
         }
-
-
 
         // ادخال كورسات
         $records=Storage::json('Json_file/courses.json');
@@ -206,6 +206,7 @@ class FileSeeder extends Seeder
             }
             else{
                 $Advertisement->images()->create([
+
                     'path'=>'advertisements/general.png'
                 ]);
             }

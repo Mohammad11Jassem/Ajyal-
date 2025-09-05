@@ -311,6 +311,7 @@ Route::prefix('course')->controller(CourseController::class)->group(function () 
             Route::get('/classRooms-course/{courseId}', 'classRoomsCourse');
             Route::get('/curricula-course/{courseId}', 'curriculumsCourse');
             Route::post('/add-schedule-to-classroom-at-course', 'addScheduleToClassroom');
+            Route::get('/all-schedule/course/{courseId}', 'allScheduleForCourse');
 
 
             Route::get('/all-files-for-course/{courseId}', 'AllfileForCourse');
