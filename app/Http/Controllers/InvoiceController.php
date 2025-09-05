@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Invoice\AddInvoicesRequest;
+use App\Http\Requests\Invoice\NotifyStudentsRequest;
 use App\Http\Requests\Invoice\PayInvoicesRequest;
 use App\Jobs\SendNotificationJob;
 use App\Models\Invoice;
@@ -85,6 +86,18 @@ class InvoiceController extends Controller
 
 
         return $this->success( $result['message'],$result);
+    }
+
+    public function notifyStudent(NotifyStudentsRequest $notifyStudentsRequest)
+    {
+        $data=$notifyStudentsRequest->validated();
+        $noti=$this->invoiceService->notifyStudent($data);
+
+        if($noti['success']){
+            return $this->success('تم ارسال الاشعار بنجاح');
+        }
+        return $this->badRequest('حدث خطأ يرجى المحاولة مرة أخرى');
+
     }
 
 

@@ -61,7 +61,7 @@ class SendNotificationJob implements ShouldQueue
             if (is_numeric($user)) {
                 $user = User::find($user);
             }
-            Log::info('user id: '.$user['id']);
+            // Log::info('user id: '.$user['id']);
 
             $notti=  $notificationService->store([
                     'user_id'=>$user['id'],
