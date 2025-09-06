@@ -186,14 +186,35 @@ class AdvertisementService
             if ($user && in_array($user->getRoleNames()->first(),[ "Manager","Secretariat"])) {
                 $perPage = 3;
             }
-            $advertisement=Advertisement::where('advertisable_type',Course::class)
-            ->orderByDesc('created_at')
-            ->with('images')
-            ->paginate($perPage);
+
+            // $advertisement=Advertisement::where('advertisable_type',Course::class)
+            //             // ->whereDoesntHave('advertisable.')
+            //             ->orderByDesc('created_at')
+            //             ->with('images')
+            //             ->paginate($perPage);
+            $student = $user?->student; // الطالب المرتبط بالمستخدم الحالي
+
+            $advertisementQuery = Advertisement::where('advertisable_type', Course::class)
+                ->orderByDesc('created_at')
+                ->with('images');
+
+            if ($student) {
+            $advertisementQuery->whereDoesntHaveMorph(
+                'advertisable',
+                [Course::class],
+                function ($q) use ($student) {
+                    $q->whereHas('registration', function ($q2) use ($student) {
+                        $q2->where('student_id', $student->id);
+                    });
+                }
+            );
+}
+
+            $advertisements = $advertisementQuery->paginate($perPage);
             return [
                 'success' => true,
                 'message' => 'all Course Advertisement',
-                'data' => $advertisement
+                'data' => $advertisements
                 ];
         }catch(Exception $e){
         return [

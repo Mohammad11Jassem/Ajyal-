@@ -87,7 +87,7 @@ Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $req
             });
 
             // $fcm_token = 'fUq3em0xR0CY08GLllSMNd:APA91bF21K4QKiPwb_9TWLd6SCvy0nW5gmEMdRdmFx5qZ6la08kvxZ3fnZdL8luji4XKqsn_qm_iAVuRHwGk1r89atbKsCgtp__MwFi6-_C4SYkXxqwKlxU';
-            $fcm_token = 'cz6l7oyXS01i1gg0yAtM9Y:APA91bH1pz2fzr6BQ0tDXztooGVZQf6id2DHpaobzC7svEouQrNKoS7oDsqyKRVwzzBL0OAJGwfvkF5vl0ZZIMK1pmIDtjk4AC4DtVmKlP2GIGgqWS0eMcw';
+            $fcm_token = 'cXx2Bp8VL89s2C5PI2Nhva:APA91bECM2hF0R9kh3ScasoKFn0Y4gf5l4Ta7AHXPEBPC5afxLP59e1Q6guB2a9Sd7Ri1mQoOiXgU7Cp0TuCiVAO468Le44cplf0iDcSwKx8--Ymp64pYMM';
 
             $message = [
                 "message" => [

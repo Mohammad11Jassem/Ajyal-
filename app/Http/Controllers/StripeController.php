@@ -8,6 +8,7 @@ use App\Interfaces\PayableContract;
 use App\Jobs\SendNotificationJob;
 use App\Models\Course;
 use App\Models\Invoice;
+use App\Models\Student;
 use App\Models\User;
 use App\Payments\CoursePayment;
 use App\Payments\InvoicePayment;
@@ -86,31 +87,54 @@ class StripeController extends Controller
             $session = $stripe->checkout->sessions->retrieve($sessionId);
 
 
-           $in= $this->invoiceService->payInvoices([
+           $result= $this->invoiceService->payInvoices([
 
                     'invoice_id'=>$session->metadata->invoice_id,
                     'student_id'=>$session->metadata->student_id,
             ]);
 
-            $invoice=Invoice::find($session->metadata->invoice_id);
-             //send notification
-            $users = User::where('id',$session->metadata->user_id)->get();
+            $student = Student::where('id',$session->metadata->student_id)->first();
+
+                //send notification
+            $users = User::where( 'id',$student->user_id)->get();
 
             $message = [
                 'title' => 'تسديد فاتورة',
-                'body'  => 'تم تسديد فاتورةالكترونياً بنجاح'
+                'body'  => 'تم تسديد فاتورتك الكترونياً بنجاح'
             ];
 
-            SendNotificationJob::dispatch($message, $users,$invoice);
+            SendNotificationJob::dispatch($message, $users,$result['data']);
+
+
             //send notification
             $managers = User::role('Manager', 'api')->get();
 
-             $message = [
+            $message = [
                 'title' => 'تسديد فاتورة',
-                'body'  => 'تم تسديد فاتورةالكترونياً بنجاح'
+                'body'  => "قام الطالب {$student->full_name} بتسديد فاتورة جديدة"
             ];
 
-            SendNotificationJob::dispatch($message, $managers,$invoice);
+            SendNotificationJob::dispatch($message, $managers, $result['data']);
+            ///////////////////
+            // $invoice=Invoice::find($session->metadata->invoice_id);
+            //  //send notification
+            // $users = User::where('id',$session->metadata->user_id)->get();
+
+            // $message = [
+            //     'title' => 'تسديد فاتورة',
+            //     'body'  => 'تم تسديد فاتورةالكترونياً بنجاح'
+            // ];
+
+            // SendNotificationJob::dispatch($message, $users,$invoice);
+            // //send notification
+            // $managers = User::role('Manager', 'api')->get();
+
+            //  $message = [
+            //     'title' => 'تسديد فاتورة',
+            //     'body'  => 'تم تسديد فاتورةالكترونياً بنجاح'
+            // ];
+
+            // SendNotificationJob::dispatch($message, $managers,$invoice);
             // return [
             //     'status'=>$session->payment_status,
             //      'orderId' => $session->metadata->order_id,
