@@ -9,6 +9,7 @@ use App\Traits\HttpResponse;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class ParentModelController extends Controller
 {
@@ -55,5 +56,13 @@ class ParentModelController extends Controller
     public function parentStudent(){
         $studnets=$this->parentService->parentStudent();
         return $this->success('طلابي',$studnets);
+    }
+
+    public function logout()
+    {
+         Auth::user()->tokens()->delete();
+
+        return $this->success('تم تسجيل الخروج ');
+
     }
 }

@@ -117,6 +117,7 @@ Route::prefix('parent')->controller(ParentModelController::class)->group(functio
 
         Route::get('/profile', 'profile');
         Route::get('/parent-students', 'parentStudent');
+        Route::post('/parent-logout', 'logout');
 
 
 
