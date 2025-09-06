@@ -31,9 +31,9 @@ class ParentModelController extends Controller
             return $this->badRequest('تم ربط الطالب سابقاً');
         }
         // return $parentData;
-        return $this->success('Parent registered and linked to student',Arr::except($parentData,['success']));
+        return $this->success('تم ربط الوالد مع الطالب وتسجيله',Arr::except($parentData,['success']));
         }catch(Exception $e){
-            $this->error('Registration failed',$e->getMessage());
+            $this->error('فشل التسجيل',$e->getMessage());
         }
 
     }
@@ -43,9 +43,9 @@ class ParentModelController extends Controller
         $data=$loginParentRequest->validated();
         $parent=$this->parentService->loginParent($data);
         if(!$parent){
-            return $this->badRequest('Invalid phone number or password');
+            return $this->badRequest('رقم الهاتف أو كلمة المرور غير صالحة');
         }
-        return $this->success('Login successfully',$parent); // edit the response
+        return $this->success('تم تسجيل الدخول بنجاح',$parent); // edit the response
       }
 
       public function profile(){

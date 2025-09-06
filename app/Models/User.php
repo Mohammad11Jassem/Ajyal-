@@ -48,100 +48,100 @@ class User extends Authenticatable
     }
 
     public function student()
-{
-    return $this->hasOne(Student::class);
-}
-
-public function teacher()
-{
-    return $this->hasOne(Teacher::class);
-}
-
-public function parentModel()
-{
-    return $this->hasOne(ParentModel::class); // because we used ParentModel
-}
-
-public function manager()
-{
-    return $this->hasOne(Manager::class);
-}
-public function verifyCode()
-{
-    return $this->hasOne(VerifyCode::class);
-}
-
-public function scopeForQuiz($query, $quizId)
-{
-    return $query->whereHas('student.courses', function ($q) use ($quizId) {
-        $q->whereHas('curriculums.quizzes', function ($q2) use ($quizId) {
-            $q2->where('quizzes.id', $quizId);
-        });
-    });
-}
-
-public function getUserDataAttribute()
-{
-    if ($this->student) {
-         // return array_merge(
-        //     $this->only(['id','password']),
-        //     $this->student->only(['id', 'user_id']),
-        //     ['role' => 'student']
-        // );
-        return [
-            'id' => $this->id,
-            'role_data' => $this->student->only([
-                'id', 'user_id','student_Id_number','first_name','last_name','number_civial','address','mother_name','father_name',
-                // 'QR','location',
-                'access_code','created_at','updated_at',
-            ]),
-            'role' => 'student',
-        ];
-    } elseif ($this->teacher) {
-        return [
-        'id' => $this->id,
-        'role_data' => $this->teacher->only([
-            'id',
-            'user_id',
-            'name',
-            'email',
-            'date_of_contract',
-            // 'avatar',
-            'bio',
-            // 'created_at',
-            // 'updated_at',
-        ]),
-        'role' => 'teacher',
-    ];
-    }elseif ($this->parentModel) {
-        return [
-        'id' => $this->id,
-        'role_data' => $this->parentModel->only([
-            'id',
-            'user_id',
-            'name',
-            'phone_number',
-            // 'created_at',
-            // 'updated_at',
-        ]),
-        'role' => 'parent',
-    ];
-    }elseif ($this->manager) {
-        return [
-        'id' => $this->id,
-        'role_data' => $this->manager->only([
-            'id',
-            'user_id',
-            'email',
-            // 'created_at',
-            // 'updated_at',
-        ]),
-        'role' => 'manager',
-    ];
+    {
+        return $this->hasOne(Student::class);
     }
 
-    return null;
-}
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
+
+    public function parentModel()
+    {
+        return $this->hasOne(ParentModel::class); // because we used ParentModel
+    }
+
+    public function manager()
+    {
+        return $this->hasOne(Manager::class);
+    }
+    public function verifyCode()
+    {
+        return $this->hasOne(VerifyCode::class);
+    }
+
+    public function scopeForQuiz($query, $quizId)
+    {
+        return $query->whereHas('student.courses', function ($q) use ($quizId) {
+            $q->whereHas('curriculums.quizzes', function ($q2) use ($quizId) {
+                $q2->where('quizzes.id', $quizId);
+            });
+        });
+    }
+
+    public function getUserDataAttribute()
+    {
+        if ($this->student) {
+            // return array_merge(
+            //     $this->only(['id','password']),
+            //     $this->student->only(['id', 'user_id']),
+            //     ['role' => 'student']
+            // );
+            return [
+                'id' => $this->id,
+                'role_data' => $this->student->only([
+                    'id', 'user_id','student_Id_number','first_name','last_name','number_civial','address','mother_name','father_name',
+                    // 'QR','location',
+                    'access_code','created_at','updated_at',
+                ]),
+                'role' => 'student',
+            ];
+        } elseif ($this->teacher) {
+            return [
+            'id' => $this->id,
+            'role_data' => $this->teacher->only([
+                'id',
+                'user_id',
+                'name',
+                'email',
+                'date_of_contract',
+                // 'avatar',
+                'bio',
+                // 'created_at',
+                // 'updated_at',
+            ]),
+            'role' => 'teacher',
+        ];
+        }elseif ($this->parentModel) {
+            return [
+            'id' => $this->id,
+            'role_data' => $this->parentModel->only([
+                'id',
+                'user_id',
+                'name',
+                'phone_number',
+                // 'created_at',
+                // 'updated_at',
+            ]),
+            'role' => 'parent',
+        ];
+        }elseif ($this->manager) {
+            return [
+            'id' => $this->id,
+            'role_data' => $this->manager->only([
+                'id',
+                'user_id',
+                'email',
+                // 'created_at',
+                // 'updated_at',
+            ]),
+            'role' => 'manager',
+        ];
+        }
+
+        return null;
+    }
 
 // public function getRoleDataAttribute()
 // {
@@ -173,6 +173,11 @@ public function getUserDataAttribute()
 
 //     return null;
 // }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 
 
 }

@@ -45,7 +45,7 @@ class AdvertisementService
         }
         return [
                 'success' => true,
-                'message' => 'Advertisement created successfully. ',
+                'message' => 'تم إنشاء الإعلان بنجاح ',
                 'data' => [
                     'advertisement' =>$advertisement->load('images')
                         ],
@@ -55,7 +55,7 @@ class AdvertisementService
     }catch(Exception $e){
         return[
                 'success' => false,
-                'message' => 'Failed to create Advertisement',
+                'message' => 'فشل في إنشاء الإعلان',
                 'error' => $e->getMessage()
         ];
     }
@@ -106,13 +106,13 @@ class AdvertisementService
 
         return [
             'success' => true,
-            'message' => 'Advertisement updated successfully',
+            'message' => 'تم تحديث الإعلان بنجاح',
             'data' => $advertisement->fresh('images')
             ];
         }catch(Exception $e){
             return [
                 'success' => false,
-                'message' => 'Advertisement updated successfully',
+                'message' => 'فشل تحديث الإعلان',
                 'error' => $e->getMessage()
             ];
         }
@@ -142,7 +142,7 @@ class AdvertisementService
 
         return [
             'success' => true,
-            'message' => 'Advertisement deleted successfully'
+            'message' => 'تم حذف الإعلان'
         ];
     }catch(Exception $e){
         return [
@@ -168,7 +168,7 @@ class AdvertisementService
             //$advertisement=Advertisement::where('advertisable_type',Teacher::class)->orderByDesc('created_at')->with('images')->paginate(10);
             return [
                 'success' => true,
-                'message' => 'all Teacher Advertisement',
+                'message' => 'كل إعلانات المعلمين',
                 'data' =>$advertisements,
                 ];
         }catch(Exception $e){
@@ -192,7 +192,7 @@ class AdvertisementService
             ->paginate($perPage);
             return [
                 'success' => true,
-                'message' => 'all Course Advertisement',
+                'message' => 'كل إعلانات الكورسات',
                 'data' => $advertisement
                 ];
         }catch(Exception $e){
@@ -216,7 +216,7 @@ class AdvertisementService
 
             return [
                 'success' => true,
-                'message' => 'all general Advertisement',
+                'message' => 'كل الإعلانات العامة',
                 'data' => $advertisement
                 ];
         }catch(Exception $e){

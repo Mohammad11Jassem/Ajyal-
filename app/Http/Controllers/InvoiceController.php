@@ -40,7 +40,7 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($courseID)
+    public function allInvoices($courseID)
     {
         $result=$this->invoiceService->allInvoices($courseID);
         if (!$result['success']) {
@@ -88,4 +88,13 @@ class InvoiceController extends Controller
     }
 
 
+    public function show($id){
+        $result=$this->invoiceService->show($id);
+        if (!$result['success']) {
+            return $this->error( $result['message'],$result);
+        }
+        else{
+            return $this->success( $result['message'],$result['data']);
+        }
+    }
 }

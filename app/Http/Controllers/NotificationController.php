@@ -33,6 +33,10 @@ class NotificationController extends Controller
         $result=$this->notificationService->getNotifications();
         return $this->success($result['message'],$result['data']);
     }
+    public function getComplaintsNotifications(){
+        $result=$this->notificationService->getComplaintsNotifications();
+        return $this->success($result['message'],$result['data']);
+    }
     // public function add(){
     //     $note = Note::find(1);
 

@@ -41,6 +41,14 @@ class NoteService
             'data'=>$notes
         ];
     }
+    public function show($id){
+        $notes=Note::findOrFail($id);
+        return [
+            'success'=>true,
+            'message'=>'تفاصيل الملاحظة',
+            'data'=>$notes
+        ];
+    }
 
 
 }

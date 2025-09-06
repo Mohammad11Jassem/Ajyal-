@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Absence;
+use App\Models\Complaint;
 use App\Models\Course;
 use App\Models\Invoice;
 use App\Models\Note;
@@ -76,6 +77,14 @@ class NotificationService
         return [
             'success'=>true,
             'message'=>'كل الإشعارات  ',
+            'data'=>$notifications
+        ];
+    }
+    public function getComplaintsNotifications(){
+        $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Complaint::class)->get();
+        return [
+            'success'=>true,
+            'message'=>'كل إشعارات الشكاوي  ',
             'data'=>$notifications
         ];
     }

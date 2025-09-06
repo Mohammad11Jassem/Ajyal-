@@ -62,7 +62,7 @@ class StudentController extends Controller
             $parent = $p->user;
 
             if (!$parent) {
-                return response()->json(['message' => 'Only parents can link to students.'], 403);
+                return response()->json(['message' => 'يمكن للوالدين فقط الربط مع الطلاب'], 403);
             }
 
             // Avoid duplicate entries
@@ -74,7 +74,7 @@ class StudentController extends Controller
 
 
             return response()->json([
-                'message' => 'Student linked successfully',
+                'message' => 'تم الربط بنجاح ',
                 'student' => $student,
             ]);
         } catch (\Exception $e) {
@@ -91,7 +91,7 @@ class StudentController extends Controller
         $student = $this->studentService->createStudent($data);
 
         return response()->json([
-            'message' => 'Student created successfully',
+            'message' => 'تم إنشاء حساب الطالب بنجاح',
             'data' => $student,
         ]);
     }
@@ -105,7 +105,7 @@ class StudentController extends Controller
             ], 404);
         }
         return response()->json([
-            'message' => 'Student found successfully',
+            'message' => 'تم إيجاد الطالب',
             'data' => new StudentResource($student),
         ]);
     }
@@ -115,10 +115,10 @@ class StudentController extends Controller
         $data=$studentRegisterRequest->validated();
         $student=$this->studentService->register($data);
         if(!$student){
-            return $this->badRequest('Register faild Try again');
+            return $this->badRequest('فشل التسجيل حاول مرة أخرى');
         }
 
-       return $this->success('Register Done',$student);
+       return $this->success('تم التسجيل بنجاح',$student);
     }
 
     public function login(StudentLoginRequest $studentLoginRequest)
@@ -126,16 +126,16 @@ class StudentController extends Controller
         $data=$studentLoginRequest->validated();
         $student=$this->studentService->login($data);
         if(!$student){
-           return $this->badRequest('Invalid credentials');
+           return $this->badRequest('فشل تسجيل الدخول');
         }
-        return $this->success('Login Successfully',$student);
+        return $this->success('تم تسجيل الدخول',$student);
     }
 
     public function logout()
     {
          Auth::user()->tokens()->delete();
 
-        return $this->success('Logged out successfully');
+        return $this->success('تم تسجيل الخروج ');
 
     }
 
