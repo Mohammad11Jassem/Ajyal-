@@ -13,6 +13,7 @@ class ComplaintService
                 'student_id' => $data['student_id'],
             ]);
 
+
             return [
                 'success' => true,
                 'message' => 'تم إضافة الشكوى بنجاح',
@@ -73,6 +74,7 @@ class ComplaintService
     {
         try {
             $complaints = Complaint::
+                with('student')->
                 orderBy('created_at', 'desc')
                 ->get();
 
@@ -89,4 +91,5 @@ class ComplaintService
             ];
         }
     }
+
 }

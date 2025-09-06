@@ -36,21 +36,32 @@ Route::get('/stripe/success', [StripeController::class, 'success'])->name('strip
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 
 Route::get('/view', function () {
-    // $users = Quiz::eligibleStudents(1);
-        // $inv=Invoice::find(1);
-        // return get_class($inv);
-        // $users=User::where('id',6)->get();
-        //             // إعداد الرسالة مع اسم الاختبار
-        //             $message = [
-        //                 'title' => 'تسجيل فاتورة',
-        //                 'body'  => "تم تسجيل فاتورة بنجاح"
-        //             ];
+    // جلب الطالب مع أولياء الأمور + حساباتهم
+        $student = Student::with(['parents.user'])->findOrFail(1);
 
-        //             // إرسال الإشعار
-        //             SendNotificationJob::dispatch($message, $users,$inv);
+        // جلب المستخدمين المرتبطين بأولياء الأمور فقط
+        $users = collect();
 
-        $noti=Notification::with('notifiable.registration.Student')->where('notifiable_type','App\Models\Payment')->get();
-        return PaymentNotificationResource::collection($noti);
+        if ($student->parents) {
+            $student->parents->each(function ($parent) use ($users) {
+                if ($parent->user) {
+                    $users->push($parent->user);
+                }
+            });
+        }
+
+        // إزالة أي تكرار
+        $users = $users->unique('id');
+
+        // رسالة الإشعار
+        $message = [
+            'title' => 'ملاحظة جديدة',
+            'body'  => 'تمت إضافة ملاحظة تخص الطالب: ' . $student->full_name,
+        ];
+
+        // إرسال الإشعار
+        SendNotificationJob::dispatch($message, $users);
+        return "done";
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
      $validated = $request->validated();
@@ -87,7 +98,7 @@ Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $req
             });
 
             // $fcm_token = 'fUq3em0xR0CY08GLllSMNd:APA91bF21K4QKiPwb_9TWLd6SCvy0nW5gmEMdRdmFx5qZ6la08kvxZ3fnZdL8luji4XKqsn_qm_iAVuRHwGk1r89atbKsCgtp__MwFi6-_C4SYkXxqwKlxU';
-            $fcm_token = 'cXx2Bp8VL89s2C5PI2Nhva:APA91bECM2hF0R9kh3ScasoKFn0Y4gf5l4Ta7AHXPEBPC5afxLP59e1Q6guB2a9Sd7Ri1mQoOiXgU7Cp0TuCiVAO468Le44cplf0iDcSwKx8--Ymp64pYMM';
+            $fcm_token = '';
 
             $message = [
                 "message" => [

@@ -95,7 +95,7 @@ class StripeController extends Controller
 
             $student = Student::where('id',$session->metadata->student_id)->first();
 
-                //send notification
+            //send notification
             $users = User::where( 'id',$student->user_id)->get();
 
             $message = [

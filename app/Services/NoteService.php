@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Jobs\SendNotificationJob;
 use App\Models\Note;
+use App\Models\Student;
+use App\Models\User;
 use Exception;
 
 class NoteService
@@ -10,6 +13,30 @@ class NoteService
     public function storeNote(array $data){
         try{
         $note=Note::create($data);
+        $student = Student::with(['parents.user'])->findOrFail(1);
+
+        // جلب المستخدمين المرتبطين بأولياء الأمور فقط
+        $users = collect();
+
+        if ($student->parents) {
+            $student->parents->each(function ($parent) use ($users) {
+                if ($parent->user) {
+                    $users->push($parent->user);
+                }
+            });
+        }
+
+        // إزالة أي تكرار
+        $users = $users->unique('id');
+
+        // رسالة الإشعار
+        $message = [
+            'title' => 'تمت إضافة ملاحظة تخص الطالب ' . $student->full_name,
+            'body'  => $note['content'],
+        ];
+
+        // إرسال الإشعار
+        SendNotificationJob::dispatch($message, $users,$note);
         return [
             'success'=>true,
             'message'=>'تم إرسال الملاحظة'
