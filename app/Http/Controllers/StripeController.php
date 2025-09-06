@@ -36,7 +36,42 @@ class StripeController extends Controller
     {
         $data =$payRequest->validated();
         return DB::transaction(function() use($data){
+
             $invoice=Invoice::findOrFail($data['invoice_id']);
+
+            //validation
+
+            // جلب الكورس
+            $course = $invoice->course()->with(['classroomCourses.registrations', 'students'])->first();
+
+            $studentId = auth()->user()->user_data['role_data']['id'];
+
+            //  الحالة 1: الطالب مسجل مسبقًا في الكورس
+            // if ($course->students->contains($studentId)) {
+            //     return [
+            //         'success' => true,
+            //         'message' => 'الطالب مسجل مسبقًا في الكورس، يمكنك المتابعة',
+            //         'data'    => $invoice
+            //     ];
+            // }
+
+            //  الحالة 2: الطالب غير مسجل → نشيك على الشعب
+            $hasCapacity = $course->classroomCourses->contains(function ($classroomCourse) {
+                $currentCount = $classroomCourse->registrations()->count();
+                return $currentCount < $classroomCourse->capacity;
+            });
+
+            if (!$hasCapacity && !$course->students->contains($studentId)) {
+                // return [
+                //     'success' => false,
+                //     'message' => 'لا توجد أي شعبة متاحة لهذا الكورس، جميع الشعب ممتلئة'
+                // ];
+                return response()->json([
+                    'message' => 'لا توجد أي شعبة متاحة لهذا الكورس، جميع الشعب ممتلئة',
+                    'checkout_url' => null,
+                ]);
+            }
+
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
             $response=$stripe->checkout->sessions->create([
@@ -60,7 +95,7 @@ class StripeController extends Controller
                 // ],
                 'metadata' => [
                     'invoice_id' => $invoice['id'],
-                    'student_id'=>auth()->user()->user_data['role_data']['id'],
+                    'student_id'=>$studentId,
                     'user_id'=>auth()->id(),
                 ],
             ]);

@@ -252,7 +252,8 @@ class TeacherService
 
         // $token = $user->createToken('api_token')->plainTextToken;
         $token = $teacher->user->createToken('manager-token')->plainTextToken;
-
+        $user->fcm_token=$data['fcm_token']??null;
+        $user->save();
 
         return [
             'success' => true,

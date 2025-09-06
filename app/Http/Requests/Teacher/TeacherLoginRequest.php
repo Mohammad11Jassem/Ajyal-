@@ -24,6 +24,7 @@ class TeacherLoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email', 'exists:teachers,email'],
             'password' => ['required', 'string','min:6'],
+            'fcm_token'=>'string',
         ];
     }
 

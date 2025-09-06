@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Course;
 
+use App\Models\Course;
 use App\Models\Invoice;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -43,6 +44,29 @@ class RegisterStudentRequest extends FormRequest
         ],
         ];
     }
+
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Additional capacity check that provides more detailed error message
+            if (!$validator->errors()->has('course_id') && $this->course_id) {
+                $course = Course::find($this->course_id);
+                if ($course) {
+                    $currentRegistrations = $course->registration()->count();
+                    $availableSlots = $course->capacity - $currentRegistrations;
+
+                    if ($availableSlots <= 0) {
+                        $validator->errors()->add(
+                            'course_id',
+                            "هذه الدورة ممتلئة بالكامل. السعة القصوى: {$course->capacity} طالب."
+                        );
+                    }
+                }
+            }
+        });
+    }
+
     public function messages()
     {
         return [

@@ -24,6 +24,7 @@ class ManagerLoginRequest extends FormRequest
         return [
             'email' => ['required', 'email', 'exists:managers,email'],
             'password' => ['required', 'string', 'min:6'],
+            'fcm_token'=>'string',
         ];
     }
 

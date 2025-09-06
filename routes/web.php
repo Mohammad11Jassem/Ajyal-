@@ -37,30 +37,35 @@ Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.
 
 Route::get('/view', function () {
     // جلب الطالب مع أولياء الأمور + حساباتهم
-        $student = Student::with(['parents.user'])->findOrFail(1);
+        $invoice = Invoice::findOrFail(1);
 
-        // جلب المستخدمين المرتبطين بأولياء الأمور فقط
-        $users = collect();
+        // جلب الكورس
+        $course = $invoice->course()->with(['classroomCourses.registrations', 'students'])->first();
 
-        if ($student->parents) {
-            $student->parents->each(function ($parent) use ($users) {
-                if ($parent->user) {
-                    $users->push($parent->user);
-                }
-            });
+        $studentId = 5; // لازم الريكويست يجيب student_id
+
+        // ✅ الحالة 1: الطالب مسجل مسبقًا في الكورس
+        if ($course->students->contains($studentId)) {
+            return [
+                'success' => true,
+                'message' => 'الطالب مسجل مسبقًا في الكورس، يمكنك المتابعة',
+                'data'    => $invoice
+            ];
         }
 
-        // إزالة أي تكرار
-        $users = $users->unique('id');
+        // ✅ الحالة 2: الطالب غير مسجل → نشيك على الشعب
+        $hasCapacity = $course->classroomCourses->contains(function ($classroomCourse) {
+            $currentCount = $classroomCourse->registrations()->count();
+            return $currentCount < $classroomCourse->capacity;
+        });
 
-        // رسالة الإشعار
-        $message = [
-            'title' => 'ملاحظة جديدة',
-            'body'  => 'تمت إضافة ملاحظة تخص الطالب: ' . $student->full_name,
-        ];
-
-        // إرسال الإشعار
-        SendNotificationJob::dispatch($message, $users);
+        if (!$hasCapacity && !$course->students->contains($studentId)) {
+            return [
+                'success' => false,
+                'message' => 'لا توجد أي شعبة متاحة لهذا الكورس، جميع الشعب ممتلئة'
+                
+            ];
+        }
         return "done";
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {

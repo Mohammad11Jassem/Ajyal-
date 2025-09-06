@@ -19,7 +19,7 @@ class ManagerAuthService
     public function authenticate(array $credentials): array
     {
         $manager = Manager::where('email', $credentials['email'])->first();
-
+        $user=User::where('id',$manager['user_id'])->first();
         if (!$manager || !Hash::check($credentials['password'], $manager->user->password)) {
             return [
                 'success' => false,
@@ -31,7 +31,8 @@ class ManagerAuthService
 
         // $token = $manager->createToken('manager-token')->plainTextToken;
         $token = $manager->user->createToken('manager-token')->plainTextToken;
-
+        $user->fcm_token=$data['fcm_token']??null;
+        $user->save();
 
         return [
             'success' => true,
