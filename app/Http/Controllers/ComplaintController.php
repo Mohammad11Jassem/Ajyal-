@@ -21,7 +21,7 @@ class ComplaintController extends Controller
     {
         $result=$this->complaintService->stroe($storeComplaintRequest->validated());
         if(!$result['success'])
-        return $this->error($result['message'],$result);
+          return $this->error($result['error']);
         else
         return $this->success($result['message'],$result['data']);
     }
