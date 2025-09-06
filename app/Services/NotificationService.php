@@ -53,7 +53,7 @@ class NotificationService
         ];
     }
     public function getNotifications(){
-        $notifications=Notification::where('user_id',auth()->id())->paginate(10);
+        $notifications=Notification::where('user_id',auth()->id())->get();
         return [
             'success'=>true,
             'message'=>'كل الإشعارات  ',
@@ -68,7 +68,7 @@ class NotificationService
             'data'=>$notifications
             ];
     }
-    public function getPaymentNotification(){
+    public function getPaymentNotifications(){
 
         $noti=Notification::where('user_id',auth()->id())
                             ->with('notifiable.registration.Student')
@@ -76,7 +76,7 @@ class NotificationService
 
         return [
             'success'=>true,
-            'message'=>'كل الإشعارات  ',
+            'message'=>'كل إشعارات الدفع  ',
             'data'=>PaymentNotificationResource::collection($noti)
         ];
     }

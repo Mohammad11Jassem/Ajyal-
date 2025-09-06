@@ -58,7 +58,6 @@ class InvoiceController extends Controller
         ], 201);
     }
 
-
     public function payInvoices(PayInvoicesRequest $payInvoicesRequest){
         // return $this->success( 'test','$result');
         $result=$this->invoiceService->payInvoices($payInvoicesRequest->validated());
@@ -76,14 +75,18 @@ class InvoiceController extends Controller
 
         SendNotificationJob::dispatch($message, $users,$result['data']);
         //send notification
+        $student = auth()->user()->student;
+
+        //send notification
         $managers = User::role('Manager', 'api')->get();
 
         $message = [
             'title' => 'تسديد فاتورة',
-            'body'  => 'تم تسديد فاتورة جديدة'
+            'body'  => "قام الطالب {$student->full_name} بتسديد فاتورة جديدة"
         ];
 
-        SendNotificationJob::dispatch($message, $managers,$result['data']);
+        SendNotificationJob::dispatch($message, $managers, $result['data']);
+
 
 
         return $this->success( $result['message'],$result);

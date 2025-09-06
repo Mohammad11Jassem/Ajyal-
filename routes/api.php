@@ -477,6 +477,7 @@ Route::prefix('notification')->controller(NotificationController::class)->group(
         Route::get('/invoices/notifications','getInvoicesNotifications');
         Route::get('/complaints/notifications','getComplaintsNotifications');
         Route::get('/notifications','getNotifications');
+        Route::get('/get-payment-notifications','getPaymentNotifications');
     });
 
 });

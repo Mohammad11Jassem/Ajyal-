@@ -50,4 +50,11 @@ class NotificationController extends Controller
     //     return $this->success($result['message'],$result['data']);
 
     // }
+
+     public function getPaymentNotifications(){
+
+        $result=$this->notificationService->getPaymentNotifications();
+        return $this->success($result['message'],$result['data']);
+
+    }
 }
