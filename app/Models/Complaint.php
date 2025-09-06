@@ -4,21 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Note extends Model
+class Complaint extends Model
 {
+    protected $fillable = ['content','student_id'];
 
-    protected $fillable = [
-        'title',
-        'content',
-        'student_id',
-        'noted_at',
-    ];
     public function student()
     {
         return $this->belongsTo(Student::class);
     }
+    
     public function notifications()
     {
         return $this->morphMany(Notification::class, 'notifiable');
     }
+
 }

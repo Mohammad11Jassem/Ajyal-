@@ -5,6 +5,7 @@ use App\Exports\StudentsExport;
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CourseController;
 
 use App\Http\Controllers\ExcelController;
@@ -370,8 +371,9 @@ Route::prefix('question')->controller(QuestionController::class)->group(function
 Route::prefix('invoice')->controller(InvoiceController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::post('/addInvoice','store');
-        Route::get('/allInvoices/{courseID}','show')->middleware('role:Manager');
+        Route::get('/allInvoices/{courseID}','allInvoices')->middleware('role:Manager');
         Route::post('/pay','payInvoices')->middleware('role:Manager|Secretariat|Student');
+        Route::get('/show/{invoiceId}','show')->middleware('role:Manager|Secretariat|Student');
         Route::post('/notify-students','notifyStudent')->middleware('role:Manager|Secretariat');
     });
 
@@ -462,6 +464,7 @@ Route::prefix('note')->controller(NoteController::class)->group(function () {
         Route::post('/add','storeNote')->middleware('role:Manager');
         Route::get('/student/{student}/notes','studentNotes');
         Route::get('/all_notes','allNotes');
+        Route::get('/show/{id}','show');
     });
 
 });
@@ -472,7 +475,21 @@ Route::prefix('notification')->controller(NotificationController::class)->group(
         Route::get('/notes/notifications','getNotesNotifications');
         Route::get('/absences/notifications','getAbscencesNotifications');
         Route::get('/invoices/notifications','getInvoicesNotifications');
+        Route::get('/complaints/notifications','getComplaintsNotifications');
         Route::get('/notifications','getNotifications');
+        Route::get('/get-payment-notifications','getPaymentNotifications');
+    });
+
+});
+
+
+//Complaint
+Route::prefix('complaint')->controller(ComplaintController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::post('/add','store');
+        Route::get('/show/{id}','show');
+        Route::get('/StudentComplaints/{studentId}','getStudentComplaints');
+        Route::get('/allComplaints','getComplaints');
     });
 
 });

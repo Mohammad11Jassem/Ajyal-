@@ -23,7 +23,7 @@ class ManagerAuthService
         if (!$manager || !Hash::check($credentials['password'], $manager->user->password)) {
             return [
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => 'فشل تسجيل الدخول '
             ];
         }
 

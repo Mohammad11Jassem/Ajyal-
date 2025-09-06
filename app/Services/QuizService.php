@@ -47,7 +47,7 @@ class QuizService
                 }
                 return [
                     'success' => true,
-                    'message' => 'Quiz created successfully',
+                    'message' => 'تم إنشاء الاختبار بنجاح',
                     'data' =>new QuizWithoutQustionsResource($quiz),
                 ];
             });
@@ -62,7 +62,7 @@ class QuizService
         }catch(Exception $e){
             return[
                 'success' => false,
-                'message' => 'Failed to create Quiz',
+                'message' => 'فشل في إنشاء الاختبار',
                 'error' => $e->getMessage()
         ];
         }
@@ -72,7 +72,7 @@ class QuizService
         if(auth()->user()->hasRole('Teacher')){
             return [
                 'success' => true,
-                'message' => 'All Question at Quiz',
+                'message' => 'جميع الأسئلة في الاختبار',
                 'data' =>Quiz::with(['questions.image','questions.choices','questions.children.image','questions.children.choices',
 
 
@@ -85,7 +85,7 @@ class QuizService
         }
         return [
                 'success' => true,
-                'message' => 'All Question at Quiz',
+                'message' => 'جميع الأسئلة في الاختبار',
                 'data' =>Quiz::with(['questions.image','questions.choices',
                                     'questions.children.image','questions.children.choices',
                             ])->findOrFail($quizID)
@@ -141,7 +141,7 @@ class QuizService
                 ->first();
 
             if ($studentQuiz) {
-                throw new Exception('Quiz already submitted');
+                throw new Exception('تم تقديم الاختبار بالفعل');
             }
             if($user && $user->hasRole('Student')){
                 $user->student->studentQuizzes()->create([
@@ -234,7 +234,7 @@ class QuizService
 
             return [
                 'success' => true,
-                'message' => 'Quiz submitted successfully',
+                'message' => 'تم رفع الاختبار بنجاح',
                 'data' => ($totalScore/$maxDegree)*100,
             ];
         });
@@ -346,12 +346,12 @@ class QuizService
             $quiz->delete();
             return[
                 'success'=>true,
-                'message'=>'Quiz has been deleted'
+                'message'=>'تم مسح الاختبار'
             ];
         }
         return [
             'success'=>false,
-            'message'=>'َQuiz deletion failed'
+            'message'=>'َفشل مسح الاختبار'
         ];
     }
     public function changeState($quizId){
@@ -388,7 +388,7 @@ class QuizService
                 }
             return [
                 'success'=>true,
-                'message'=>'Quiz status changed',
+                'message'=>'تم تغيير حالة الاختبار',
                 'data'=>$quiz
             ];
         }

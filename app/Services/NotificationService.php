@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\PaymentNotificationResource;
 use App\Models\Absence;
+use App\Models\Complaint;
 use App\Models\Course;
 use App\Models\Invoice;
 use App\Models\Note;
@@ -26,27 +27,6 @@ class NotificationService
             'message'=>'نم إضافة الإشعار',
             'data'=>$notification
         ];
-
-        // $title=null;
-        // $body=null;
-        // switch($data['type'])
-        // {
-        //     case 'note_added':
-        //         $title='ملاحظة على الطالب';
-        //         $body=$data['content'];
-        //         break;
-
-        //     case 'invoice_due':
-        //         $title='تأخر في دفع فاتورة';
-        //         $course_name=Course::findOrFail($data['course_id']);
-        //         $invoice=
-        //         $body='يرجى تسديد فاتورة ';
-        //         break;
-
-        //     case 'attendance_alert':
-        //         $title='تغيب عن الدوام';
-        //         break;
-        // }
     }
     public function getInvoicesNotifications(){
         $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Invoice::class)->get();
@@ -73,14 +53,22 @@ class NotificationService
         ];
     }
     public function getNotifications(){
-        $notifications=Notification::where('user_id',auth()->id())->paginate(10);
+        $notifications=Notification::where('user_id',auth()->id())->get();
         return [
             'success'=>true,
             'message'=>'كل الإشعارات  ',
             'data'=>$notifications
         ];
     }
-    public function getPaymentNotification(){
+    public function getComplaintsNotifications(){
+        $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Complaint::class)->get();
+        return [
+            'success'=>true,
+            'message'=>'كل إشعارات الشكاوي  ',
+            'data'=>$notifications
+            ];
+    }
+    public function getPaymentNotifications(){
 
         $noti=Notification::where('user_id',auth()->id())
                             ->with('notifiable.registration.Student')
@@ -88,7 +76,7 @@ class NotificationService
 
         return [
             'success'=>true,
-            'message'=>'كل الإشعارات  ',
+            'message'=>'كل إشعارات الدفع  ',
             'data'=>PaymentNotificationResource::collection($noti)
         ];
     }

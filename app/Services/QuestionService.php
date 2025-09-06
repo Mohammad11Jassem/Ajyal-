@@ -48,15 +48,6 @@ class QuestionService
 
                         // Save image if exists
                         if (isset($child['image']) && $child['image']->isValid()) {
-                            // $imageFile = $child['image'];
-                            // $image = $subQuestion->image()->create([
-                            //     'path' => '' // Temporary, will be updated after saving the file
-                            // ]);
-                            // $imageName = time().$image->id. '.' . $imageFile->getClientOriginalExtension();
-                            // $imageFile->move(public_path('questions'), $imageName);
-                            // $imagePath = 'questions/' . $imageName;
-                            // $image->path=$imagePath;
-                            // $image->save();
                             $this->saveQuestionImage($child['image'],$subQuestion);
 
                         }
@@ -74,7 +65,7 @@ class QuestionService
 
                 return [
                     'success' => true,
-                    'message' => 'Question created successfully',
+                    'message' => 'تم إنشاء السؤال',
                     'data' =>$question->load('choices','image','children.choices','children.image')
                 ];
             });
@@ -82,7 +73,7 @@ class QuestionService
         }catch(Exception $e){
             return[
                 'success' => false,
-                'message' => 'Failed to create Question',
+                'message' => 'فشل إنشاء السؤال',
                 'error' => $e->getMessage()
             ];
         }
@@ -110,30 +101,6 @@ class QuestionService
         try{
 
             return DB::transaction(function () use ($questions,$parentId) {
-
-                // foreach ($questions['questions'] as $questionData) {
-                //     $question = Question::create([
-                //         'quiz_id' => $questionData['quiz_id'],
-                //         'question_text' => $questionData['question_text'],
-                //         'hint' => $questionData['hint'] ?? null,
-                //         'mark' => $questionData['mark'] ?? 10,
-                //         'parent_question_id' => $parentId,
-                //     ]);
-
-                //     if (isset($questionData['children']) && is_array($questionData['children'])) {
-                //         $this->storeQuestions($questionData['children'], $question->id);
-                //     } else {
-                //         if (isset($questionData['choices']) && is_array($questionData['choices'])) {
-                //             foreach ($questionData['choices'] as $choiceData) {
-                //                 $question->choices()->create([
-                //                 'choice_text' => $choiceData['text'],
-                //                 'is_correct' => $choiceData['is_correct'] ?? false,
-                //             ]);
-                //             }
-                //         }
-                //     }
-                //     $created[] = $question->load('children');
-                // }
                 foreach ($questions['questions'] as $questionData) {
                     $question = Question::create([
                         'quiz_id' => $questions['quiz_id'],
@@ -194,7 +161,7 @@ class QuestionService
 
                 return [
                 'success' => true,
-                'message' => 'Question created successfully',
+                'message' => 'تم إنشاء السؤال بنجاح',
                 ];
             });
 
@@ -202,7 +169,7 @@ class QuestionService
     }catch(Exception $e){
                     return[
                 'success' => false,
-                'message' => 'Failed to create Question',
+                'message' => 'فشل في إنشاء السؤال',
                 'error' => $e->getMessage()
         ];
     }
@@ -212,7 +179,7 @@ class QuestionService
 
     return [
                 'success' => true,
-                'message' => 'Question',
+                'message' => 'السؤال',
                 'data' =>Question::with(['children.choices', 'choices','image','children.image'])->findOrFail($questionID)
 
             ];
@@ -234,26 +201,6 @@ class QuestionService
                 'question_text' => $data['question_text']??$question['question_text'],
                 'hint' => $data['hint']??$question['hint'],
             ]);
-
-            // // Update choices
-            // if(isset($data['choices'])){
-            //     foreach ($data['choices'] as $choiceData) {
-            //         // $choice=Choice::where('id',$choiceData['id']??null)->first()??null;
-            //         // Choice::updateOrCreate(
-            //         //     ['id' => $choiceData['id'] ?? null, 'question_id' => $question->id],
-            //         //     [
-            //         //         'choice_text' => $choiceData['choice_text']??$choice['choice_text'],
-            //         //         'is_correct' => $choiceData['is_correct']??$choice['is_correct'],
-            //         //     ]
-            //         // );
-            //         Choice::create([
-            //             'choice_text' => $choiceData['choice_text'],
-            //             'is_correct' => $choiceData['is_correct'],
-            //         ]);
-            //     }
-
-            // }
-
            // Add children if any
                 if (isset($data['children'])) {
                     foreach ($data['children'] as $child) {
@@ -302,7 +249,7 @@ class QuestionService
         Question::findOrFail($questionId)->delete();
         return[
             'success'=>true,
-            'message'=>'Question has been deleted'
+            'message'=>'تم حذف السؤال'
         ];
     }
 }

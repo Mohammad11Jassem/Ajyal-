@@ -30,5 +30,9 @@ class NoteController extends Controller
     return $this->success($result['message'],$result['data']);
 
     }
+    public function show($id){
+    $result=$this->noteService->show($id);
+    return $this->success($result['message'],$result['data']);
+    }
 
 }

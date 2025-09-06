@@ -49,8 +49,7 @@ class InvoiceService
         ];
         }
     }
-
-        public function payInvoices(array $data){
+    public function payInvoices(array $data){
         try{
                 return DB::transaction(function () use ($data) {
                     $invoice = Invoice::findOrFail($data['invoice_id']);
@@ -69,6 +68,24 @@ class InvoiceService
             return [
                 'success'=>false,
                 'message'=>'فشلت عملية الدفع',
+                'error'=>$e->getMessage()
+            ];
+        }
+    }
+
+
+    public function show($id){
+        try{
+        $invoice=Invoice::findOrFail($id);
+        return [
+            'success'=>true,
+            'message'=>'تفاصيل فاتورة',
+            'data'=>$invoice
+        ];
+        }catch(Exception $e){
+            return [
+                'success'=>false,
+                'message'=>'فشل جلب تفاصيل الفاتورة',
                 'error'=>$e->getMessage()
             ];
         }

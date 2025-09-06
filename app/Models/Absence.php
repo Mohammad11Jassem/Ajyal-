@@ -20,4 +20,8 @@ class Absence extends Model
     {
         return $this->belongsTo(AbsenceDate::class);
     }
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
 }

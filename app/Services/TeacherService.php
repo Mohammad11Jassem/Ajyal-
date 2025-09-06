@@ -103,17 +103,17 @@ class TeacherService
                 //     email: $data['email'],
                 //     password: $password
                 // ));
-                $emailStatus = 'Email sent successfully';
+                $emailStatus = 'تم إرسال البريد الإلكتروني بنجاح';
             } catch (\Exception $e) {
                 // Log the email error but don't fail the teacher creation
                 Log::warning('Failed to send teacher credentials email: ' . $e->getMessage());
-                $emailStatus = 'Teacher created but email could not be sent';
+                $emailStatus = 'تم إنشاء المعلم ولكن لم يتمكن من إرسال البريد الإلكتروني';
             }
 
             // Return success response with temporary password
             return [
                 'success' => true,
-                'message' => 'Teacher created successfully. ' . $emailStatus,
+                'message' => 'تم إنشاء الحساب بنجاح. ' . $emailStatus,
                 'data' => [
                     'teacher' =>$teacher->load('image'),
                     // 'temporary_password' => $verifyCode // This should be sent via email in production
@@ -124,7 +124,7 @@ class TeacherService
 
             return [
                 'success' => false,
-                'message' => 'Failed to create teacher',
+                'message' => 'فشل إنشاء الحساب',
                 'error' => $e->getMessage()
             ];
         }
@@ -136,7 +136,7 @@ class TeacherService
         if($teacher && $teacher->user->password ){
         return [
                 'success' => false,
-                'message' => 'the account is used from other one'
+                'message' => 'الحساب مستخدم من قبل شخص آخر '
             ];
             }
 
@@ -148,10 +148,10 @@ class TeacherService
                 //     email: $data['email'],
                 //     password: $verifyCode['code']
                 // ));
-                $emailStatus = 'Email sent successfully';
+                $emailStatus = 'تم إرسال البريد الإلكتروني بنجاح';
             } catch (\Exception $e) {
                 // Log the email error but don't fail the teacher creation
-                Log::warning('Failed to send teacher credentials email: ' . $e->getMessage());
+                Log::warning('فشل في إرسال بريد إلكتروني يحتوي على بيانات اعتماد المعلم: ' . $e->getMessage());
                 $emailStatus = 'Teacher created but email could not be sent';
             }
 
@@ -164,7 +164,7 @@ class TeacherService
 
             return [
             'success' => true,
-            'message'=>'Teacher Register successfully. ' . $emailStatus,
+            'message'=>'تم تسجيل المعلم بنجاح ' . $emailStatus,
             'data' => [
                 'verifyCode' => $verifyCode,
                 'teacher' =>[
@@ -177,7 +177,7 @@ class TeacherService
             // return $e->getMessage();
             return [
                 'success' => false,
-                'message' => 'Failed to register teacher',
+                'message' => 'فشل في تسجيل المعلم',
                 'error' => $e->getMessage()
             ];
 
@@ -194,7 +194,7 @@ class TeacherService
             if($verifyCode['code'] !=$data['verifyCode']){
                 return [
                 'success' => false,
-                'message' => 'the verifyCode is not correct ',
+                'message' => 'رمز التحقق غير صحيح',
             ];
             }
                 $verifyCode['confirmed']=true;
@@ -203,7 +203,7 @@ class TeacherService
         $token = $teacher->user->createToken('manager-token')->plainTextToken;
             return [
             'success' => true,
-            'message'=>'welcome to our community',
+            'message'=>'مرحباً بكم في مجتمعنا',
             'data' => [
                 'token' => $token,
                 'teacher' => Teacher::with('image')->where('id',$teacher->id)->first(),
@@ -215,7 +215,7 @@ class TeacherService
     catch(Exception $e){
         return [
                 'success' => false,
-                'message' => 'your account has not been added at System ',
+                'message' => 'لم يتم إضافة حسابك إلى النظام',
                 'error' => $e->getMessage()
             ];
         }
@@ -243,7 +243,7 @@ class TeacherService
         if($user->id != $teacher->user_id || !Hash::check($data['password'], $user->password)){
             return[
                 'success'=>false,
-                'message' =>'this information not matching together',
+                'message' =>'هذه المعلومات لا تتطابق مع بعضها البعض',
             ];
         }
 

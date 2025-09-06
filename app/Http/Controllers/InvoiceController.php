@@ -45,7 +45,7 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($courseID)
+    public function allInvoices($courseID)
     {
         $result=$this->invoiceService->allInvoices($courseID);
         if (!$result['success']) {
@@ -60,7 +60,6 @@ class InvoiceController extends Controller
             'data' => $result['data']
         ], 201);
     }
-
 
     public function payInvoices(PayInvoicesRequest $payInvoicesRequest){
         // return $this->success( 'test','$result');
@@ -81,6 +80,7 @@ class InvoiceController extends Controller
                 'body'  => 'تم تسديد فاتورتك بنجاح'
             ];
 
+
             SendNotificationJob::dispatch($message, $users,$result['data']);
             //send notification
             // $student = Student::where('user_id',auth()->id())->first();
@@ -94,8 +94,6 @@ class InvoiceController extends Controller
             ];
 
             SendNotificationJob::dispatch($message, $managers, $result['data']);
-
-
 
             return $this->success( $result['message'],$result);
         });
@@ -115,4 +113,13 @@ class InvoiceController extends Controller
     }
 
 
+    public function show($id){
+        $result=$this->invoiceService->show($id);
+        if (!$result['success']) {
+            return $this->error( $result['message'],$result);
+        }
+        else{
+            return $this->success( $result['message'],$result['data']);
+        }
+    }
 }
