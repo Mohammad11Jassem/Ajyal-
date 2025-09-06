@@ -6,6 +6,7 @@ use App\Models\Advertisement;
 use App\Models\Choice;
 use App\Models\Classroom;
 use App\Models\ClassroomCourse;
+use App\Models\Community;
 use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumTeacher;
@@ -115,7 +116,10 @@ class FileSeeder extends Seeder
         // ادخال مواد لكل كورس
         $records=Storage::json('Json_file/curricula.json');
         foreach($records as $record){
-            Curriculum::create($record);
+           $curr= Curriculum::create($record);
+            Community::create([
+                'curriculum_id'=>$curr->id
+            ]);
         }
 
         // ادخال كل استاذ وشو بدرس مواد مع ادخال الكويزات
@@ -146,7 +150,7 @@ class FileSeeder extends Seeder
                     'hint' => $questionData['hint'] ?? null,
                 ]);
                 $question->image()->create([
-                    'path'=>'questions/question.png'
+                    'path'=>'questions/question.jpg'
                 ]);
                 // إضافة الخيارات إن وُجدت
                 if (!empty($questionData['choices'])) {

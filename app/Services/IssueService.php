@@ -95,6 +95,17 @@ class IssueService
     {
             return DB::transaction(function () use ($curriculumId) {
 
+                if(auth()->user()->hasRole('Student')){
+
+                     $issues= Issue::where('is_fqa', 1)
+                            ->where('community_id', $curriculumId)
+                            ->where('author_id', '!=', auth()->user()->user_data['role_data']['id'])
+                            // ->where('author_type',Teacher::class)
+                            // ->with(['image','author'])
+                            ->get();
+                         return IssueResource::collection($issues);
+
+                }
                 // return $this->getIssue($curriculumId,1);
                 $issues= Issue::where('is_fqa', 1)
                             ->where('community_id', $curriculumId)
@@ -110,8 +121,9 @@ class IssueService
          return DB::transaction(function () use ($curriculumId) {
             $curriculum=Curriculum::where('id',$curriculumId)->first();
             $communityId=$curriculum->community['id'];
-             $issues =Issue::where('is_fqa', 0)
-                            ->where('community_id', $communityId)
+             $issues =Issue::
+                            // where('is_fqa', 0)
+                            where('community_id', $communityId)
                             ->where('author_id', auth()->user()->user_data['role_data']['id'])
                             ->where('author_type',Student::class)
                             ->with('image')

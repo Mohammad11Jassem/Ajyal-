@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Interfaces\StudentInterface;
+use App\Jobs\SendNotificationJob;
 use App\Models\ParentModel;
 use App\Models\ParentStudent;
 use App\Models\Student;
@@ -99,6 +100,16 @@ class StudentService
             $token = $user->createToken('token')->plainTextToken;
             $user->fcm_token=$data['fcm_token']??null;
             $user->save();
+
+            //send notification
+            $users = User::where('id',$user->id)->get();
+
+            $message = [
+                'title' => 'رسالة ترحيب',
+                'body'  => 'مرحباً بك في تطبيق أجيال التعليمي'
+            ];
+
+            SendNotificationJob::dispatch($message, $users);
             return [
                 'student' => $student,
                 'token' => $token

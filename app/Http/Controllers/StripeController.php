@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Payment\CoursePaymentRequest;
 use App\Http\Requests\Payment\PayRequest;
+use App\Interfaces\PayableContract;
 use App\Jobs\SendNotificationJob;
+use App\Models\Course;
 use App\Models\Invoice;
 use App\Models\User;
+use App\Payments\CoursePayment;
+use App\Payments\InvoicePayment;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -119,6 +124,52 @@ class StripeController extends Controller
 
     public function cancel()
     {
-        return view('fail-payment');
+        return view('failPayment');
+    }
+
+
+    public function createCheckoutSession(PayableContract $payable)
+    {
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+        return $stripe->checkout->sessions->create([
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $payable->getTitle(),
+                    ],
+                    'unit_amount' => $payable->getAmount(),
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => route('stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url'  => route('stripe.cancel'),
+            'metadata'    => $payable->getMetadata(),
+        ]);
+    }
+
+    public function sessionForInvoice(PayRequest $request)
+    {
+        $data = $request->validated();
+        $invoice = Invoice::findOrFail($data['invoice_id']);
+
+        $payable = new InvoicePayment($invoice, auth()->user()->user_data['role_data']['id'], auth()->id());
+
+        $session = $this->createCheckoutSession($payable);
+
+        return response()->json(['checkout_url' => $session->url]);
+    }
+
+    public function sessionForCourse(CoursePaymentRequest $coursePayment)
+    {
+        $data=$coursePayment->validated();
+        $course = Course::findOrFail($data['course_id']);
+
+        $payable = new CoursePayment($course, auth()->user()->user_data['role_data']['id'], auth()->id());
+
+        $session = $this->createCheckoutSession($payable);
+
+        return response()->json(['checkout_url' => $session->url]);
     }
 }

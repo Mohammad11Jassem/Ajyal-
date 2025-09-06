@@ -74,7 +74,7 @@ class SendNotificationJob implements ShouldQueue
             }
 
             // 1. إرسال الإشعار
-            // PushNotification::sendNotification($this->message, $user->fcm_token);
+            PushNotification::sendNotification($this->message, $user->fcm_token);
 
                 // 2. تخزين الإشعار
 

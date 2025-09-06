@@ -61,7 +61,8 @@ class InvoiceService
                     return [
                             'success'=>true,
                             'message' => 'تم دفع الفاتورة بنجاح',
-                            'data'=>$invoice
+                            // 'data'=>$invoice
+                            'data'=>$payment
                         ];
                 });
         }catch(Exception $e){

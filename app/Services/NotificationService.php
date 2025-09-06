@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\PaymentNotificationResource;
 use App\Models\Absence;
 use App\Models\Course;
 use App\Models\Invoice;
@@ -17,7 +18,7 @@ class NotificationService
             'user_id'=>$data['user_id'],
             'title'=>$data['title'],
             'body'=>$data['body'],
-            'notifiable_type' =>get_class($Model)??null,
+            'notifiable_type' => $Model ? get_class($Model) : null,
             'notifiable_id'=>$Model?->id??null
         ]);
         return [
@@ -77,6 +78,18 @@ class NotificationService
             'success'=>true,
             'message'=>'كل الإشعارات  ',
             'data'=>$notifications
+        ];
+    }
+    public function getPaymentNotification(){
+
+        $noti=Notification::where('user_id',auth()->id())
+                            ->with('notifiable.registration.Student')
+                            ->where('notifiable_type','App\Models\Payment')->get();
+
+        return [
+            'success'=>true,
+            'message'=>'كل الإشعارات  ',
+            'data'=>PaymentNotificationResource::collection($noti)
         ];
     }
 }

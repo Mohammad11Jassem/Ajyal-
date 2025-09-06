@@ -7,6 +7,7 @@ use App\Http\Requests\Invoice\NotifyStudentsRequest;
 use App\Http\Requests\Invoice\PayInvoicesRequest;
 use App\Jobs\SendNotificationJob;
 use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\User;
 use App\Services\InvoiceService;
 use App\Traits\HttpResponse;
@@ -70,7 +71,7 @@ class InvoiceController extends Controller
 
         $message = [
             'title' => 'تسديد فاتورة',
-            'body'  => 'تم تسديد فاتورة جديدة'
+            'body'  => 'تم تسديد فاتورتك بنجاح'
         ];
 
         SendNotificationJob::dispatch($message, $users,$result['data']);

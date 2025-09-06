@@ -5,6 +5,7 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\StripeController;
 use App\Http\Requests\CreateAndRegisterStudentRequest;
 use App\Http\Resources\AbsenceResource;
+use App\Http\Resources\PaymentNotificationResource;
 use App\Http\Resources\PrevQuizeResource;
 use App\Jobs\SendNotificationJob;
 use App\Mail\TestMail;
@@ -12,6 +13,7 @@ use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumTeacher;
 use App\Models\Invoice;
+use App\Models\Notification;
 use App\Models\Quiz;
 use App\Models\Registration;
 use App\Models\Student;
@@ -35,17 +37,20 @@ Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.
 
 Route::get('/view', function () {
     // $users = Quiz::eligibleStudents(1);
-        $inv=Invoice::find(1);
+        // $inv=Invoice::find(1);
         // return get_class($inv);
-        $users=User::where('id',6)->get();
-                    // إعداد الرسالة مع اسم الاختبار
-                    $message = [
-                        'title' => 'تسجيل فاتورة',
-                        'body'  => "تم تسجيل فاتورة بنجاح"
-                    ];
+        // $users=User::where('id',6)->get();
+        //             // إعداد الرسالة مع اسم الاختبار
+        //             $message = [
+        //                 'title' => 'تسجيل فاتورة',
+        //                 'body'  => "تم تسجيل فاتورة بنجاح"
+        //             ];
 
-                    // إرسال الإشعار
-                    SendNotificationJob::dispatch($message, $users,$inv);
+        //             // إرسال الإشعار
+        //             SendNotificationJob::dispatch($message, $users,$inv);
+
+        $noti=Notification::with('notifiable.registration.Student')->where('notifiable_type','App\Models\Payment')->get();
+        return PaymentNotificationResource::collection($noti);
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
      $validated = $request->validated();
@@ -82,7 +87,7 @@ Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $req
             });
 
             // $fcm_token = 'fUq3em0xR0CY08GLllSMNd:APA91bF21K4QKiPwb_9TWLd6SCvy0nW5gmEMdRdmFx5qZ6la08kvxZ3fnZdL8luji4XKqsn_qm_iAVuRHwGk1r89atbKsCgtp__MwFi6-_C4SYkXxqwKlxU';
-            $fcm_token = '';
+            $fcm_token = 'cz6l7oyXS01i1gg0yAtM9Y:APA91bH1pz2fzr6BQ0tDXztooGVZQf6id2DHpaobzC7svEouQrNKoS7oDsqyKRVwzzBL0OAJGwfvkF5vl0ZZIMK1pmIDtjk4AC4DtVmKlP2GIGgqWS0eMcw';
 
             $message = [
                 "message" => [
