@@ -61,7 +61,7 @@ class SendNotificationJob implements ShouldQueue
             if (is_numeric($user)) {
                 $user = User::find($user);
             }
-            Log::info('user id: '.$user['id']);
+            // Log::info('user id: '.$user['id']);
 
             $notti=  $notificationService->store([
                     'user_id'=>$user['id'],
@@ -74,7 +74,7 @@ class SendNotificationJob implements ShouldQueue
             }
 
             // 1. إرسال الإشعار
-            // PushNotification::sendNotification($this->message, $user->fcm_token);
+            PushNotification::sendNotification($this->message, $user->fcm_token);
 
                 // 2. تخزين الإشعار
 

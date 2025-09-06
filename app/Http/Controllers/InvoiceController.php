@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Invoice\AddInvoicesRequest;
+use App\Http\Requests\Invoice\NotifyStudentsRequest;
 use App\Http\Requests\Invoice\PayInvoicesRequest;
 use App\Jobs\SendNotificationJob;
 use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\User;
 use App\Services\InvoiceService;
 use App\Traits\HttpResponse;
@@ -69,7 +71,7 @@ class InvoiceController extends Controller
 
         $message = [
             'title' => 'تسديد فاتورة',
-            'body'  => 'تم تسديد فاتورة جديدة'
+            'body'  => 'تم تسديد فاتورتك بنجاح'
         ];
 
         SendNotificationJob::dispatch($message, $users,$result['data']);
@@ -85,6 +87,18 @@ class InvoiceController extends Controller
 
 
         return $this->success( $result['message'],$result);
+    }
+
+    public function notifyStudent(NotifyStudentsRequest $notifyStudentsRequest)
+    {
+        $data=$notifyStudentsRequest->validated();
+        $noti=$this->invoiceService->notifyStudent($data);
+
+        if($noti['success']){
+            return $this->success('تم ارسال الاشعار بنجاح');
+        }
+        return $this->badRequest('حدث خطأ يرجى المحاولة مرة أخرى');
+
     }
 
 

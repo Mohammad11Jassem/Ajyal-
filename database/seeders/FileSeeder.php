@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Advertisement;
 use App\Models\Choice;
+use App\Models\Classroom;
+use App\Models\ClassroomCourse;
+use App\Models\Community;
 use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\CurriculumTeacher;
@@ -14,6 +17,7 @@ use App\Models\Payment;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Registration;
+use App\Models\SortStudent;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
@@ -98,10 +102,24 @@ class FileSeeder extends Seeder
             Course::create($record);
         }
 
+        // ادخال شعب
+        $records=Storage::json('Json_file/ClassRooms.json');
+        foreach($records as $record){
+            Classroom::create($record);
+        }
+        // ادخال شعب لكورس
+        $records=Storage::json('Json_file/classroom_courses.json');
+        foreach($records as $record){
+            ClassroomCourse::create($record);
+        }
+
         // ادخال مواد لكل كورس
         $records=Storage::json('Json_file/curricula.json');
         foreach($records as $record){
-            Curriculum::create($record);
+           $curr= Curriculum::create($record);
+            Community::create([
+                'curriculum_id'=>$curr->id
+            ]);
         }
 
         // ادخال كل استاذ وشو بدرس مواد مع ادخال الكويزات
@@ -132,7 +150,7 @@ class FileSeeder extends Seeder
                     'hint' => $questionData['hint'] ?? null,
                 ]);
                 $question->image()->create([
-                    'path'=>'questions/question.png'
+                    'path'=>'questions/question.jpg'
                 ]);
                 // إضافة الخيارات إن وُجدت
                 if (!empty($questionData['choices'])) {
@@ -176,6 +194,11 @@ class FileSeeder extends Seeder
         $records=Storage::json('Json_file/registrations.json');
         foreach($records as $record){
             Registration::create($record);
+        }
+        // تسجيل الطلاب بشعبة ضمن كورس
+        $records=Storage::json('Json_file/sort_students.json');
+        foreach($records as $record){
+            SortStudent::create($record);
         }
 
         //ادخال فواتير لكل كورس

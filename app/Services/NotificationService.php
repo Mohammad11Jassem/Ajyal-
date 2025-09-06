@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\PaymentNotificationResource;
 use App\Models\Absence;
 use App\Models\Complaint;
 use App\Models\Course;
@@ -18,7 +19,7 @@ class NotificationService
             'user_id'=>$data['user_id'],
             'title'=>$data['title'],
             'body'=>$data['body'],
-            'notifiable_type' =>get_class($Model)??null,
+            'notifiable_type' => $Model ? get_class($Model) : null,
             'notifiable_id'=>$Model?->id??null
         ]);
         return [
@@ -26,27 +27,6 @@ class NotificationService
             'message'=>'نم إضافة الإشعار',
             'data'=>$notification
         ];
-
-        // $title=null;
-        // $body=null;
-        // switch($data['type'])
-        // {
-        //     case 'note_added':
-        //         $title='ملاحظة على الطالب';
-        //         $body=$data['content'];
-        //         break;
-
-        //     case 'invoice_due':
-        //         $title='تأخر في دفع فاتورة';
-        //         $course_name=Course::findOrFail($data['course_id']);
-        //         $invoice=
-        //         $body='يرجى تسديد فاتورة ';
-        //         break;
-
-        //     case 'attendance_alert':
-        //         $title='تغيب عن الدوام';
-        //         break;
-        // }
     }
     public function getInvoicesNotifications(){
         $notifications=Notification::where('user_id',auth()->id())->where('notifiable_type',Invoice::class)->get();
@@ -86,6 +66,18 @@ class NotificationService
             'success'=>true,
             'message'=>'كل إشعارات الشكاوي  ',
             'data'=>$notifications
+            ];
+    }
+    public function getPaymentNotification(){
+
+        $noti=Notification::where('user_id',auth()->id())
+                            ->with('notifiable.registration.Student')
+                            ->where('notifiable_type','App\Models\Payment')->get();
+
+        return [
+            'success'=>true,
+            'message'=>'كل الإشعارات  ',
+            'data'=>PaymentNotificationResource::collection($noti)
         ];
     }
 }

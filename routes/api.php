@@ -374,6 +374,7 @@ Route::prefix('invoice')->controller(InvoiceController::class)->group(function (
         Route::get('/allInvoices/{courseID}','allInvoices')->middleware('role:Manager');
         Route::post('/pay','payInvoices')->middleware('role:Manager|Secretariat|Student');
         Route::get('/show/{invoiceId}','show')->middleware('role:Manager|Secretariat|Student');
+        Route::post('/notify-students','notifyStudent')->middleware('role:Manager|Secretariat');
     });
 
 });
