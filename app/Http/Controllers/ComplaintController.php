@@ -53,7 +53,7 @@ class ComplaintController extends Controller
     {
         $result=$this->complaintService->getComplaints();
         if(!$result['success'])
-        return $this->error($result['message'],$result);
+        return $this->error($result['message']);
         else
         return $this->success($result['message'],$result['data']);
     }

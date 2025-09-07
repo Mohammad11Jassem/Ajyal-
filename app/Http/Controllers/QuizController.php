@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Quiz\StoreQuizRequest as QuizStoreQuizRequest;
 use App\Http\Requests\Quiz\SubmitQuizRequest;
 use App\Http\Requests\Quiz\UpdateQuizRequest;
+use App\Jobs\SendNotificationJob;
+use App\Models\Quiz;
+use App\Models\Student;
 use App\Services\QuizService;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
@@ -85,6 +88,21 @@ class QuizController extends Controller
                 // 'error' => $result['error']
             ], 422);
         }
+
+        // $users = Quiz::eligibleParents($request->quiz_id);
+            $student = Student::where('user_id', auth()->id())->first();
+
+            $parentUsers = $student?->parents->map(fn($parent) => $parent->user)->filter();
+
+            $mark=$result['data'];
+           $message = [
+                'title' => "نتيجة اختبار",
+                'body'  => "تم تسجيل نتيجة $student->full_name في الاختبار . العلامة: $mark"
+            ];
+
+            SendNotificationJob::dispatch($message, $parentUsers);
+
+
         return response()->json([
             'message' => $result['message'],
             'data' => $result['data']

@@ -41,6 +41,15 @@ class Quiz extends Model
         // جلب الطلاب المرتبطين بالكورس
         return $quiz?->assignment?->curriculum?->course?->students?->map(fn($student) => $student->user);
     }
+
+    public function scopeEligibleParents($query, $quizId)
+    {
+        $quiz = $query->with('assignment.curriculum.course.students.parents.user')->find($quizId);
+
+        return $quiz?->assignment?->curriculum?->course?->students->flatMap(function($student) {
+            return $student->parents->map(fn($parent) => $parent->user)->filter();
+        })->unique('id')->values(); // <- إعادة ترتيب الـ indexes
+    }
     // public function curriculum()
     // {
     //     return $this->belongsTo(Curriculum::class);

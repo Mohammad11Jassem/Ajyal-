@@ -36,37 +36,18 @@ Route::get('/stripe/success', [StripeController::class, 'success'])->name('strip
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 
 Route::get('/view', function () {
-    // جلب الطالب مع أولياء الأمور + حساباتهم
-        $invoice = Invoice::findOrFail(1);
+$student = Student::where('user_id', 5)->first();
 
-        // جلب الكورس
-        $course = $invoice->course()->with(['classroomCourses.registrations', 'students'])->first();
+            $parentUsers = $student?->parents->map(fn($parent) => $parent->user)->filter();
 
-        $studentId = 5; // لازم الريكويست يجيب student_id
-
-        // ✅ الحالة 1: الطالب مسجل مسبقًا في الكورس
-        if ($course->students->contains($studentId)) {
-            return [
-                'success' => true,
-                'message' => 'الطالب مسجل مسبقًا في الكورس، يمكنك المتابعة',
-                'data'    => $invoice
+            $mark=5;
+           $message = [
+                'title' => "نتيجة اختبار",
+                'body'  => "تم تسجيل نتيجة $student->full_name في الاختبار . العلامة: $mark"
             ];
-        }
 
-        // ✅ الحالة 2: الطالب غير مسجل → نشيك على الشعب
-        $hasCapacity = $course->classroomCourses->contains(function ($classroomCourse) {
-            $currentCount = $classroomCourse->registrations()->count();
-            return $currentCount < $classroomCourse->capacity;
-        });
+            SendNotificationJob::dispatch($message, $parentUsers);
 
-        if (!$hasCapacity && !$course->students->contains($studentId)) {
-            return [
-                'success' => false,
-                'message' => 'لا توجد أي شعبة متاحة لهذا الكورس، جميع الشعب ممتلئة'
-                
-            ];
-        }
-        return "done";
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {
      $validated = $request->validated();
