@@ -8,11 +8,13 @@ use App\Interfaces\PayableContract;
 use App\Jobs\SendNotificationJob;
 use App\Models\Course;
 use App\Models\Invoice;
+use App\Models\Registration;
 use App\Models\Student;
 use App\Models\User;
 use App\Payments\CoursePayment;
 use App\Payments\InvoicePayment;
 use App\Services\InvoiceService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
@@ -35,7 +37,7 @@ class StripeController extends Controller
     public function session(PayRequest $payRequest)
     {
         $data =$payRequest->validated();
-        return DB::transaction(function() use($data){
+        // return DB::transaction(function() use($data){
 
             $invoice=Invoice::findOrFail($data['invoice_id']);
 
@@ -97,6 +99,7 @@ class StripeController extends Controller
                     'invoice_id' => $invoice['id'],
                     'student_id'=>$studentId,
                     'user_id'=>auth()->id(),
+                    'at_course'=>$course->students->contains($studentId)
                 ],
             ]);
 
@@ -104,7 +107,7 @@ class StripeController extends Controller
             return response()->json([
                 'checkout_url' => $response->url,
             ]);
-        });
+        // });
     }
 
     public function success(Request $request)
@@ -120,7 +123,16 @@ class StripeController extends Controller
 
             $stripe = new StripeClient(env('STRIPE_SECRET'));
             $session = $stripe->checkout->sessions->retrieve($sessionId);
-
+            // return $session->metadata->at_course;
+            if($session->metadata->at_course == 'false'){
+                $invoice=Invoice::where('id',$session->metadata->invoice_id)->first();
+                $registration=Registration::create([
+                    'course_id'=>$invoice->course->id,
+                    'student_id'=>$session->metadata->student_id,
+                    'registered_at'=>Carbon::now()
+                ]);
+                // return $registration;
+            }
 
            $result= $this->invoiceService->payInvoices([
 
@@ -128,6 +140,9 @@ class StripeController extends Controller
                     'student_id'=>$session->metadata->student_id,
             ]);
 
+            // return response()->json([
+            //     'result'=>$result
+            // ]);
             $student = Student::where('id',$session->metadata->student_id)->first();
 
             //send notification

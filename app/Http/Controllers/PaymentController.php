@@ -17,7 +17,8 @@ class PaymentController extends Controller
     public function getStudentPayments($studentId, $courseId)
     {
         $result=$this->paymentService->getStudentPayments($studentId,$courseId);
-        return $this->success( $result['message'],$result);
+        // return $this->success( $result['message'],$result);
+        return $this->success( 'تم ',$result);
     }
     public function getCoursePayments($courseId)
     {

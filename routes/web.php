@@ -36,17 +36,7 @@ Route::get('/stripe/success', [StripeController::class, 'success'])->name('strip
 Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 
 Route::get('/view', function () {
-$student = Student::where('user_id', 5)->first();
-
-            $parentUsers = $student?->parents->map(fn($parent) => $parent->user)->filter();
-
-            $mark=5;
-           $message = [
-                'title' => "نتيجة اختبار",
-                'body'  => "تم تسجيل نتيجة $student->full_name في الاختبار . العلامة: $mark"
-            ];
-
-            SendNotificationJob::dispatch($message, $parentUsers);
+    return 55;
 
 });
 Route::post('/createAndRegister', function (CreateAndRegisterStudentRequest $request) {

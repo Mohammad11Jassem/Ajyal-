@@ -13,18 +13,18 @@ class PaymentService
         // find registration
         $registration = Registration::where('student_id', $studentId)
             ->where('course_id', $courseId)
-            ->firstOrFail();
-
-        $course = $registration->course;
+            ->first();
+        // return $registration;
+        $course = $registration?->course;
 
         // All invoices of this course
-        $invoices = $course->invoices()->with('payments')->get();
+        $invoices = $course?->invoices()->with('payments')->get();
         // $unpaid = $invoices->filter(function ($invoice) use ($registration) {
         //     return $invoice->payments->where('registration_id', $registration->id)->isEmpty();
         // });
 
         // Unpaid invoices (no payments list)
-        $unpaid = $invoices->filter(function ($invoice) use ($registration) {
+        $unpaid = $invoices?->filter(function ($invoice) use ($registration) {
             return $invoice->payments->where('registration_id', $registration->id)->isEmpty();
         })->map(function ($invoice) {
             return [
@@ -34,12 +34,14 @@ class PaymentService
             ];
         });
 
-
+        $allInvoice=Invoice::where('course_id',$courseId)->get();
         if(auth()->user()->hasRole('Student')){
             return [
                 'message'=>'فواتيري غير المدفوعة في كورس معين',
                 // 'course' => $course,
-                'unpaid_invoices' => $unpaid->values(),
+                'unpaid_invoices' => $registration
+                ? $unpaid?->values()   // إذا في تسجيل
+                : $allInvoice->values() // إذا التسجيل null
             ];
         }
 
