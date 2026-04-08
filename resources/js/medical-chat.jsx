@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+const toPlainText = (value) => String(value ?? '')
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .trim();
+
 function MedicalChatApp() {
     const [question, setQuestion] = useState('');
     const [answer, setAnswer] = useState('');
@@ -194,6 +198,3 @@ const rootElement = document.getElementById('medical-chat-root');
 if (rootElement) {
     createRoot(rootElement).render(<MedicalChatApp />);
 }
-    const toPlainText = (value) => String(value ?? '')
-        .replace(/[\u0000-\u001F\u007F]/g, ' ')
-        .trim();
