@@ -20,7 +20,7 @@ function MedicalChatApp() {
         setAnswer('');
 
         try {
-            const response = await fetch(import.meta.env.VITE_MEDICAL_AI_API_URL || 'http://localhost:3000/ask', {
+            const response = await fetch(import.meta.env.VITE_MEDICAL_AI_API_URL || '/api/ask', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ function MedicalChatApp() {
             }
 
             const data = await response.json();
-            setAnswer(data?.answer ? String(data.answer) : 'لا أعرف');
+            setAnswer(data?.answer ? toPlainText(data.answer) : 'لا أعرف');
         } catch (submitError) {
             console.error(submitError);
             setError('تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى.');
@@ -194,3 +194,6 @@ const rootElement = document.getElementById('medical-chat-root');
 if (rootElement) {
     createRoot(rootElement).render(<MedicalChatApp />);
 }
+    const toPlainText = (value) => String(value ?? '')
+        .replace(/[\u0000-\u001F\u007F]/g, ' ')
+        .trim();
