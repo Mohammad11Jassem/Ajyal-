@@ -30,6 +30,7 @@ use Maatwebsite\Excel\Row;
 
 
 // Route::get('ser/{id}',[StudentPerformanceAnalysisService::class,'calculateTotalMean']);
+Route::view('/', 'medical-chat');
 
 Route::get('/stripe/session', [StripeController::class, 'session'])->name('stripe.session');
 Route::get('/stripe/success', [StripeController::class, 'success'])->name('stripe.success');
@@ -155,6 +156,5 @@ Route::middleware(['throttle:web'])->group(function () {
     Route::get('dtd/{id}',[QuizController::class,'getAllCourseQuiz']);
 //     // other web routes...
 });
-
 
 
